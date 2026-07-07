@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FedEMR COO Operating System</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <div class="brand-mark">F</div>
+        <div>
+          <strong>FedEMR</strong>
+          <span>COO OS</span>
+        </div>
+      </div>
+
+      <nav class="nav" id="sidebarNav"></nav>
+
+      <div class="sidebar-footer">
+        <button class="ghost-button full-width" id="exportButton">Export JSON</button>
+        <label class="ghost-button full-width file-label" for="importInput">Import JSON</label>
+        <input id="importInput" type="file" accept="application/json" hidden />
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Commercialization Command Centre</p>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <input id="globalSearch" type="search" placeholder="Search tasks, risks, customers..." aria-label="Global search" />
+          </div>
+          <button class="primary-button" id="quickAddButton">Quick Add</button>
+        </div>
+      </header>
+
+      <main id="app" class="main-content" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div id="modalRoot" class="modal-root" aria-live="polite"></div>
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
