@@ -1,79 +1,59 @@
-import { clamp } from './utils.js';
+function countItems(data, collection) {
+  return Array.isArray(data[collection]) ? data[collection].length : 0;
+}
 
-const statusWeights = {
-  'Complete': 100,
-  'Done': 100,
-  'Active': 70,
-  'In Progress': 60,
-  'Accepted': 60,
-  'Discovery': 35,
-  'At Risk': 30,
-  'Open': 25,
-  'Not Started': 10,
-  'Hypothesis': 10,
-  'Blocked': 5
-};
+function countCompleted(items = []) {
+  return items.filter((item) => {
+    const status = String(item.status || '').toLowerCase();
+    return status.includes('complete') || status.includes('done');
+  }).length;
+}
 
-const average = (values) => values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+function scoreFromCompletion(items = []) {
+  if (!items.length) return 0;
 
-const itemScore = (item) => {
-  const completion = Number(item.completionPercentage);
-  const base = Number.isFinite(completion) && completion > 0 ? completion : statusWeights[item.status] ?? 30;
-  const priorityPenalty = item.priority === 'High' && item.status !== 'Complete' ? 5 : 0;
-  const blockedPenalty = item.blocked || item.blockingIssue ? 18 : 0;
-  return clamp(base - priorityPenalty - blockedPenalty);
-};
+  const completed = countCompleted(items);
+  return Math.round((completed / items.length) * 100);
+}
 
-export const commercialReadinessScore = (state) => average((state.readinessItems || []).map(itemScore));
-export const governmentReadinessScore = (state) => average((state.governmentReadinessItems || []).map(itemScore));
+function cap(value, max = 100) {
+  return Math.min(Math.max(value, 0), max);
+}
 
-export const riskSeverityScore = (state) => {
-  const risks = state.risks || [];
-  if (!risks.length) return 0;
-  const maxSeverity = 25;
-  return clamp(average(risks.filter(r => r.status !== 'Closed').map(r => Number(r.severity || (r.probability * r.impact)) / maxSeverity * 100)));
-};
+export function calculateExecutiveScore(data = {}) {
+  const taskScore = scoreFromCompletion(data.tasks || []);
+  const commercialScore = scoreFromCompletion(data.readinessItems || []);
+  const governmentScore = scoreFromCompletion(data.governmentReadinessItems || []);
 
-export const fundingReadinessScore = (state) => {
-  const needs = state.fundingNeeds || [];
-  if (!needs.length) return 100;
-  const resolved = needs.filter(n => ['Funded', 'Closed', 'Complete'].includes(n.status)).length;
-  const highOpen = needs.filter(n => n.priority === 'High' && !['Funded', 'Closed', 'Complete'].includes(n.status)).length;
-  return clamp((resolved / needs.length) * 100 - highOpen * 8 + 45);
-};
+  const customerScore = cap(countItems(data, 'customers') * 10);
+  const fundingScore = cap(countItems(data, 'fundingNeeds') * 15);
+  const roadmapScore = scoreFromCompletion(data.roadmapItems || []);
 
-export const customerPipelineScore = (state) => {
-  const customers = state.customers || [];
-  if (!customers.length) return 0;
-  return clamp(average(customers.map(c => Number(c.probability || 0))));
-};
+  const riskPenalty = cap(countItems(data, 'risks') * 5, 30);
 
-export const companyHealthScore = (state) => {
-  const commercial = commercialReadinessScore(state);
-  const government = governmentReadinessScore(state);
-  const funding = fundingReadinessScore(state);
-  const pipeline = customerPipelineScore(state);
-  const riskPenalty = riskSeverityScore(state) * 0.35;
-  return clamp((commercial * 0.3) + (government * 0.25) + (funding * 0.15) + (pipeline * 0.2) + 10 - riskPenalty);
-};
+  const rawScore =
+    taskScore * 0.2 +
+    commercialScore * 0.2 +
+    governmentScore * 0.15 +
+    customerScore * 0.15 +
+    fundingScore * 0.1 +
+    roadmapScore * 0.15 -
+    riskPenalty;
 
-export const allScores = (state) => ({
-  commercialReadiness: Math.round(commercialReadinessScore(state)),
-  governmentReadiness: Math.round(governmentReadinessScore(state)),
-  companyHealth: Math.round(companyHealthScore(state)),
-  riskSeverity: Math.round(riskSeverityScore(state)),
-  fundingReadiness: Math.round(fundingReadinessScore(state)),
-  pipeline: Math.round(customerPipelineScore(state))
-});
+  return cap(Math.round(rawScore));
+}
 
-export const readinessQuestions = (state) => {
-  const readiness = [...(state.readinessItems || []), ...(state.governmentReadinessItems || [])];
-  const has = (term) => readiness.some(item => `${item.title} ${item.category} ${item.description}`.toLowerCase().includes(term));
-  return [
-    { question: 'Can we sell?', answer: has('sales') || has('pricing') ? 'Partially' : 'Needs work' },
-    { question: 'Can we contract?', answer: has('legal') || has('contract') ? 'Partially' : 'Needs work' },
-    { question: 'Can we deploy?', answer: has('deploy') || has('infrastructure') ? 'Partially' : 'Needs work' },
-    { question: 'Can we get paid?', answer: has('payment') || has('procurement') || has('vendor') ? 'Partially' : 'Needs work' },
-    { question: 'Can we prove ROI?', answer: has('roi') || has('evidence') ? 'Partially' : 'Needs work' }
-  ];
-};
+export function calculateCollectionSummary(data = {}) {
+  return {
+    tasks: countItems(data, 'tasks'),
+    readinessItems: countItems(data, 'readinessItems'),
+    governmentReadinessItems: countItems(data, 'governmentReadinessItems'),
+    customers: countItems(data, 'customers'),
+    meetings: countItems(data, 'meetings'),
+    advisorRecommendations: countItems(data, 'advisorRecommendations'),
+    risks: countItems(data, 'risks'),
+    fundingNeeds: countItems(data, 'fundingNeeds'),
+    roadmapItems: countItems(data, 'roadmapItems'),
+    documents: countItems(data, 'documents'),
+  };
+}

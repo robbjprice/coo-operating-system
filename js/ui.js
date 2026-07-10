@@ -1,217 +1,397 @@
-import { currency, formatDate, titleCase } from './utils.js';
+const appRoot = document.querySelector('#app');
+const pageTitle = document.querySelector('#pageTitle');
+const navEl = document.querySelector('#sidebarNav');
+const modalRoot = document.querySelector('#modalRoot');
+const toastRoot = document.querySelector('#toastRoot');
+const quickAddButton = document.querySelector('#quickAddButton');
+const searchInput = document.querySelector('#globalSearch');
+const importInput = document.querySelector('#importInput');
+const exportButton = document.querySelector('#exportButton');
 
-export const navItems = [
-  ['dashboard', 'Dashboard'],
-  ['tasks', 'Tasks'],
-  ['readinessItems', 'Commercial Readiness'],
-  ['governmentReadinessItems', 'Government Readiness'],
-  ['customers', 'Customers & Opportunities'],
-  ['risks', 'Risks'],
-  ['meetings', 'Meetings'],
-  ['advisorRecommendations', 'Advisor Recommendations'],
-  ['fundingNeeds', 'Funding Needs'],
-  ['roadmapItems', 'Roadmap']
-];
-
-export const moduleMeta = {
-  tasks: { label: 'Tasks', singular: 'Task', titleField: 'title', description: 'Immediate execution items, blockers, owners, and waiting-on details.' },
-  readinessItems: { label: 'Commercial Readiness', singular: 'Readiness Item', titleField: 'title', description: 'The gaps that decide whether FedEMR can sell, contract, deploy, get paid, and prove ROI.' },
-  governmentReadinessItems: { label: 'Government Readiness', singular: 'Government Readiness Item', titleField: 'title', description: 'Buyer-specific requirements for governments, health systems, universities, and research institutions.' },
-  customers: { label: 'Customers & Opportunities', singular: 'Customer / Opportunity', titleField: 'name', description: 'Active opportunities, procurement paths, next steps, probability, value, and risk.' },
-  risks: { label: 'Risks', singular: 'Risk', titleField: 'title', description: 'Serious risks with probability, impact, severity, mitigation, owner, and review date.' },
-  meetings: { label: 'Meetings', singular: 'Meeting', titleField: 'title', description: 'Meeting notes, decisions, action items, risks, recommendations, and follow-ups.' },
-  advisorRecommendations: { label: 'Advisor Recommendations', singular: 'Advisor Recommendation', titleField: 'title', description: 'Advisor input converted into accountable operating records.' },
-  fundingNeeds: { label: 'Funding Needs', singular: 'Funding Need', titleField: 'title', description: 'Funding tied to specific commercialization blockers, not random grant chasing.' },
-  roadmapItems: { label: 'Roadmap', singular: 'Roadmap Item', titleField: 'title', description: 'Milestones, dependencies, target dates, and completion progress.' }
+const collectionLabels = {
+  tasks: 'Tasks',
+  readinessItems: 'Commercial Readiness',
+  governmentReadinessItems: 'Government Readiness',
+  customers: 'Customers',
+  meetings: 'Meetings',
+  advisorRecommendations: 'Advisor Recommendations',
+  risks: 'Risks',
+  fundingNeeds: 'Funding Needs',
+  roadmapItems: 'Roadmap',
+  documents: 'Documents',
+  settings: 'Settings',
 };
 
-const esc = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
-export const badgeClass = (value) => {
-  const v = String(value || '').toLowerCase();
-  if (['complete', 'done', 'funded', 'closed'].includes(v)) return 'success';
-  if (['high', 'at risk', 'blocked', 'open'].includes(v)) return 'danger';
-  if (['medium', 'in progress', 'accepted', 'discovery'].includes(v)) return 'warning';
-  if (['low', 'active'].includes(v)) return 'accent';
-  return 'neutral';
-};
+function formatCollectionName(collection) {
+  return collectionLabels[collection] || collection;
+}
 
-export const badge = (value) => `<span class="badge ${badgeClass(value)}">${esc(value || 'Not set')}</span>`;
+function getItemTitle(item) {
+  return item.title || item.name || item.company || item.topic || 'Untitled';
+}
 
-export const scoreCard = (label, value, hint) => `
-  <section class="card score-card">
-    <div class="score-label">${esc(label)}</div>
-    <div class="score-value">${Number(value || 0)}%</div>
-    <div class="meta">${esc(hint || '')}</div>
-    <div class="progress"><span style="width:${Number(value || 0)}%"></span></div>
-  </section>
-`;
+function getItemSubtitle(item) {
+  return item.description || item.notes || item.status || item.owner || '';
+}
 
-export const listCard = (title, items, renderItem, empty = 'Nothing here yet.') => `
-  <section class="card">
-    <div class="card-header"><h3>${esc(title)}</h3></div>
-    <div class="list">
-      ${items.length ? items.map(renderItem).join('') : `<div class="empty-state">${esc(empty)}</div>`}
-    </div>
-  </section>
-`;
+function setPageTitle(title) {
+  if (pageTitle) pageTitle.textContent = title;
+}
 
-export const compactItem = (record, titleField = 'title') => `
-  <div class="list-item">
-    <div class="list-item-top">
-      <div>
-        <strong>${esc(record[titleField] || record.title || record.name)}</strong>
-        <div class="meta">Owner: ${esc(record.owner || 'Not set')} • Due: ${esc(formatDate(record.dueDate || record.targetDate || record.reviewDate || record.followUpDate))}</div>
-      </div>
-      ${badge(record.priority || record.status)}
-    </div>
-    ${record.waitingOn ? `<p class="meta">Waiting on: ${esc(record.waitingOn)}</p>` : ''}
-  </div>
-`;
+export function showStatus(message) {
+  if (!toastRoot) return;
 
-export const renderNav = (activeRoute, onNavigate) => {
-  const nav = document.getElementById('sidebarNav');
-  nav.innerHTML = navItems.map(([route, label]) => `<button class="${route === activeRoute ? 'active' : ''}" data-route="${route}">${label}</button>`).join('');
-  nav.querySelectorAll('button').forEach(button => button.addEventListener('click', () => onNavigate(button.dataset.route)));
-};
+  toastRoot.innerHTML = `<div class="toast">${escapeHtml(message)}</div>`;
 
-const columnFor = (collection) => {
-  const common = ['status', 'priority', 'owner', 'blocked', 'waitingOn'];
-  const map = {
-    tasks: ['title', 'category', ...common, 'dueDate'],
-    readinessItems: ['title', 'category', 'status', 'priority', 'completionPercentage', 'blockingIssue'],
-    governmentReadinessItems: ['title', 'organization', 'category', 'status', 'priority', 'completionPercentage'],
-    customers: ['name', 'sector', 'stage', 'probability', 'estimatedValue', 'nextStep'],
-    risks: ['title', 'category', 'probability', 'impact', 'severity', 'status', 'reviewDate'],
-    meetings: ['title', 'date', 'organization', 'attendees', 'followUpDate'],
-    advisorRecommendations: ['title', 'advisorName', 'category', 'priority', 'status', 'relatedModule'],
-    fundingNeeds: ['title', 'category', 'amount', 'priority', 'timing', 'status'],
-    roadmapItems: ['title', 'quarter', 'targetDate', 'status', 'owner', 'completionPercentage']
-  };
-  return map[collection] || ['title', ...common];
-};
+  window.clearTimeout(showStatus.timeout);
+  showStatus.timeout = window.setTimeout(() => {
+    toastRoot.innerHTML = '';
+  }, 3000);
+}
 
-const valueFor = (field, record) => {
-  if (field === 'blocked') return record.blocked ? badge('Blocked') : badge('Clear');
-  if (['status', 'priority', 'stage'].includes(field)) return badge(record[field]);
-  if (field === 'estimatedValue' || field === 'amount' || field === 'estimatedCost') return esc(currency(record[field]));
-  if (field.toLowerCase().includes('date')) return esc(formatDate(record[field]));
-  if (field === 'probability' || field === 'completionPercentage') return `${esc(record[field] ?? 0)}%`;
-  if (field === 'title' || field === 'name') return `<div class="row-title">${esc(record[field])}</div><div class="row-subtitle">${esc(record.notes || record.description || '')}</div>`;
-  return esc(record[field] || '');
-};
+export function bindNavigation(handlers) {
+  if (!navEl) return;
 
-export const renderModuleTable = (collection, records, handlers) => {
-  const columns = columnFor(collection);
-  if (!records.length) return `<div class="empty-state">No records yet. Use Add ${moduleMeta[collection].singular} to create one.</div>`;
-  return `
-    <div class="table-wrap">
-      <table>
-        <thead><tr>${columns.map(c => `<th>${esc(titleCase(c))}</th>`).join('')}<th></th></tr></thead>
-        <tbody>
-          ${records.map(record => `
-            <tr>
-              ${columns.map(field => `<td>${valueFor(field, record)}</td>`).join('')}
-              <td class="actions">
-                <button class="icon-button" data-action="edit" data-id="${record.id}">Edit</button>
-                <button class="danger-button" data-action="delete" data-id="${record.id}">Delete</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
+  navEl.innerHTML = `
+    <button data-view="dashboard">Dashboard</button>
+    <button data-view="tasks">Tasks</button>
+    <button data-view="readinessItems">Commercial Readiness</button>
+    <button data-view="governmentReadinessItems">Government Readiness</button>
+    <button data-view="customers">Customers</button>
+    <button data-view="fundingNeeds">Funding Needs</button>
+    <button data-view="risks">Risks</button>
+    <button data-view="meetings">Meetings</button>
+    <button data-view="roadmapItems">Roadmap</button>
+    <button data-view="documents">Documents</button>
+    <button data-view="advisorRecommendations">Advisors</button>
   `;
-};
 
-export const attachTableActions = (root, handlers) => {
-  root.querySelectorAll('[data-action="edit"]').forEach(button => button.addEventListener('click', () => handlers.edit(button.dataset.id)));
-  root.querySelectorAll('[data-action="delete"]').forEach(button => button.addEventListener('click', () => handlers.delete(button.dataset.id)));
-};
+  navEl.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-view]');
+    if (!button) return;
 
-export const toast = (message) => {
-  const root = document.getElementById('toastRoot');
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.textContent = message;
-  root.appendChild(el);
-  setTimeout(() => el.remove(), 3200);
-};
+    handlers.onNavigate(button.dataset.view);
+  });
 
-export const fieldDefinitions = {
-  common: [
-    ['status', 'select', ['Not Started', 'In Progress', 'Active', 'At Risk', 'Blocked', 'Complete', 'Open', 'Closed', 'Funded']],
-    ['priority', 'select', ['Low', 'Medium', 'High']],
-    ['owner', 'text'],
-    ['blocked', 'checkbox'],
-    ['waitingOn', 'text'],
-    ['evidenceLink', 'url'],
-    ['reviewCadence', 'select', ['Daily', 'Weekly', 'Biweekly', 'Monthly', 'Quarterly']],
-    ['notes', 'textarea']
-  ],
-  tasks: [['title', 'text'], ['category', 'text'], ['dueDate', 'date']],
-  readinessItems: [['title', 'text'], ['category', 'text'], ['description', 'textarea'], ['completionPercentage', 'number'], ['estimatedCost', 'number'], ['dependency', 'text'], ['blockingIssue', 'text']],
-  governmentReadinessItems: [['title', 'text'], ['organization', 'text'], ['category', 'text'], ['description', 'textarea'], ['completionPercentage', 'number'], ['requiredDocumentation', 'textarea'], ['blockingIssue', 'text']],
-  customers: [['name', 'text'], ['organizationName', 'text'], ['contactNames', 'text'], ['sector', 'text'], ['opportunityType', 'text'], ['stage', 'select', ['Hypothesis', 'Discovery', 'Active', 'Proposal', 'Contracting', 'Won', 'Lost']], ['probability', 'number'], ['estimatedValue', 'number'], ['expectedCloseDate', 'date'], ['nextStep', 'text'], ['decisionMaker', 'text'], ['procurementPath', 'text']],
-  risks: [['title', 'text'], ['description', 'textarea'], ['category', 'text'], ['probability', 'number'], ['impact', 'number'], ['severity', 'number'], ['mitigationPlan', 'textarea'], ['reviewDate', 'date']],
-  meetings: [['title', 'text'], ['date', 'date'], ['attendees', 'text'], ['organization', 'text'], ['decisions', 'textarea'], ['actionItems', 'textarea'], ['followUpDate', 'date']],
-  advisorRecommendations: [['title', 'text'], ['advisorName', 'text'], ['date', 'date'], ['recommendation', 'textarea'], ['category', 'text'], ['relatedModule', 'text'], ['outcome', 'textarea']],
-  fundingNeeds: [['title', 'text'], ['fundingNeed', 'text'], ['category', 'text'], ['amount', 'number'], ['purpose', 'textarea'], ['timing', 'text'], ['potentialFundingSource', 'text'], ['grantMatch', 'text']],
-  roadmapItems: [['title', 'text'], ['milestone', 'text'], ['quarter', 'text'], ['month', 'text'], ['targetDate', 'date'], ['dependencies', 'textarea'], ['completionPercentage', 'number']]
-};
+  if (searchInput) {
+    searchInput.addEventListener('input', (event) => {
+      handlers.onSearch(event.target.value);
+    });
+  }
+}
 
-export const showRecordModal = ({ collection, record = {}, onSave, onClose }) => {
-  const meta = moduleMeta[collection];
-  const root = document.getElementById('modalRoot');
-  const fields = [...(fieldDefinitions[collection] || []), ...fieldDefinitions.common];
-  root.classList.add('active');
-  root.innerHTML = `
-    <div class="modal-backdrop" data-close="true"></div>
-    <section class="modal" role="dialog" aria-modal="true" aria-label="${esc(meta.singular)} form">
-      <div class="modal-header">
-        <h2>${record.id ? 'Edit' : 'Add'} ${esc(meta.singular)}</h2>
-        <button class="icon-button" data-close="true">Close</button>
+export function bindQuickAdd(handlers) {
+  if (!quickAddButton || !modalRoot) return;
+
+  quickAddButton.addEventListener('click', () => {
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop">
+        <section class="modal">
+          <div class="modal-header">
+            <h2>Quick Add</h2>
+            <button class="ghost-button" data-close-modal>Close</button>
+          </div>
+
+          <form id="quickAddForm" class="form-grid">
+            <label>
+              Collection
+              <select name="collection">
+                <option value="tasks">Task</option>
+                <option value="risks">Risk</option>
+                <option value="customers">Customer</option>
+                <option value="fundingNeeds">Funding Need</option>
+                <option value="meetings">Meeting</option>
+                <option value="roadmapItems">Roadmap Item</option>
+                <option value="documents">Document</option>
+                <option value="advisorRecommendations">Advisor Recommendation</option>
+              </select>
+            </label>
+
+            <label>
+              Title
+              <input name="title" required />
+            </label>
+
+            <label>
+              Description
+              <textarea name="description"></textarea>
+            </label>
+
+            <label>
+              Owner
+              <input name="owner" />
+            </label>
+
+            <label>
+              Priority
+              <select name="priority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </label>
+
+            <label>
+              Status
+              <input name="status" value="Open" />
+            </label>
+
+            <label>
+              Due Date
+              <input type="date" name="dueDate" />
+            </label>
+
+            <button class="primary-button" type="submit">Save</button>
+          </form>
+        </section>
       </div>
-      <form id="recordForm" class="form-grid">
-        ${fields.map(([name, type, options]) => renderField(name, type, options, record[name])).join('')}
-        <div class="form-actions full">
-          <button type="button" class="secondary-button" data-close="true">Cancel</button>
-          <button type="submit" class="primary-button">Save</button>
-        </div>
-      </form>
+    `;
+
+    modalRoot.querySelector('[data-close-modal]').addEventListener('click', () => {
+      modalRoot.innerHTML = '';
+    });
+
+    modalRoot.querySelector('#quickAddForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.currentTarget);
+
+      await handlers.onQuickAdd({
+        collection: formData.get('collection'),
+        title: formData.get('title'),
+        description: formData.get('description'),
+        owner: formData.get('owner'),
+        priority: formData.get('priority'),
+        status: formData.get('status'),
+        dueDate: formData.get('dueDate'),
+      });
+
+      modalRoot.innerHTML = '';
+    });
+  });
+}
+
+export function bindImportExport(handlers) {
+  if (exportButton) {
+    exportButton.addEventListener('click', () => {
+      handlers.onExport();
+    });
+  }
+
+  if (importInput) {
+    importInput.addEventListener('change', async (event) => {
+      const [file] = event.target.files;
+      await handlers.onImport(file);
+      importInput.value = '';
+    });
+  }
+}
+
+function renderMetricCard(label, value) {
+  return `
+    <article class="metric-card">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+    </article>
+  `;
+}
+
+function renderItemForm(collection, item = {}) {
+  const title = getItemTitle(item) === 'Untitled' ? '' : getItemTitle(item);
+
+  return `
+    <form class="item-form" data-collection="${escapeHtml(collection)}" data-id="${escapeHtml(item.id || '')}">
+      <label>
+        Title
+        <input name="title" value="${escapeHtml(title)}" />
+      </label>
+
+      <label>
+        Description
+        <textarea name="description">${escapeHtml(item.description || item.notes || '')}</textarea>
+      </label>
+
+      <label>
+        Owner
+        <input name="owner" value="${escapeHtml(item.owner || '')}" />
+      </label>
+
+      <label>
+        Status
+        <input name="status" value="${escapeHtml(item.status || '')}" />
+      </label>
+
+      <label>
+        Priority
+        <select name="priority">
+          <option value="">None</option>
+          <option value="Low" ${item.priority === 'Low' ? 'selected' : ''}>Low</option>
+          <option value="Medium" ${item.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+          <option value="High" ${item.priority === 'High' ? 'selected' : ''}>High</option>
+          <option value="Critical" ${item.priority === 'Critical' ? 'selected' : ''}>Critical</option>
+        </select>
+      </label>
+
+      <label>
+        Due Date
+        <input type="date" name="dueDate" value="${escapeHtml(item.dueDate || '')}" />
+      </label>
+
+      <button class="primary-button" type="submit">Save</button>
+    </form>
+  `;
+}
+
+function renderItemCard(collection, item) {
+  return `
+    <article class="item-card">
+      <div>
+        <h3>${escapeHtml(getItemTitle(item))}</h3>
+        <p>${escapeHtml(getItemSubtitle(item))}</p>
+      </div>
+
+      <div class="item-meta">
+        ${item.owner ? `<span>Owner: ${escapeHtml(item.owner)}</span>` : ''}
+        ${item.status ? `<span>Status: ${escapeHtml(item.status)}</span>` : ''}
+        ${item.priority ? `<span>Priority: ${escapeHtml(item.priority)}</span>` : ''}
+        ${item.dueDate ? `<span>Due: ${escapeHtml(item.dueDate)}</span>` : ''}
+      </div>
+
+      <details>
+        <summary>Edit</summary>
+        ${renderItemForm(collection, item)}
+      </details>
+
+      <button class="danger-button" data-delete="${escapeHtml(item.id)}" data-collection="${escapeHtml(collection)}">
+        Delete
+      </button>
+    </article>
+  `;
+}
+
+function bindCollectionActions(handlers) {
+  appRoot.querySelectorAll('.item-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+
+      await handlers.onSave(form.dataset.collection, {
+        id: form.dataset.id || undefined,
+        title: formData.get('title'),
+        description: formData.get('description'),
+        owner: formData.get('owner'),
+        status: formData.get('status'),
+        priority: formData.get('priority'),
+        dueDate: formData.get('dueDate'),
+      });
+    });
+  });
+
+  appRoot.querySelectorAll('[data-delete]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      await handlers.onDelete(button.dataset.collection, button.dataset.delete);
+    });
+  });
+}
+
+export function renderDashboard(model, handlers) {
+  const { data, executiveScore } = model;
+
+  const tasks = data.tasks || [];
+  const risks = data.risks || [];
+  const customers = data.customers || [];
+  const fundingNeeds = data.fundingNeeds || [];
+  const meetings = data.meetings || [];
+
+  setPageTitle('Dashboard');
+
+  appRoot.innerHTML = `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">FedEMR Technologies</p>
+        <h2>Executive Operating Dashboard</h2>
+        <p>Commercialization, government readiness, customer development, funding, risk, meetings, documents, and roadmap execution in one local-first command centre.</p>
+      </div>
+      <div class="score-card">
+        <span>Executive Score</span>
+        <strong>${escapeHtml(executiveScore)}%</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Open Tasks', tasks.length)}
+      ${renderMetricCard('Customers', customers.length)}
+      ${renderMetricCard('Funding Needs', fundingNeeds.length)}
+      ${renderMetricCard('Risks', risks.length)}
+      ${renderMetricCard('Meetings', meetings.length)}
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <h2>Top Priorities</h2>
+        ${tasks.slice(0, 5).map((item) => renderItemCard('tasks', item)).join('') || '<p>No tasks yet.</p>'}
+      </article>
+
+      <article class="panel">
+        <h2>Active Risks</h2>
+        ${risks.slice(0, 5).map((item) => renderItemCard('risks', item)).join('') || '<p>No risks yet.</p>'}
+      </article>
     </section>
   `;
-  root.querySelectorAll('[data-close="true"]').forEach(el => el.addEventListener('click', onClose));
-  root.querySelector('#recordForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const data = { ...record };
-    fields.forEach(([name, type]) => {
-      if (type === 'checkbox') data[name] = formData.get(name) === 'on';
-      else if (type === 'number') data[name] = Number(formData.get(name) || 0);
-      else data[name] = formData.get(name) || '';
-    });
-    onSave(data);
-  });
-};
 
-const renderField = (name, type, options = [], value = '') => {
-  const label = titleCase(name);
-  const full = type === 'textarea' || ['notes', 'description', 'recommendation', 'purpose', 'decisions', 'actionItems', 'mitigationPlan'].includes(name) ? 'full' : '';
-  if (type === 'select') {
-    return `<div class="form-field ${full}"><label>${esc(label)}</label><select name="${esc(name)}">${options.map(opt => `<option value="${esc(opt)}" ${opt === value ? 'selected' : ''}>${esc(opt)}</option>`).join('')}</select></div>`;
-  }
-  if (type === 'textarea') {
-    return `<div class="form-field ${full}"><label>${esc(label)}</label><textarea name="${esc(name)}">${esc(value)}</textarea></div>`;
-  }
-  if (type === 'checkbox') {
-    return `<div class="form-field"><label>${esc(label)}</label><select name="${esc(name)}"><option value="">No</option><option value="on" ${value ? 'selected' : ''}>Yes</option></select></div>`;
-  }
-  return `<div class="form-field ${full}"><label>${esc(label)}</label><input name="${esc(name)}" type="${esc(type)}" value="${esc(value)}" /></div>`;
-};
+  bindCollectionActions(handlers);
+}
 
-export const closeModal = () => {
-  const root = document.getElementById('modalRoot');
-  root.classList.remove('active');
-  root.innerHTML = '';
-};
+export function renderCollection(collection, items, handlers) {
+  setPageTitle(formatCollectionName(collection));
+
+  appRoot.innerHTML = `
+    <section class="panel">
+      <h2>Add New ${escapeHtml(formatCollectionName(collection))}</h2>
+      ${renderItemForm(collection)}
+    </section>
+
+    <section class="item-list">
+      ${items.map((item) => renderItemCard(collection, item)).join('') || '<p>No items yet.</p>'}
+    </section>
+  `;
+
+  bindCollectionActions(handlers);
+}
+
+export function renderSearchResults(results, query, handlers) {
+  setPageTitle('Search');
+
+  appRoot.innerHTML = `
+    <section class="panel">
+      <h2>Search Results</h2>
+      <p>${results.length} result${results.length === 1 ? '' : 's'} for "${escapeHtml(query)}"</p>
+    </section>
+
+    <section class="item-list">
+      ${
+        results
+          .map(
+            (result) => `
+              <div class="collection-label">${escapeHtml(formatCollectionName(result.collection))}</div>
+              ${renderItemCard(result.collection, result.item)}
+            `
+          )
+          .join('') || '<p>No matching items found.</p>'
+      }
+    </section>
+  `;
+
+  bindCollectionActions(handlers);
+}

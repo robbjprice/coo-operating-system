@@ -1,103 +1,109 @@
-import { collections, sampleData } from './sample-data.js';
-import { nowIso, uid } from './utils.js';
+import { collections } from './sample-data.js';
 
 const DB_NAME = 'fedemr-coo-os';
 const DB_VERSION = 1;
-let dbPromise;
 
-const openDb = () => {
+let dbPromise = null;
+
+function openDatabase() {
   if (dbPromise) return dbPromise;
+
   dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
+
     request.onupgradeneeded = () => {
       const db = request.result;
-      collections.forEach((name) => {
-        if (!db.objectStoreNames.contains(name)) {
-          db.createObjectStore(name, { keyPath: 'id' });
+
+      collections.forEach((collection) => {
+        if (!db.objectStoreNames.contains(collection)) {
+          db.createObjectStore(collection, { keyPath: 'id' });
         }
       });
     };
+
+    request.onsuccess = () => {
+      resolve(request.result);
+    };
+
+    request.onerror = () => {
+      reject(request.error);
+    };
+  });
+
+  return dbPromise;
+}
+
+function getStore(db, collection, mode = 'readonly') {
+  if (!collections.includes(collection)) {
+    throw new Error(`Unknown collection: ${collection}`);
+  }
+
+  const transaction = db.transaction(collection, mode);
+  return transaction.objectStore(collection);
+}
+
+function requestToPromise(request) {
+  return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
-  return dbPromise;
-};
+}
 
-const txStore = async (collection, mode = 'readonly') => {
-  const db = await openDb();
-  const tx = db.transaction(collection, mode);
-  return { store: tx.objectStore(collection), tx };
-};
+export async function getAllItems(collection) {
+  const db = await openDatabase();
+  const store = getStore(db, collection, 'readonly');
+  const request = store.getAll();
 
-const requestToPromise = (request) => new Promise((resolve, reject) => {
-  request.onsuccess = () => resolve(request.result);
-  request.onerror = () => reject(request.error);
-});
+  return requestToPromise(request);
+}
 
-export const getAll = async (collection) => {
-  const { store } = await txStore(collection);
-  return requestToPromise(store.getAll());
-};
+export async function saveItem(collection, item) {
+  const db = await openDatabase();
+  const store = getStore(db, collection, 'readwrite');
+  const request = store.put(item);
 
-export const putRecord = async (collection, record) => {
-  const { store, tx } = await txStore(collection, 'readwrite');
-  const saved = { ...record, updatedAt: nowIso(), id: record.id || uid(collection) };
-  store.put(saved);
-  await new Promise((resolve, reject) => {
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-  });
-  return saved;
-};
+  await requestToPromise(request);
 
-export const deleteRecord = async (collection, id) => {
-  const { store, tx } = await txStore(collection, 'readwrite');
-  store.delete(id);
-  await new Promise((resolve, reject) => {
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-  });
-};
+  return item;
+}
 
-export const clearCollection = async (collection) => {
-  const { store, tx } = await txStore(collection, 'readwrite');
-  store.clear();
-  await new Promise((resolve, reject) => {
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-  });
-};
+export async function deleteItem(collection, id) {
+  const db = await openDatabase();
+  const store = getStore(db, collection, 'readwrite');
+  const request = store.delete(id);
 
-export const loadState = async () => {
-  await seedIfEmpty();
-  const entries = await Promise.all(collections.map(async (collection) => [collection, await getAll(collection)]));
-  return Object.fromEntries(entries);
-};
+  return requestToPromise(request);
+}
 
-export const seedIfEmpty = async () => {
-  const settings = await getAll('settings');
-  if (settings.length) return;
-  await importState(sampleData, false);
-};
+export async function clearCollection(collection) {
+  const db = await openDatabase();
+  const store = getStore(db, collection, 'readwrite');
+  const request = store.clear();
 
-export const importState = async (state, logImport = true) => {
-  for (const collection of collections) {
-    await clearCollection(collection);
-    const records = Array.isArray(state[collection]) ? state[collection] : [];
-    for (const record of records) {
-      await putRecord(collection, record);
-    }
-  }
-  if (logImport) {
-    await putRecord('activityLog', {
-      id: uid('log'),
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
-      title: 'Imported JSON data',
-      type: 'import',
-      notes: 'Application data was replaced from an imported JSON file.'
-    });
-  }
-};
+  return requestToPromise(request);
+}
 
-export const resetToSampleData = async () => importState(sampleData);
+export async function seedDatabase(seedData) {
+  const db = await openDatabase();
+
+  await Promise.all(
+    collections.map(
+      (collection) =>
+        new Promise((resolve, reject) => {
+          const transaction = db.transaction(collection, 'readwrite');
+          const store = transaction.objectStore(collection);
+          const items = seedData[collection] || [];
+
+          store.clear();
+
+          items.forEach((item) => {
+            store.put(item);
+          });
+
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+          transaction.onabort = () => reject(transaction.error);
+        })
+    )
+  );
+}
