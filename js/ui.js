@@ -1310,6 +1310,505 @@ function renderProductOverview(items, data) {
     </section>
   `;
 }
+function renderProductVersions(items) {
+  const currentVersion = items.find(
+    (item) => item.id === 'product_version_current'
+  );
+
+  const nextVersion = items.find(
+    (item) => item.id === 'product_version_v2'
+  );
+
+  const otherVersions = items.filter(
+    (item) =>
+      item.id !== 'product_version_current' &&
+      item.id !== 'product_version_v2'
+  );
+
+  const renderVersionCard = (version, label) => {
+    if (!version) {
+      return `
+        <article class="panel">
+          <p class="eyebrow">${escapeHtml(label)}</p>
+          <h2>Not Defined</h2>
+          <p>No product-version record is stored.</p>
+        </article>
+      `;
+    }
+
+    return `
+      <article class="panel">
+        <p class="eyebrow">${escapeHtml(label)}</p>
+
+        <h2>
+          ${escapeHtml(
+            version.versionName ||
+              version.versionNumber ||
+              'Unnamed Version'
+          )}
+        </h2>
+
+        <div class="item-meta">
+          ${
+            version.status
+              ? `
+                <span>
+                  Status: ${escapeHtml(version.status)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            version.releaseType
+              ? `
+                <span>
+                  Type: ${escapeHtml(version.releaseType)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            version.productReadinessScore !== undefined
+              ? `
+                <span>
+                  Readiness:
+                  ${escapeHtml(version.productReadinessScore)}%
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            version.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(version.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          version.summary
+            ? `
+              <p>
+                ${escapeHtml(version.summary)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          version.releaseObjective
+            ? `
+              <h3>Release Objective</h3>
+              <p>
+                ${escapeHtml(version.releaseObjective)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          version.plannedReleaseDate
+            ? `
+              <p>
+                <strong>Planned Release:</strong>
+                ${escapeHtml(version.plannedReleaseDate)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          version.deploymentStage
+            ? `
+              <p>
+                <strong>Deployment Stage:</strong>
+                ${escapeHtml(version.deploymentStage)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          version.capabilitiesIncluded?.length
+            ? `
+              <h3>Capabilities Included</h3>
+
+              <div class="tag-list">
+                ${version.capabilitiesIncluded
+                  .map(
+                    (capability) => `
+                      <span>
+                        ${escapeHtml(capability)}
+                      </span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          version.improvementsOverPreviousVersion?.length
+            ? `
+              <h3>Key Improvements</h3>
+
+              <ul>
+                ${version.improvementsOverPreviousVersion
+                  .map(
+                    (improvement) => `
+                      <li>
+                        ${escapeHtml(improvement)}
+                      </li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          version.releaseBlockers?.length
+            ? `
+              <h3>Release Blockers</h3>
+
+              <ul>
+                ${version.releaseBlockers
+                  .map(
+                    (blocker) => `
+                      <li>
+                        ${escapeHtml(blocker)}
+                      </li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          version.knownLimitations?.length
+            ? `
+              <h3>Known Limitations</h3>
+
+              <ul>
+                ${version.knownLimitations
+                  .map(
+                    (limitation) => `
+                      <li>
+                        ${escapeHtml(limitation)}
+                      </li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          version.productReadinessExplanation
+            ? `
+              <div class="linked-records">
+                <strong>Readiness Explanation</strong>
+
+                <span>
+                  ${escapeHtml(
+                    version.productReadinessExplanation
+                  )}
+                </span>
+              </div>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Product Versions</h2>
+
+        <p>
+          Track what FedEMR supports today, what is planned next,
+          and what must be completed before release.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Versions</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      ${renderVersionCard(currentVersion, 'Current Product')}
+      ${renderVersionCard(nextVersion, 'Next Product')}
+    </section>
+
+    ${
+      otherVersions.length
+        ? `
+          <section class="item-list">
+            ${otherVersions
+              .map((version) =>
+                renderVersionCard(version, 'Additional Version')
+              )
+              .join('')}
+          </section>
+        `
+        : ''
+    }
+  `;
+}
+function renderProductCapabilities(items) {
+  const available = items.filter(
+    (item) => item.availabilityStatus === 'Available'
+  );
+
+  const planned = items.filter(
+    (item) => item.availabilityStatus !== 'Available'
+  );
+
+  const commerciallySupported = items.filter(
+    (item) => item.commerciallySupported
+  );
+
+  const renderCapabilityCard = (capability) => `
+    <article class="item-card">
+      <div>
+        <p class="eyebrow">
+          ${escapeHtml(capability.category || 'Capability')}
+        </p>
+
+        <h3>
+          ${escapeHtml(capability.name || 'Unnamed Capability')}
+        </h3>
+
+        <p>
+          ${escapeHtml(
+            capability.userDescription ||
+              capability.description ||
+              ''
+          )}
+        </p>
+      </div>
+
+      <div class="item-meta">
+        ${
+          capability.availabilityStatus
+            ? `
+              <span>
+                Status:
+                ${escapeHtml(capability.availabilityStatus)}
+              </span>
+            `
+            : ''
+        }
+
+        ${
+          capability.supportStatus
+            ? `
+              <span>
+                Support:
+                ${escapeHtml(capability.supportStatus)}
+              </span>
+            `
+            : ''
+        }
+
+        <span>
+          ${
+            capability.commerciallySupported
+              ? 'Commercially Supported'
+              : 'Not Commercially Supported'
+          }
+        </span>
+
+        ${
+          capability.confidentiality
+            ? `
+              <span>
+                ${escapeHtml(capability.confidentiality)}
+              </span>
+            `
+            : ''
+        }
+      </div>
+
+      ${
+        capability.customerValue
+          ? `
+            <div class="linked-records">
+              <strong>Customer Value</strong>
+              <span>${escapeHtml(capability.customerValue)}</span>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        capability.researchValue
+          ? `
+            <div class="linked-records">
+              <strong>Research Value</strong>
+              <span>${escapeHtml(capability.researchValue)}</span>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        capability.dependencies?.length
+          ? `
+            <h3>Dependencies</h3>
+
+            <ul>
+              ${capability.dependencies
+                .map(
+                  (dependency) => `
+                    <li>${escapeHtml(dependency)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        capability.knownLimitations?.length
+          ? `
+            <h3>Known Limitations</h3>
+
+            <ul>
+              ${capability.knownLimitations
+                .map(
+                  (limitation) => `
+                    <li>${escapeHtml(limitation)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        capability.securityConsiderations?.length
+          ? `
+            <h3>Security Considerations</h3>
+
+            <ul>
+              ${capability.securityConsiderations
+                .map(
+                  (consideration) => `
+                    <li>${escapeHtml(consideration)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        capability.privacyConsiderations?.length
+          ? `
+            <h3>Privacy Considerations</h3>
+
+            <ul>
+              ${capability.privacyConsiderations
+                .map(
+                  (consideration) => `
+                    <li>${escapeHtml(consideration)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        capability.evidenceStatus
+          ? `
+            <div class="linked-records">
+              <strong>Evidence Status</strong>
+              <span>${escapeHtml(capability.evidenceStatus)}</span>
+            </div>
+          `
+          : ''
+      }
+    </article>
+  `;
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Product Capabilities</h2>
+
+        <p>
+          Separate what is available now, what is planned, and what
+          is commercially supported.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Capabilities</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Available', available.length)}
+      ${renderMetricCard('Planned', planned.length)}
+      ${renderMetricCard(
+        'Commercially Supported',
+        commerciallySupported.length
+      )}
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Current Product</p>
+      <h2>Available Capabilities</h2>
+    </section>
+
+    <section class="directory-grid">
+      ${
+        available.length
+          ? available.map(renderCapabilityCard).join('')
+          : '<p>No available capabilities recorded.</p>'
+      }
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Roadmap</p>
+      <h2>Planned or In-Development Capabilities</h2>
+    </section>
+
+    <section class="directory-grid">
+      ${
+        planned.length
+          ? planned.map(renderCapabilityCard).join('')
+          : '<p>No planned capabilities recorded.</p>'
+      }
+    </section>
+  `;
+}
 function bindCollectionActions(handlers) {
   if (!appRoot) return;
 
@@ -1480,8 +1979,20 @@ export function renderCollection(
 ) {
     setPageTitle(formatCollectionName(collection));
 
-  if (collection === 'products') {
+   if (collection === 'products') {
     appRoot.innerHTML = renderProductOverview(items, data);
+
+    return;
+  }
+
+   if (collection === 'productVersions') {
+    appRoot.innerHTML = renderProductVersions(items);
+
+    return;
+  }
+
+  if (collection === 'productCapabilities') {
+    appRoot.innerHTML = renderProductCapabilities(items);
 
     return;
   }
