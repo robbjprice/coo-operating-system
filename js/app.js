@@ -35,7 +35,75 @@ const state = {
   data: {},
   searchQuery: ''
 };
+const PRODUCT_MARKET_SEED_VERSION = 1;
 
+const productMarketCollections = [
+  'products',
+  'productVersions',
+  'productCapabilities',
+  'audiences',
+  'contentAssets',
+  'presentations',
+  'useCases',
+  'caseStudies',
+  'approvedClaims'
+];
+
+async function seedProductMarketDataOnce() {
+  const settingsRecord = (
+    state.data.settings || []
+  ).find(
+    (item) => item.id === 'settings_default'
+  );
+
+  const completedVersion = Number(
+    settingsRecord?.productMarketSeedVersion || 0
+  );
+
+  if (
+    completedVersion >=
+    PRODUCT_MARKET_SEED_VERSION
+  ) {
+    return false;
+  }
+
+  for (const collection of productMarketCollections) {
+    const existingItems =
+      state.data[collection] || [];
+
+    const existingIds = new Set(
+      existingItems.map((item) => item.id)
+    );
+
+    const seedItems =
+      sampleData[collection] || [];
+
+    for (const item of seedItems) {
+      if (!existingIds.has(item.id)) {
+        await saveItem(collection, item);
+      }
+    }
+  }
+
+  await saveItem('settings', {
+    ...(settingsRecord || {
+      id: 'settings_default',
+      appName: 'FedEMR COO Operating System',
+      appVersion: '0.5',
+      schemaVersion: '0.5',
+      theme: 'light',
+      createdAt: nowIso()
+    }),
+
+    productMarketSeedVersion:
+      PRODUCT_MARKET_SEED_VERSION,
+
+    updatedAt: nowIso()
+  });
+
+  return true;
+}
+  
 async function loadData() {
   const entries = await Promise.all(
     collections.map(async (collection) => {
@@ -387,17 +455,24 @@ async function init() {
     await loadData();
   }
 
+  const productMarketSeeded =
+    await seedProductMarketDataOnce();
+
+  if (productMarketSeeded) {
+    await loadData();
+  }
+
   renderDashboard(
     getDashboardModel(),
     handlers
   );
 
   showStatus(
-    'FedEMR COO Operating System ready.'
+    productMarketSeeded
+      ? 'Product and Market data added.'
+      : 'FedEMR COO Operating System ready.'
   );
-}
-
-init().catch((error) => {
+}init().catch((error) => {
   console.error(error);
 
   showStatus(

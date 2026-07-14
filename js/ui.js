@@ -18,18 +18,33 @@ const collectionLabels = {
   risks: 'Risks',
   fundingNeeds: 'Funding Needs',
   roadmapItems: 'Roadmap',
-  documents: 'Documents',
+
   people: 'People',
   organizations: 'Organizations',
   relationships: 'Relationships',
   interactions: 'Interactions',
   followUps: 'Follow-Ups',
+
+  products: 'Product Overview',
+  productVersions: 'Product Versions',
+  productCapabilities: 'Capabilities',
+  audiences: 'Audiences',
+  contentAssets: 'Content Assets',
+  presentations: 'Presentations',
+  useCases: 'Use Cases',
+  caseStudies: 'Case Studies',
+  approvedClaims: 'Approved Claims',
+
   fundingOpportunities: 'Funding Opportunities',
   fundingApplications: 'Funding Applications',
+
   institutionalPathways: 'Institutional Pathways',
   pathwayCases: 'Pathway Cases',
+
   workPackages: 'Work Packages',
   resourceRequirements: 'Resource Requirements',
+
+  documents: 'Documents',
   decisions: 'Decisions',
   evidence: 'Evidence',
   settings: 'Settings'
@@ -130,6 +145,17 @@ export function bindNavigation(handlers) {
     <button data-view="interactions">Interactions</button>
     <button data-view="followUps">Follow-Ups</button>
 
+    <div class="nav-section-label">Product & Market</div>
+    <button data-view="products">Product Overview</button>
+    <button data-view="productVersions">Product Versions</button>
+    <button data-view="productCapabilities">Capabilities</button>
+    <button data-view="audiences">Audiences</button>
+    <button data-view="contentAssets">Content Assets</button>
+    <button data-view="presentations">Presentations</button>
+    <button data-view="useCases">Use Cases</button>
+    <button data-view="caseStudies">Case Studies</button>
+    <button data-view="approvedClaims">Approved Claims</button>
+
     <div class="nav-section-label">Commercialization</div>
     <button data-view="readinessItems">Commercial Readiness</button>
     <button data-view="governmentReadinessItems">Government Readiness</button>
@@ -166,7 +192,6 @@ export function bindNavigation(handlers) {
     });
   }
 }
-
 export function bindQuickAdd(handlers) {
   if (!quickAddButton || !modalRoot) return;
 
@@ -963,7 +988,328 @@ function renderOrganizationCard(item, data) {
     </article>
   `;
 }
+function renderProductOverview(items, data) {
+  const product = items[0];
 
+  if (!product) {
+    return `
+      <section class="panel">
+        <p class="eyebrow">Product & Market</p>
+        <h2>Product Overview</h2>
+
+        <p>
+          No product record is currently stored in the database.
+          The Product and Market sample data still needs to be seeded.
+        </p>
+      </section>
+    `;
+  }
+
+  const currentVersion = (data.productVersions || []).find(
+    (item) => item.id === product.currentProductVersionId
+  );
+
+  const nextVersion = (data.productVersions || []).find(
+    (item) => item.id === product.nextProductVersionId
+  );
+
+  const capabilities = (data.productCapabilities || []).filter(
+    (item) =>
+      item.productId === product.id ||
+      product.linkedProductCapabilityIds?.includes(item.id)
+  );
+
+  const audiences = data.audiences || [];
+  const contentAssets = data.contentAssets || [];
+  const presentations = data.presentations || [];
+  const useCases = data.useCases || [];
+  const caseStudies = data.caseStudies || [];
+  const approvedClaims = data.approvedClaims || [];
+
+  const currentCapabilities = capabilities.filter(
+    (item) => item.availabilityStatus === 'Available'
+  );
+
+  const plannedCapabilities = capabilities.filter(
+    (item) => item.availabilityStatus !== 'Available'
+  );
+
+  return `
+    <section class="dashboard-hero product-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>${escapeHtml(product.name || 'FedEMR')}</h2>
+
+        <p>
+          ${escapeHtml(product.summary || product.description || '')}
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Current TRL</span>
+        <strong>${escapeHtml(product.currentTrl || 'Not Set')}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard(
+        'Current Capabilities',
+        currentCapabilities.length
+      )}
+
+      ${renderMetricCard(
+        'Planned Capabilities',
+        plannedCapabilities.length
+      )}
+
+      ${renderMetricCard('Audiences', audiences.length)}
+      ${renderMetricCard('Use Cases', useCases.length)}
+      ${renderMetricCard('Content Assets', contentAssets.length)}
+      ${renderMetricCard('Approved Claims', approvedClaims.length)}
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <p class="eyebrow">Product Positioning</p>
+        <h2>Value Proposition</h2>
+
+        <p>
+          ${escapeHtml(product.currentValueProposition || '')}
+        </p>
+
+        <h3>Research Positioning</h3>
+        <p>
+          ${escapeHtml(product.researchPositioning || '')}
+        </p>
+
+        <h3>Commercial Positioning</h3>
+        <p>
+          ${escapeHtml(product.commercialPositioning || '')}
+        </p>
+      </article>
+
+      <article class="panel">
+        <p class="eyebrow">Product Versions</p>
+        <h2>Current and Next</h2>
+
+        <div class="linked-records">
+          <strong>Current Version</strong>
+
+          <span>
+            ${escapeHtml(
+              currentVersion?.versionName || 'Not defined'
+            )}
+          </span>
+
+          ${
+            currentVersion?.status
+              ? `
+                <span>
+                  Status: ${escapeHtml(currentVersion.status)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            currentVersion?.productReadinessScore !== undefined
+              ? `
+                <span>
+                  Product Readiness:
+                  ${escapeHtml(currentVersion.productReadinessScore)}%
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        <div class="linked-records">
+          <strong>Next Version</strong>
+
+          <span>
+            ${escapeHtml(
+              nextVersion?.versionName || 'Not defined'
+            )}
+          </span>
+
+          ${
+            nextVersion?.status
+              ? `
+                <span>
+                  Status: ${escapeHtml(nextVersion.status)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            nextVersion?.plannedReleaseDate
+              ? `
+                <span>
+                  Planned Release:
+                  ${escapeHtml(nextVersion.plannedReleaseDate)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            nextVersion?.productReadinessScore !== undefined
+              ? `
+                <span>
+                  Product Readiness:
+                  ${escapeHtml(nextVersion.productReadinessScore)}%
+                </span>
+              `
+              : ''
+          }
+        </div>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <p class="eyebrow">Capabilities</p>
+        <h2>Available Now</h2>
+
+        ${
+          currentCapabilities.length
+            ? currentCapabilities
+                .map(
+                  (capability) => `
+                    <div class="linked-records">
+                      <strong>
+                        ${escapeHtml(capability.name)}
+                      </strong>
+
+                      <span>
+                        ${escapeHtml(
+                          capability.userDescription ||
+                            capability.description ||
+                            ''
+                        )}
+                      </span>
+
+                      <span>
+                        Support:
+                        ${escapeHtml(
+                          capability.supportStatus || 'Not Set'
+                        )}
+                      </span>
+                    </div>
+                  `
+                )
+                .join('')
+            : '<p>No current capabilities stored yet.</p>'
+        }
+      </article>
+
+      <article class="panel">
+        <p class="eyebrow">Roadmap</p>
+        <h2>Planned Capabilities</h2>
+
+        ${
+          plannedCapabilities.length
+            ? plannedCapabilities
+                .map(
+                  (capability) => `
+                    <div class="linked-records">
+                      <strong>
+                        ${escapeHtml(capability.name)}
+                      </strong>
+
+                      <span>
+                        ${escapeHtml(
+                          capability.userDescription ||
+                            capability.description ||
+                            ''
+                        )}
+                      </span>
+
+                      <span>
+                        Status:
+                        ${escapeHtml(
+                          capability.availabilityStatus ||
+                            'Not Set'
+                        )}
+                      </span>
+                    </div>
+                  `
+                )
+                .join('')
+            : '<p>No planned capabilities stored yet.</p>'
+        }
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <p class="eyebrow">Market Intelligence</p>
+        <h2>Audience and Content Coverage</h2>
+
+        <div class="item-meta">
+          <span>${audiences.length} audiences</span>
+          <span>${contentAssets.length} content assets</span>
+          <span>${presentations.length} presentations</span>
+        </div>
+
+        ${
+          audiences.length
+            ? `
+              <div class="tag-list">
+                ${audiences
+                  .map(
+                    (audience) => `
+                      <span>${escapeHtml(audience.name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : '<p>No audiences stored yet.</p>'
+        }
+      </article>
+
+      <article class="panel">
+        <p class="eyebrow">Evidence and Claims</p>
+        <h2>Trust Controls</h2>
+
+        <div class="item-meta">
+          <span>${approvedClaims.length} claims</span>
+          <span>${caseStudies.length} case studies</span>
+          <span>${useCases.length} use cases</span>
+        </div>
+
+        <p>
+          Claims remain controlled by approval status, evidence
+          strength, permitted contexts, qualifiers, and review dates.
+        </p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <p class="eyebrow">Product Governance</p>
+      <h2>Known Limitations</h2>
+
+      ${
+        product.knownLimitations?.length
+          ? `
+            <ul>
+              ${product.knownLimitations
+                .map(
+                  (limitation) => `
+                    <li>${escapeHtml(limitation)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : '<p>No known limitations recorded.</p>'
+      }
+    </section>
+  `;
+}
 function bindCollectionActions(handlers) {
   if (!appRoot) return;
 
@@ -1132,7 +1478,13 @@ export function renderCollection(
   handlers,
   data = {}
 ) {
-  setPageTitle(formatCollectionName(collection));
+    setPageTitle(formatCollectionName(collection));
+
+  if (collection === 'products') {
+    appRoot.innerHTML = renderProductOverview(items, data);
+
+    return;
+  }
 
   if (collection === 'people') {
     appRoot.innerHTML = `
