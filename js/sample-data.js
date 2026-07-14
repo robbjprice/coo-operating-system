@@ -4058,7 +4058,644 @@ export const sampleData = {
     })
   ],
 
-  contentAssets: [],
+    contentAssets: [
+    fixed('content_general_explanation', {
+      title: 'General FedEMR Product Explanation',
+      contentType: 'Product Explanation',
+
+      purpose:
+        'Provide a careful high-level explanation of FedEMR for general business, research, and technical audiences.',
+
+      audienceIds: [
+        'audience_health_executives',
+        'audience_researchers',
+        'audience_technical',
+        'audience_pharma',
+        'audience_funders'
+      ],
+
+      primaryAudienceId:
+        'audience_health_executives',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      technicalDepth: 'Medium',
+
+      coreMessage:
+        'FedEMR supports distributed multi-site analytics and model development while participating organizations retain control of their local patient-level source data.',
+
+      problemStatement:
+        'Health-data collaboration is often slowed by privacy, governance, contracting, technical, and data-transfer barriers.',
+
+      productExplanation:
+        'FedEMR coordinates approved computation across participating environments rather than requiring all patient-level source records to be assembled in one central location.',
+
+      benefits: [
+        'Supports multi-site collaboration',
+        'Maintains local institutional control',
+        'Supports model development and validation',
+        'Reduces dependence on centralized patient-level data transfer'
+      ],
+
+      proofPoints: [],
+
+      privacyWording:
+        'Patient-level source data remains within participating controlled environments during configured federated workflows.',
+
+      securityWording:
+        'Each implementation requires appropriate local and cross-site security controls.',
+
+      objectionsAndResponses: [
+        {
+          objection:
+            'Does federated learning eliminate privacy review?',
+          response:
+            'No. Each project still requires appropriate privacy, legal, security, ethics, and governance review.'
+        }
+      ],
+
+      frequentlyAskedQuestions: [
+        {
+          question:
+            'Does FedEMR move patient-level records into one central database?',
+          answer:
+            'The platform is designed to support approved distributed computation while participating organizations retain control of local patient-level source data.'
+        }
+      ],
+
+      callToAction:
+        'Define the participating sites, use case, analysis, governance requirements, and implementation environment.',
+
+      bodyContent:
+        'FedEMR is a privacy-preserving federated learning and analytics platform designed to support collaboration across organizations while participating sites retain local control of patient-level source information.',
+
+      shortVersion:
+        'FedEMR enables distributed health-data analysis and model development while participating organizations retain local control of patient-level source data.',
+
+      longVersion:
+        'FedEMR coordinates approved analytics and model-development workflows across participating organizations. Computation occurs within controlled participating environments, reducing the need to transfer patient-level source records into a single central dataset.',
+
+      draftStatus: 'Draft',
+      approvalStatus: 'Under Review',
+
+      owner: 'Robb',
+
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      lastReviewedDate: '',
+      nextReviewDate: '',
+
+      reviewCadence: 'Quarterly',
+      confidentiality: 'Internal',
+
+      linkedApprovedClaimIds: [],
+
+      linkedEvidenceIds: [],
+
+      linkedPresentationIds: [],
+
+      linkedUseCaseIds: [],
+
+      linkedCaseStudyIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedMeetingIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration',
+        'capability_model_validation'
+      ],
+
+      linkedDocumentIds: []
+    }),
+
+    fixed('content_privacy_explanation', {
+      title: 'FedEMR Privacy Explanation',
+      contentType: 'Privacy Explanation',
+
+      purpose:
+        'Provide careful privacy wording without making absolute guarantees.',
+
+      audienceIds: [
+        'audience_privacy',
+        'audience_government',
+        'audience_clinicians',
+        'audience_researchers',
+        'audience_technical'
+      ],
+
+      primaryAudienceId:
+        'audience_privacy',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      technicalDepth: 'Medium',
+
+      coreMessage:
+        'FedEMR is designed so that patient-level source data remains within participating controlled environments during configured federated workflows.',
+
+      problemStatement:
+        'Centralizing patient-level data across organizations can create significant privacy, governance, contractual, and operational barriers.',
+
+      productExplanation:
+        'FedEMR coordinates approved local computation. Participating sites exchange only the model information or analytical outputs permitted by the project design and institutional approvals.',
+
+      benefits: [
+        'Local control of source records',
+        'Defined output exchange',
+        'Distributed workflow',
+        'Support for institutional governance'
+      ],
+
+      proofPoints: [],
+
+      privacyWording:
+        'Patient-level source data remains within participating controlled environments during the configured workflow. This architecture does not eliminate the need for privacy, legal, security, ethics, or governance review.',
+
+      securityWording:
+        'Security responsibilities and controls must be defined for each participating environment and deployment.',
+
+      objectionsAndResponses: [
+        {
+          objection:
+            'Is federated learning automatically anonymous?',
+          response:
+            'No. Privacy and disclosure risks depend on the data, workflow, model, outputs, and controls. Appropriate review remains necessary.'
+        },
+        {
+          objection:
+            'Does privacy-preserving mean there is no privacy risk?',
+          response:
+            'No. The architecture is intended to reduce certain data-movement risks, but project-specific privacy and governance review is still required.'
+        }
+      ],
+
+      frequentlyAskedQuestions: [
+        {
+          question:
+            'What leaves a participating organization?',
+          answer:
+            'Only the model information or analytical outputs permitted by the approved workflow should be exchanged.'
+        },
+        {
+          question:
+            'Does FedEMR replace privacy impact assessments?',
+          answer:
+            'No. Institutional privacy, legal, security, ethics, and governance processes still apply.'
+        }
+      ],
+
+      callToAction:
+        'Review the use case, data flow, outputs, site controls, agreements, and approvals.',
+
+      bodyContent:
+        'FedEMR supports local computation across participating environments. Patient-level source records remain under participating-site control, while approved outputs or model information are exchanged according to the defined workflow.',
+
+      shortVersion:
+        'Patient-level source data remains within participating controlled environments during configured workflows.',
+
+      longVersion:
+        'FedEMR coordinates approved computation within participating environments. Only the outputs or model information permitted by the defined project workflow are exchanged. Appropriate privacy, legal, security, ethics, and governance review remains required.',
+
+      draftStatus: 'Draft',
+      approvalStatus: 'Under Review',
+
+      owner: 'Robb',
+
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      lastReviewedDate: '',
+      nextReviewDate: '',
+
+      reviewCadence: 'Quarterly',
+      confidentiality: 'Internal',
+
+      linkedApprovedClaimIds: [],
+
+      linkedEvidenceIds: [],
+
+      linkedPresentationIds: [],
+
+      linkedUseCaseIds: [],
+
+      linkedCaseStudyIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedMeetingIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control',
+        'capability_federated_training',
+        'capability_federated_analytics'
+      ],
+
+      linkedDocumentIds: []
+       }),
+
+    fixed('content_researcher_explanation', {
+      title: 'FedEMR Explanation for Researchers',
+      contentType: 'Research Explanation',
+
+      purpose:
+        'Explain FedEMR for multi-site research collaboration, federated analysis, and model validation.',
+
+      audienceIds: [
+        'audience_researchers'
+      ],
+
+      primaryAudienceId:
+        'audience_researchers',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      technicalDepth: 'Medium to High',
+
+      coreMessage:
+        'FedEMR supports coordinated federated analysis, model training, and validation across participating institutions.',
+
+      problemStatement:
+        'Multi-site research is often delayed by data-transfer, governance, harmonization, contracting, and infrastructure barriers.',
+
+      productExplanation:
+        'FedEMR coordinates approved local computation and combines permitted outputs or model information across participating controlled environments.',
+
+      benefits: [
+        'Multi-site model development',
+        'External validation',
+        'Distributed analysis',
+        'Local institutional data control',
+        'Coordinated research workflows'
+      ],
+
+      proofPoints: [],
+
+      privacyWording:
+        'Patient-level source records remain under participating-site control during configured workflows.',
+
+      securityWording:
+        'Deployment, access, identity, logging, and communication controls remain implementation-specific.',
+
+      objectionsAndResponses: [
+        {
+          objection:
+            'Does federated analysis solve data harmonization?',
+          response:
+            'No. Participating sites still require sufficiently compatible variables, definitions, and analytical protocols.'
+        },
+        {
+          objection:
+            'Does the platform remove research-governance requirements?',
+          response:
+            'No. Appropriate institutional, ethics, privacy, legal, and governance requirements still apply.'
+        }
+      ],
+
+      frequentlyAskedQuestions: [
+        {
+          question:
+            'Can FedEMR support external model validation?',
+          answer:
+            'FedEMR is designed to support approved distributed validation workflows across participating environments.'
+        },
+        {
+          question:
+            'What must participating sites prepare?',
+          answer:
+            'Sites generally require approved data access, compatible variables, local technical readiness, and an agreed analytical protocol.'
+        }
+      ],
+
+      callToAction:
+        'Define the research question, participating sites, data model, analysis plan, governance requirements, and technical environment.',
+
+      bodyContent:
+        'FedEMR supports distributed research workflows across participating organizations. Approved computation occurs within local environments, and permitted outputs or model information are coordinated according to the research protocol.',
+
+      shortVersion:
+        'Run approved federated analyses and model workflows across participating institutions.',
+
+      longVersion:
+        'FedEMR coordinates approved analytical and model-development workflows across institution-controlled environments. The platform supports distributed execution, site participation, permitted result exchange, and multi-site research collaboration.',
+
+      draftStatus: 'Draft',
+      approvalStatus: 'Under Review',
+
+      owner: 'Robb',
+
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      lastReviewedDate: '',
+      nextReviewDate: '',
+
+      reviewCadence: 'Quarterly',
+      confidentiality: 'Internal',
+
+      linkedApprovedClaimIds: [],
+
+      linkedEvidenceIds: [],
+
+      linkedPresentationIds: [],
+
+      linkedUseCaseIds: [],
+
+      linkedCaseStudyIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedMeetingIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration',
+        'capability_model_validation'
+      ],
+
+      linkedDocumentIds: []
+    }),
+
+    fixed('content_clinician_explanation', {
+      title: 'FedEMR Explanation for Clinical Physicians',
+      contentType: 'Clinical Explanation',
+
+      purpose:
+        'Explain FedEMR in clinically relevant language without overstating clinical readiness or benefit.',
+
+      audienceIds: [
+        'audience_clinicians'
+      ],
+
+      primaryAudienceId:
+        'audience_clinicians',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      technicalDepth: 'Low',
+
+      coreMessage:
+        'FedEMR can help researchers learn from patient populations across multiple organizations while each participating organization retains control of its local records.',
+
+      problemStatement:
+        'Models developed in one location may not reflect patients seen elsewhere, but moving patient-level records between organizations can be difficult.',
+
+      productExplanation:
+        'FedEMR supports approved model-development and validation workflows across participating sites without requiring all patient-level source records to be combined centrally.',
+
+      benefits: [
+        'Broader multi-site learning',
+        'Potential local model validation',
+        'Institutional control of local records',
+        'Support for clinically meaningful research questions'
+      ],
+
+      proofPoints: [],
+
+      privacyWording:
+        'Patient-level source records remain within participating controlled environments during configured workflows.',
+
+      securityWording:
+        'Each participating organization applies its approved local access, security, and governance controls.',
+
+      objectionsAndResponses: [
+        {
+          objection:
+            'Does FedEMR make a model clinically safe?',
+          response:
+            'No. Appropriate clinical validation, governance, oversight, and deployment review remain necessary.'
+        },
+        {
+          objection:
+            'Does FedEMR replace physician judgment?',
+          response:
+            'No. FedEMR is a research and analytical platform, not a replacement for clinical judgment.'
+        }
+      ],
+
+      frequentlyAskedQuestions: [
+        {
+          question:
+            'Does FedEMR replace clinical validation?',
+          answer:
+            'No. Clinical and local validation remain necessary before any clinical use.'
+        },
+        {
+          question:
+            'Does patient-level data leave the hospital?',
+          answer:
+            'The platform is designed so patient-level source data remains within the participating controlled environment during configured federated workflows.'
+        }
+      ],
+
+      callToAction:
+        'Identify a clinically meaningful problem and define an appropriate multi-site research or validation pathway.',
+
+      bodyContent:
+        'FedEMR helps participating organizations collaborate on approved model-development or validation work while keeping patient-level source records within their local controlled environments.',
+
+      shortVersion:
+        'Learn across multiple patient populations while participating organizations retain local control of their records.',
+
+      longVersion:
+        'FedEMR supports approved multi-site model-development and validation workflows. Participating organizations perform computation locally and share only the permitted outputs or model information required by the project.',
+
+      draftStatus: 'Draft',
+      approvalStatus: 'Not Reviewed',
+
+      owner: 'Robb',
+
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      lastReviewedDate: '',
+      nextReviewDate: '',
+
+      reviewCadence: 'Quarterly',
+      confidentiality: 'Internal',
+
+      linkedApprovedClaimIds: [],
+
+      linkedEvidenceIds: [],
+
+      linkedPresentationIds: [],
+
+      linkedUseCaseIds: [],
+
+      linkedCaseStudyIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedMeetingIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control',
+        'capability_model_validation',
+        'capability_federated_training'
+      ],
+
+      linkedDocumentIds: []
+        }),
+
+    fixed('content_government_value', {
+      title: 'FedEMR Government Value Proposition',
+      contentType: 'Government Briefing Language',
+
+      purpose:
+        'Describe FedEMR in terms of public value, health-system capacity, responsible innovation, and commercialization readiness.',
+
+      audienceIds: [
+        'audience_government',
+        'audience_funders',
+        'audience_health_executives'
+      ],
+
+      primaryAudienceId:
+        'audience_government',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_v2',
+
+      technicalDepth: 'Low',
+
+      coreMessage:
+        'FedEMR is intended to make responsible collaboration across health-data environments more practical while supporting local data control.',
+
+      problemStatement:
+        'Health systems and researchers often cannot efficiently learn across organizations or jurisdictions because patient-level data cannot simply be centralized.',
+
+      productExplanation:
+        'FedEMR coordinates approved computation across participating environments and supports the exchange of permitted results rather than routine central transfer of patient-level source records.',
+
+      benefits: [
+        'Supports cross-institution collaboration',
+        'Supports local data governance',
+        'May reduce duplicated analytical effort',
+        'Supports domestic health-AI capacity',
+        'Creates a pathway from research capability to system implementation'
+      ],
+
+      proofPoints: [],
+
+      privacyWording:
+        'Participating organizations retain local control of patient-level source data during configured federated workflows.',
+
+      securityWording:
+        'Each implementation requires defined institutional security, privacy, legal, and governance controls.',
+
+      objectionsAndResponses: [
+        {
+          objection:
+            'What measurable public value does this create?',
+          response:
+            'Public-value claims must be tied to defined implementation outcomes such as capacity, time saved, adoption, research productivity, or validated system improvements.'
+        },
+        {
+          objection:
+            'Does the technology eliminate privacy and legal barriers?',
+          response:
+            'No. It is designed to reduce certain data-movement barriers, while appropriate institutional review and approvals remain necessary.'
+        }
+      ],
+
+      frequentlyAskedQuestions: [
+        {
+          question:
+            'How could government investment help?',
+          answer:
+            'Investment could support defined product, security, procurement, deployment, evidence, and commercialization milestones.'
+        },
+        {
+          question:
+            'Can the platform support collaboration across jurisdictions?',
+          answer:
+            'The architecture is designed for distributed collaboration, but each implementation still depends on participating-site approvals, compatibility, agreements, and technical readiness.'
+        }
+      ],
+
+      callToAction:
+        'Support a defined commercialization and implementation program with measurable public-value outcomes.',
+
+      bodyContent:
+        'FedEMR is designed to help health systems, researchers, and government partners collaborate across distributed data environments while respecting institutional control and governance.',
+
+      shortVersion:
+        'Responsible multi-site health-data collaboration without routine central transfer of patient-level source records.',
+
+      longVersion:
+        'FedEMR supports approved multi-site analytics and model workflows across participating organizations. Its distributed architecture is intended to strengthen research and health-system collaboration while participating organizations retain control of local patient-level source information.',
+
+      draftStatus: 'Draft',
+      approvalStatus: 'Not Reviewed',
+
+      owner: 'Robb',
+
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      lastReviewedDate: '',
+      nextReviewDate: '',
+
+      reviewCadence: 'Quarterly',
+      confidentiality: 'Internal',
+
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedPresentationIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedMeetingIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control',
+        'capability_federated_analytics',
+        'capability_orchestration',
+        'capability_zero_code'
+      ],
+
+      linkedDocumentIds: []
+    })
+  ],
+
   presentations: [],
   useCases: [],
   caseStudies: [],
