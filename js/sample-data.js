@@ -7,16 +7,30 @@ const commonLinks = () => ({
   linkedMeetings: [],
   linkedReadinessItems: [],
   linkedRoadmapItems: [],
+
   linkedPersonIds: [],
   linkedOrganizationIds: [],
+
   linkedFundingOpportunityIds: [],
   linkedFundingApplicationIds: [],
+
   linkedPathwayIds: [],
   linkedPathwayCaseIds: [],
   linkedWorkPackageIds: [],
+
   linkedDecisionIds: [],
   linkedDocumentIds: [],
-  linkedEvidenceIds: []
+  linkedEvidenceIds: [],
+
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: []
 });
 
 const base = (prefix, extra = {}) => ({
@@ -83,6 +97,16 @@ export const collections = [
   'relationships',
   'interactions',
   'followUps',
+
+  'products',
+  'productVersions',
+  'productCapabilities',
+  'audiences',
+  'contentAssets',
+  'presentations',
+  'useCases',
+  'caseStudies',
+  'approvedClaims',
 
   'fundingOpportunities',
   'fundingApplications',
@@ -2007,6 +2031,1123 @@ export const sampleData = {
       status: 'Unassigned'
     })
   ],
+
+    products: [
+    fixed('product_fedemr', {
+      name: 'FedEMR',
+      legalProductName: 'FedEMR',
+      shortName: 'FedEMR',
+
+      productCategory:
+        'Privacy-Preserving Federated Learning Platform',
+      productType: 'Software Platform',
+
+      summary:
+        'A platform supporting multi-site analysis and model development while participating organizations retain control of their local data.',
+
+      description:
+        'FedEMR helps researchers and organizations collaborate across distributed health-data environments without requiring patient-level records to be routinely centralized.',
+
+      currentValueProposition:
+        'Enable distributed health-data collaboration while reducing the need to transfer patient-level information between participating organizations.',
+
+      commercialPositioning:
+        'A platform and implementation service for governed multi-site analytics, model development, validation, and deployment workflows.',
+
+      researchPositioning:
+        'A research-enablement platform supporting distributed analysis and federated learning across participating sites.',
+
+      primaryMarkets: [
+        'Health systems',
+        'Universities',
+        'Research networks',
+        'Government',
+        'Pharmaceutical research'
+      ],
+
+      primaryUsers: [
+        'Researchers',
+        'Data scientists',
+        'Health-system teams',
+        'Technical implementation teams'
+      ],
+
+      currentMaturity:
+        'Research use and commercialization preparation',
+
+      currentTrl: 7,
+
+      deploymentModel:
+        'Distributed deployment with computation occurring within participating controlled environments.',
+
+      privacyModel:
+        'Participating organizations retain local control of patient-level source data during configured federated workflows.',
+
+      dataHandlingSummary:
+        'The platform is designed to avoid routine central transfer of patient-level records during federated workflows.',
+
+      differentiators: [
+        'Distributed computation',
+        'Local data control',
+        'Multi-site orchestration',
+        'Research and commercial workflow support',
+        'Planned zero-code experience'
+      ],
+
+      knownLimitations: [
+        'Deployment requirements vary by institution.',
+        'Commercial support and integration scope must be confirmed for each implementation.',
+        'Some capabilities depend on the product version and environment.'
+      ],
+
+      supportedEnvironments: [
+        'Institution-controlled infrastructure',
+        'Research computing environments',
+        'Approved cloud or local environments where supported'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed research deployment',
+        'Pilot deployment',
+        'Institution-managed deployment'
+      ],
+
+      productOwnerPersonId: 'person_robb',
+      technicalOwnerPersonId: '',
+      commercialOwnerPersonId: 'person_robb',
+
+      currentProductVersionId:
+        'product_version_current',
+
+      nextProductVersionId:
+        'product_version_v2',
+
+      status: 'Active',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [],
+      linkedAudienceIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+
+      linkedRoadmapItemIds: [],
+      linkedWorkPackageIds: [
+        'workpackage_security',
+        'workpackage_deployment'
+      ],
+
+      linkedFundingOpportunityIds: [
+        'funding_commercialization',
+        'funding_implementation'
+      ],
+
+      linkedRiskIds: [],
+      linkedDecisionIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: []
+    })
+  ],
+
+  productVersions: [
+    fixed('product_version_current', {
+      productId: 'product_fedemr',
+
+      versionName:
+        'Current FedEMR Research Platform',
+
+      versionNumber: 'Current Research Build',
+      releaseType: 'Research Build',
+
+      status: 'Supported',
+
+      plannedReleaseDate: '',
+      actualReleaseDate: '',
+
+      productEnvironment:
+        'Research and controlled implementation environments',
+
+      deploymentStage:
+        'Research use and commercialization preparation',
+
+      summary:
+        'Generalized representation of the currently available FedEMR research platform.',
+
+      releaseObjective:
+        'Support federated research workflows and multi-site model-development activities.',
+
+      improvementsOverPreviousVersion: [],
+
+      capabilitiesIncluded: [
+        'Federated model training',
+        'Federated analytics',
+        'Local data control',
+        'Multi-site orchestration',
+        'Model validation support'
+      ],
+
+      knownLimitations: [
+        'Implementation requires technical support.',
+        'Commercial deployment packaging remains in development.',
+        'Integration scope is environment-specific.'
+      ],
+
+      technicalDependencies: [
+        'Compatible participating-site infrastructure',
+        'Local technical configuration',
+        'Agreed data and analysis workflow'
+      ],
+
+      infrastructureDependencies: [
+        'Institution-controlled compute environment'
+      ],
+
+      integrationDependencies: [
+        'Site-specific integration planning'
+      ],
+
+      securityChanges: [],
+      privacyChanges: [],
+      deploymentChanges: [],
+      integrationChanges: [],
+      userExperienceChanges: [],
+
+      customerRequestsAddressed: [],
+
+      researchRequestsAddressed: [
+        'Multi-site model development',
+        'Distributed analysis'
+      ],
+
+      technicalDebtAddressed: [],
+
+      commercialReadinessStatus:
+        'Commercial packaging in development',
+
+      securityReadinessStatus:
+        'Requires implementation-specific assessment',
+
+      privacyReadinessStatus:
+        'Requires implementation-specific review',
+
+      documentationStatus:
+        'Research documentation available',
+
+      trainingStatus:
+        'Technical onboarding required',
+
+      supportReadinessStatus:
+        'Research support model',
+
+      deploymentReadinessStatus:
+        'Controlled deployments supported',
+
+      productReadinessScore: 60,
+
+      productReadinessExplanation:
+        'The platform supports research workflows, while repeatable commercial deployment, support, security documentation, and procurement packaging remain under development.',
+
+      releaseBlockers: [
+        'Commercial support model',
+        'Security and procurement package',
+        'Repeatable deployment documentation'
+      ],
+
+      releaseRisks: [
+        'Site-specific implementation complexity'
+      ],
+
+      decisionsRequired: [
+        'Define the minimum commercially supported deployment package.'
+      ],
+
+      releaseDecision:
+        'Continue supported research use while commercial packaging is developed.',
+
+      releaseDecisionDate: '',
+
+      owner: 'FedEMR Team',
+      technicalLeadPersonId: '',
+      commercialLeadPersonId: 'person_robb',
+
+      confidentiality: 'Internal',
+
+      linkedProductCapabilityIds: [],
+      linkedRoadmapItemIds: [],
+      linkedTaskIds: [],
+
+      linkedWorkPackageIds: [
+        'workpackage_security',
+        'workpackage_deployment'
+      ],
+
+      linkedRiskIds: [],
+
+      linkedFundingOpportunityIds: [
+        'funding_commercialization',
+        'funding_implementation'
+      ],
+
+      linkedCustomerIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedPresentationIds: [],
+      linkedContentAssetIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: [],
+      linkedDocumentIds: []
+    }),
+
+    fixed('product_version_v2', {
+      productId: 'product_fedemr',
+
+      versionName:
+        'FedEMR V2 Zero-Code Platform',
+
+      versionNumber: 'V2',
+      releaseType: 'Major',
+
+      status: 'In Development',
+
+      plannedReleaseDate: '2026-09-30',
+      actualReleaseDate: '',
+
+      productEnvironment:
+        'Planned research and commercial implementation environments',
+
+      deploymentStage: 'Development',
+
+      summary:
+        'Planned major product version focused on simplifying configuration, onboarding, and federated-workflow operation.',
+
+      releaseObjective:
+        'Reduce technical setup effort and improve repeatability through a guided zero-code experience.',
+
+      improvementsOverPreviousVersion: [
+        'Zero-code workflow configuration',
+        'Simplified site onboarding',
+        'Improved deployment tooling',
+        'Broader operating-system support',
+        'Improved multi-site orchestration',
+        'Clearer workflow and status visibility'
+      ],
+
+      capabilitiesIncluded: [
+        'Federated model training',
+        'Federated analytics',
+        'Local data control',
+        'Multi-site orchestration',
+        'Model validation support',
+        'Planned zero-code workflow'
+      ],
+
+      knownLimitations: [
+        'Final supported environments remain under validation.',
+        'Commercial support scope is not yet finalized.',
+        'Integration support will depend on implementation requirements.'
+      ],
+
+      technicalDependencies: [
+        'Completion of the zero-code interface',
+        'Deployment validation',
+        'Cross-platform testing'
+      ],
+
+      infrastructureDependencies: [
+        'Supported institutional compute environment'
+      ],
+
+      integrationDependencies: [
+        'Implementation-specific integration plan'
+      ],
+
+      securityChanges: [
+        'Planned security documentation and deployment controls'
+      ],
+
+      privacyChanges: [
+        'Planned clearer privacy and data-flow documentation'
+      ],
+
+      deploymentChanges: [
+        'Simplified deployment workflow',
+        'Improved site onboarding'
+      ],
+
+      integrationChanges: [
+        'Broader environment support under evaluation'
+      ],
+
+      userExperienceChanges: [
+        'Zero-code configuration',
+        'Guided workflow',
+        'Improved status visibility'
+      ],
+
+      customerRequestsAddressed: [
+        'Simpler onboarding',
+        'Reduced technical configuration effort'
+      ],
+
+      researchRequestsAddressed: [
+        'Easier setup for multi-site research projects'
+      ],
+
+      technicalDebtAddressed: [
+        'Manual workflow complexity'
+      ],
+
+      commercialReadinessStatus:
+        'In Development',
+
+      securityReadinessStatus:
+        'In Development',
+
+      privacyReadinessStatus:
+        'In Development',
+
+      documentationStatus: 'Planned',
+      trainingStatus: 'Planned',
+      supportReadinessStatus: 'Planned',
+
+      deploymentReadinessStatus:
+        'Testing required',
+
+      productReadinessScore: 45,
+
+      productReadinessExplanation:
+        'Core development is underway. Release readiness depends on completing the interface, deployment validation, documentation, security packaging, and support preparation.',
+
+      releaseBlockers: [
+        'Complete zero-code experience',
+        'Complete deployment validation',
+        'Complete security and privacy documentation',
+        'Define commercial support model',
+        'Complete training and onboarding materials'
+      ],
+
+      releaseRisks: [
+        'Release-date pressure',
+        'Cross-platform testing scope',
+        'Institution-specific deployment requirements'
+      ],
+
+      decisionsRequired: [
+        'Confirm minimum V2 release scope.',
+        'Confirm supported deployment environments.',
+        'Confirm commercial support boundaries.'
+      ],
+
+      releaseDecision: '',
+      releaseDecisionDate: '',
+
+      owner: 'FedEMR Team',
+      technicalLeadPersonId: '',
+      commercialLeadPersonId: 'person_robb',
+
+      confidentiality: 'Confidential',
+
+      linkedProductCapabilityIds: [],
+      linkedRoadmapItemIds: [],
+      linkedTaskIds: [],
+
+      linkedWorkPackageIds: [
+        'workpackage_security',
+        'workpackage_deployment'
+      ],
+
+      linkedRiskIds: [],
+
+      linkedFundingOpportunityIds: [
+        'funding_commercialization',
+        'funding_implementation'
+      ],
+
+      linkedCustomerIds: [],
+
+      linkedOrganizationIds: [
+        'org_fedemr'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedPresentationIds: [],
+      linkedContentAssetIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: [],
+      linkedDocumentIds: []
+    })
+  ],
+    productCapabilities: [
+    fixed('capability_federated_training', {
+      productId: 'product_fedemr',
+
+      name: 'Federated Model Training',
+      shortName: 'Federated Training',
+      category: 'Federated Learning',
+
+      description:
+        'Coordinate model training across participating sites without routinely centralizing patient-level records.',
+
+      technicalDescription:
+        'Participating environments perform approved local computation and exchange permitted model information through a coordinated workflow.',
+
+      userDescription:
+        'Develop a shared model across multiple organizations while each site keeps control of its local data.',
+
+      availabilityStatus: 'Available',
+      supportStatus: 'Research Support',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: false,
+
+      firstAvailableVersionId:
+        'product_version_current',
+
+      currentSupportedVersionIds: [
+        'product_version_current'
+      ],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'Participating-site compute environment',
+        'Configured local data workflow'
+      ],
+
+      dependencies: [
+        'Site onboarding',
+        'Approved analysis plan',
+        'Compatible data preparation'
+      ],
+
+      supportedEnvironments: [
+        'Controlled research environments'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed research deployment'
+      ],
+
+      knownLimitations: [
+        'Setup and support requirements vary by participating site.'
+      ],
+
+      securityConsiderations: [
+        'Participating sites require appropriate local access and deployment controls.'
+      ],
+
+      privacyConsiderations: [
+        'Permitted outputs and model information must be defined for each workflow.'
+      ],
+
+      evidenceStatus:
+        'Supporting evidence must be linked before external claims are approved.',
+
+      demonstrationStatus: 'Demonstrated',
+      validationStatus: 'Environment-Dependent',
+
+      customerValue:
+        'Supports collaboration across organizational boundaries.',
+
+      researchValue:
+        'Supports multi-site model development without creating one central patient-level dataset.',
+
+      technicalValue:
+        'Coordinates distributed model training.',
+
+      operationalValue:
+        'May reduce the need to establish a centralized patient-level dataset.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+      linkedWorkPackageIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('capability_federated_analytics', {
+      productId: 'product_fedemr',
+
+      name: 'Federated Analytics',
+      shortName: 'Federated Analytics',
+      category: 'Federated Analytics',
+
+      description:
+        'Support approved analyses across distributed participating datasets.',
+
+      technicalDescription:
+        'Coordinate local analytical operations and combine permitted results according to the configured workflow.',
+
+      userDescription:
+        'Run an analysis across participating organizations without first combining all patient-level data in one location.',
+
+      availabilityStatus: 'Available',
+      supportStatus: 'Research Support',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: false,
+
+      firstAvailableVersionId:
+        'product_version_current',
+
+      currentSupportedVersionIds: [
+        'product_version_current'
+      ],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'Local analytical environment'
+      ],
+
+      dependencies: [
+        'Approved analysis',
+        'Compatible site data'
+      ],
+
+      supportedEnvironments: [
+        'Controlled research environments'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed research deployment'
+      ],
+
+      knownLimitations: [
+        'Supported analyses depend on implementation and configuration.'
+      ],
+
+      securityConsiderations: [],
+
+      privacyConsiderations: [
+        'Output-disclosure controls must be defined.'
+      ],
+
+      evidenceStatus:
+        'Evidence linkage is required for specific performance claims.',
+
+      demonstrationStatus: 'Demonstrated',
+      validationStatus: 'Use-Case Dependent',
+
+      customerValue:
+        'Supports distributed multi-site analysis.',
+
+      researchValue:
+        'Enables cross-site analytical collaboration.',
+
+      technicalValue:
+        'Coordinates approved local analysis and aggregation.',
+
+      operationalValue:
+        'May reduce centralized data-transfer requirements.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+      linkedWorkPackageIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('capability_local_control', {
+      productId: 'product_fedemr',
+
+      name: 'Local Data Control',
+      shortName: 'Local Control',
+      category: 'Data Governance',
+
+      description:
+        'Participating organizations retain control of their local patient-level data during configured federated workflows.',
+
+      technicalDescription:
+        'Patient-level source data remains within the participating environment while approved computation occurs locally.',
+
+      userDescription:
+        'Each participating organization keeps its patient-level data in its own controlled environment.',
+
+      availabilityStatus: 'Available',
+      supportStatus: 'Core Design Principle',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: false,
+
+      firstAvailableVersionId:
+        'product_version_current',
+
+      currentSupportedVersionIds: [
+        'product_version_current'
+      ],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'Institution-controlled environment'
+      ],
+
+      dependencies: [
+        'Local governance and access controls'
+      ],
+
+      supportedEnvironments: [
+        'Institution-controlled infrastructure'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed research deployment',
+        'Institution-managed deployment'
+      ],
+
+      knownLimitations: [
+        'Local-control architecture does not replace institutional privacy, legal, security, ethics, or governance review.'
+      ],
+
+      securityConsiderations: [
+        'Each participating environment remains responsible for its local security controls.'
+      ],
+
+      privacyConsiderations: [
+        'The workflow must define permitted outputs and data use.'
+      ],
+
+      evidenceStatus:
+        'Architecture and implementation evidence should support external wording.',
+
+      demonstrationStatus: 'Demonstrated',
+      validationStatus: 'Implementation-Dependent',
+
+      customerValue:
+        'Supports institutional control over patient-level data.',
+
+      researchValue:
+        'Reduces the need to create a central patient-level research dataset.',
+
+      technicalValue:
+        'Supports local computation within distributed environments.',
+
+      operationalValue:
+        'Aligns with distributed institutional governance.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+      linkedWorkPackageIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+       }),
+
+    fixed('capability_orchestration', {
+      productId: 'product_fedemr',
+
+      name: 'Multi-Site Orchestration',
+      shortName: 'Orchestration',
+      category: 'Workflow Orchestration',
+
+      description:
+        'Coordinate approved workflows across multiple participating sites.',
+
+      technicalDescription:
+        'Manage distributed workflow steps, participating sites, execution status, and permitted result exchange.',
+
+      userDescription:
+        'Coordinate one approved project across several participating organizations.',
+
+      availabilityStatus: 'Available',
+      supportStatus: 'Research Support',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: false,
+
+      firstAvailableVersionId:
+        'product_version_current',
+
+      currentSupportedVersionIds: [
+        'product_version_current'
+      ],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'Configured participating sites'
+      ],
+
+      dependencies: [
+        'Site onboarding',
+        'Workflow configuration'
+      ],
+
+      supportedEnvironments: [
+        'Distributed participating environments'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed research deployment'
+      ],
+
+      knownLimitations: [
+        'Site readiness and technical compatibility vary.'
+      ],
+
+      securityConsiderations: [
+        'Cross-site communication and permissions require appropriate controls.'
+      ],
+
+      privacyConsiderations: [
+        'Only permitted outputs may be exchanged.'
+      ],
+
+      evidenceStatus:
+        'Internal technical documentation should be linked before external approval.',
+
+      demonstrationStatus: 'Demonstrated',
+      validationStatus: 'Use-Case Dependent',
+
+      customerValue:
+        'Creates a coordinated multi-site workflow.',
+
+      researchValue:
+        'Supports research collaboration across institutions.',
+
+      technicalValue:
+        'Controls distributed workflow execution.',
+
+      operationalValue:
+        'Improves visibility into site participation and workflow progress.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+      linkedWorkPackageIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+      }),
+
+    fixed('capability_model_validation', {
+      productId: 'product_fedemr',
+
+      name: 'Federated Model Validation',
+      shortName: 'Model Validation',
+      category: 'Model Validation',
+
+      description:
+        'Evaluate a model across participating-site datasets while sites retain control of their local records.',
+
+      technicalDescription:
+        'Distribute an approved model or validation workflow to participating environments and combine permitted evaluation outputs.',
+
+      userDescription:
+        'Test how a model performs across several organizations without centralizing all patient-level validation data.',
+
+      availabilityStatus: 'Available',
+      supportStatus: 'Use-Case Dependent',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: false,
+
+      firstAvailableVersionId:
+        'product_version_current',
+
+      currentSupportedVersionIds: [
+        'product_version_current'
+      ],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'Validation-ready local datasets'
+      ],
+
+      dependencies: [
+        'Compatible outcome definitions',
+        'Approved validation protocol'
+      ],
+
+      supportedEnvironments: [
+        'Controlled research environments'
+      ],
+
+      supportedOperatingSystems: [
+        'Environment-dependent'
+      ],
+
+      supportedDeploymentTypes: [
+        'Distributed validation deployment'
+      ],
+
+      knownLimitations: [
+        'Interpretation depends on data quality and comparability across sites.'
+      ],
+
+      securityConsiderations: [
+        'Model access and validation outputs require appropriate controls.'
+      ],
+
+      privacyConsiderations: [
+        'Permitted validation outputs must be defined.'
+      ],
+
+      evidenceStatus:
+        'Use-case evidence is required for specific performance claims.',
+
+      demonstrationStatus: 'Demonstrated',
+      validationStatus: 'Protocol-Dependent',
+
+      customerValue:
+        'Supports broader evaluation before deployment decisions.',
+
+      researchValue:
+        'Enables external validation across participating institutions.',
+
+      technicalValue:
+        'Coordinates distributed model evaluation.',
+
+      operationalValue:
+        'Reduces the need to centralize validation datasets.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+      linkedWorkPackageIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+       }),
+
+    fixed('capability_zero_code', {
+      productId: 'product_fedemr',
+
+      name: 'Zero-Code Workflow',
+      shortName: 'Zero-Code',
+      category: 'User Experience',
+
+      description:
+        'A planned guided workflow that allows approved users to configure supported federated activities without writing code.',
+
+      technicalDescription:
+        'A planned interface layer that translates guided configuration into supported federated workflow definitions.',
+
+      userDescription:
+        'Set up supported federated workflows through a guided interface instead of writing code.',
+
+      availabilityStatus: 'In Development',
+      supportStatus: 'Not Yet Commercially Available',
+
+      researchOnly: false,
+      commerciallySupported: false,
+      experimental: true,
+
+      firstAvailableVersionId: '',
+
+      currentSupportedVersionIds: [],
+
+      plannedVersionIds: [
+        'product_version_v2'
+      ],
+
+      requiredInfrastructure: [
+        'FedEMR V2 supported environment'
+      ],
+
+      dependencies: [
+        'V2 interface development',
+        'Workflow-template validation',
+        'User testing',
+        'Deployment validation'
+      ],
+
+      supportedEnvironments: [
+        'To Be Confirmed'
+      ],
+
+      supportedOperatingSystems: [
+        'To Be Confirmed'
+      ],
+
+      supportedDeploymentTypes: [
+        'Planned research deployment',
+        'Planned institution-managed deployment'
+      ],
+
+      knownLimitations: [
+        'Not available in the current product version.',
+        'The initial release may support only defined workflow types.',
+        'Supported environments remain under validation.'
+      ],
+
+      securityConsiderations: [
+        'Workflow permissions and configuration controls require validation.'
+      ],
+
+      privacyConsiderations: [
+        'Guided workflows must preserve approved data-flow and output controls.'
+      ],
+
+      evidenceStatus:
+        'Development evidence only. No public performance claims are approved.',
+
+      demonstrationStatus: 'In Development',
+      validationStatus: 'Not Yet Validated',
+
+      customerValue:
+        'Intended to reduce setup effort and technical barriers.',
+
+      researchValue:
+        'Intended to make supported federated workflows easier to configure.',
+
+      technicalValue:
+        'Provides a guided configuration layer.',
+
+      operationalValue:
+        'Intended to improve repeatability and onboarding speed.',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Confidential',
+
+      linkedProductVersionIds: [
+        'product_version_v2'
+      ],
+
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedEvidenceIds: [],
+
+      linkedWorkPackageIds: [
+        'workpackage_deployment'
+      ],
+
+      linkedFundingOpportunityIds: [
+        'funding_commercialization'
+      ],
+
+      linkedCustomerIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    })
+  ],
+
+  audiences: [],
+  contentAssets: [],
+  presentations: [],
+  useCases: [],
+  caseStudies: [],
+  approvedClaims: [],
 
   documents: [],
 

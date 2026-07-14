@@ -1,7 +1,7 @@
 import { collections, sampleData } from './sample-data.js';
 
 const DB_NAME = 'fedemr-coo-os';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbPromise = null;
 
