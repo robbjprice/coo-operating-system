@@ -5945,8 +5945,452 @@ export const sampleData = {
     })
   ],
 
-  caseStudies: [],
-  approvedClaims: [],
+    caseStudies: [
+    fixed('case_study_multisite_hypothetical', {
+      title:
+        'Illustrative Multi-Site Prediction Project',
+
+      classification: 'Hypothetical Example',
+      publicationStatus: 'Internal',
+
+      situation:
+        'Several fictional health organizations want to develop a prediction model using their combined experience without centralizing patient-level source records.',
+
+      challenge:
+        'The organizations cannot readily transfer all source records into one central environment.',
+
+      environment:
+        'Fictional multi-site healthcare research network',
+
+      participatingOrganizationIds: [],
+      participatingPersonIds: [],
+
+      centralizedAnalysisBarrier:
+        'Privacy, governance, contracting, and data-transfer complexity.',
+
+      fedemrApproach:
+        'Each fictional site performs approved local computation while the coordinated workflow exchanges permitted model information.',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_v2',
+
+      productCapabilityIds: [
+        'capability_federated_training',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      implementationSteps: [
+        'Define the research question.',
+        'Confirm participating sites.',
+        'Harmonize required variables.',
+        'Approve the workflow.',
+        'Configure local environments.',
+        'Run the coordinated training workflow.',
+        'Evaluate results.'
+      ],
+
+      implementationDuration:
+        'Illustrative only',
+
+      timeRequired:
+        'Not estimated',
+
+      results: [],
+      modelPerformance: [],
+
+      operationalBenefit:
+        'Illustrates how a coordinated workflow could replace disconnected site activity.',
+
+      clinicalBenefit:
+        'No clinical benefit is claimed.',
+
+      researchBenefit:
+        'Illustrates broader multi-site model development.',
+
+      economicBenefit:
+        'No economic result is claimed.',
+
+      privacyOutcome:
+        'Illustrates local retention of patient-level source data.',
+
+      securityOutcome:
+        'Project-specific controls would be required.',
+
+      lessonsLearned: [
+        'Site readiness and data harmonization remain essential.',
+        'Federated learning does not eliminate governance requirements.'
+      ],
+
+      testimonial: '',
+      testimonialApproved: false,
+
+      evidenceDocumentIds: [],
+      evidenceIds: [],
+      approvedClaimIds: [],
+
+      confidentialityRestrictions: [
+        'Must always be labelled as hypothetical.'
+      ],
+
+      permissionStatus:
+        'Internal illustrative example',
+
+      externalUsePermitted: false,
+
+      reviewDate: '',
+      nextReviewDate: '',
+
+      owner: 'Robb',
+      confidentiality: 'Internal',
+
+      linkedUseCaseIds: [
+        'usecase_multisite_prediction'
+      ],
+
+      linkedPresentationIds: [],
+      linkedContentAssetIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedApprovedClaimIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedDocumentIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('case_study_validation_composite', {
+      title:
+        'Composite Federated Validation Example',
+
+      classification: 'Composite Example',
+      publicationStatus: 'Internal',
+
+      situation:
+        'A composite research team wants to evaluate one model across several independent participating datasets.',
+
+      challenge:
+        'The validation records cannot be routinely combined in one central environment.',
+
+      environment:
+        'Generalized composite research environment',
+
+      participatingOrganizationIds: [],
+      participatingPersonIds: [],
+
+      centralizedAnalysisBarrier:
+        'Institutional privacy, governance, legal, and operational constraints.',
+
+      fedemrApproach:
+        'Participating environments execute a common validation protocol and return permitted performance summaries.',
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      productCapabilityIds: [
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      implementationSteps: [
+        'Define the validation protocol.',
+        'Confirm outcome definitions.',
+        'Configure participating environments.',
+        'Execute local validation.',
+        'Combine permitted summaries.',
+        'Interpret cross-site performance.'
+      ],
+
+      implementationDuration:
+        'Composite illustration only',
+
+      timeRequired:
+        'Not estimated',
+
+      results: [],
+      modelPerformance: [],
+
+      operationalBenefit:
+        'Illustrates coordinated external validation.',
+
+      clinicalBenefit:
+        'No clinical benefit is claimed.',
+
+      researchBenefit:
+        'Illustrates evaluation across multiple settings.',
+
+      economicBenefit:
+        'No economic result is claimed.',
+
+      privacyOutcome:
+        'Illustrates local retention of validation records.',
+
+      securityOutcome:
+        'Implementation-specific controls would be required.',
+
+      lessonsLearned: [
+        'Comparable outcomes and variables are critical.',
+        'Cross-site performance differences require careful interpretation.'
+      ],
+
+      testimonial: '',
+      testimonialApproved: false,
+
+      evidenceDocumentIds: [],
+      evidenceIds: [],
+      approvedClaimIds: [],
+
+      confidentialityRestrictions: [
+        'Must always be labelled as a composite example.'
+      ],
+
+      permissionStatus:
+        'Internal composite example',
+
+      externalUsePermitted: false,
+
+      reviewDate: '',
+      nextReviewDate: '',
+
+      owner: 'Robb',
+      confidentiality: 'Internal',
+
+      linkedUseCaseIds: [
+        'usecase_external_validation'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_research'
+      ],
+
+      linkedContentAssetIds: [
+        'content_researcher_explanation'
+      ],
+
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedApprovedClaimIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedCustomerIds: [],
+      linkedDocumentIds: [],
+      linkedDecisionIds: []
+    })
+  ],
+    approvedClaims: [
+    fixed('claim_local_data_control', {
+      claimText:
+        'During configured federated workflows, participating organizations retain control of their local patient-level source data.',
+
+      shortClaim:
+        'Participating organizations retain local control of patient-level source data.',
+
+      claimCategory: 'Privacy',
+
+      audienceIds: [
+        'audience_clinicians',
+        'audience_researchers',
+        'audience_government',
+        'audience_privacy',
+        'audience_technical',
+        'audience_pharma'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      productCapabilityIds: [
+        'capability_local_control'
+      ],
+
+      evidenceIds: [],
+      evidenceStrength: 'Preliminary',
+
+      evidenceSummary:
+        'Draft claim based on the generalized product architecture. Technical and implementation evidence must be linked before public approval.',
+
+      approvalStatus: 'Under Review',
+
+      approvedByPersonIds: [],
+      approvalDate: '',
+      reviewDate: '',
+      expiryDate: '',
+
+      permittedContexts: [
+        'Internal planning',
+        'Draft presentations',
+        'Draft product explanations'
+      ],
+
+      prohibitedContexts: [
+        'Unqualified public guarantee',
+        'Statement that privacy review is unnecessary',
+        'Statement that no information ever leaves a participating site'
+      ],
+
+      requiredQualifier:
+        'Appropriate privacy, legal, security, ethics, and governance review remains required for each implementation.',
+
+      usageNotes:
+        'The claim concerns patient-level source data during configured workflows. It must not be used as a guarantee of zero privacy risk.',
+
+      publicUsePermitted: false,
+      confidentiality: 'Internal',
+
+      linkedPresentationIds: [
+        'presentation_government',
+        'presentation_research',
+        'presentation_technical',
+        'presentation_conference'
+      ],
+
+      linkedContentAssetIds: [
+        'content_general_explanation',
+        'content_privacy_explanation',
+        'content_researcher_explanation',
+        'content_clinician_explanation',
+        'content_government_value'
+      ],
+
+      linkedCaseStudyIds: [
+        'case_study_multisite_hypothetical',
+        'case_study_validation_composite'
+      ],
+
+      linkedUseCaseIds: [
+        'usecase_multisite_prediction',
+        'usecase_external_validation',
+        'usecase_cardiometabolic',
+        'usecase_pharma_cohort',
+        'usecase_cross_jurisdiction'
+      ],
+
+      linkedFundingApplicationIds: [],
+      linkedCustomerIds: [],
+      linkedDocumentIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('claim_distributed_computation', {
+      claimText:
+        'FedEMR coordinates approved computation across participating controlled environments.',
+
+      shortClaim:
+        'FedEMR coordinates approved distributed computation.',
+
+      claimCategory: 'Product Capability',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_technical',
+        'audience_government',
+        'audience_funders'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      productCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_orchestration'
+      ],
+
+      evidenceIds: [],
+      evidenceStrength: 'Preliminary',
+
+      evidenceSummary:
+        'Draft claim requiring linked technical and implementation evidence before public approval.',
+
+      approvalStatus: 'Under Review',
+
+      approvedByPersonIds: [],
+      approvalDate: '',
+      reviewDate: '',
+      expiryDate: '',
+
+      permittedContexts: [
+        'Internal planning',
+        'Draft technical explanations',
+        'Draft research presentations'
+      ],
+
+      prohibitedContexts: [
+        'Claims about unsupported analysis types',
+        'Claims that every technical environment is supported',
+        'Claims of guaranteed deployment success'
+      ],
+
+      requiredQualifier:
+        'Supported workflows, environments, and implementation requirements must be confirmed for each project.',
+
+      usageNotes:
+        'Do not use this claim to imply that every analysis, operating system, integration, or deployment environment is currently supported.',
+
+      publicUsePermitted: false,
+      confidentiality: 'Internal',
+
+      linkedPresentationIds: [
+        'presentation_government',
+        'presentation_research',
+        'presentation_technical',
+        'presentation_conference'
+      ],
+
+      linkedContentAssetIds: [
+        'content_general_explanation',
+        'content_researcher_explanation',
+        'content_government_value'
+      ],
+
+      linkedCaseStudyIds: [],
+
+      linkedUseCaseIds: [
+        'usecase_multisite_prediction',
+        'usecase_external_validation',
+        'usecase_cross_jurisdiction'
+      ],
+
+      linkedFundingApplicationIds: [],
+      linkedCustomerIds: [],
+      linkedDocumentIds: [],
+      linkedDecisionIds: []
+    })
+  ],
 
   documents: [],
 
