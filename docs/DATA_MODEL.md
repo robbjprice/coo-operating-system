@@ -13,6 +13,14 @@ The model supports:
 - People and relationships
 - Institutional pathways
 - Resource and execution planning
+- Product and market intelligence
+- Product-version tracking
+- Capability tracking
+- Audience-specific content
+- Presentations
+- Use cases
+- Case studies
+- Approved claims
 - Customers and opportunities
 - Tasks
 - Risks
@@ -23,7 +31,7 @@ The model supports:
 - Decisions
 - Future AI-supported workflows
 
-The system should avoid duplicating names, organizations, contact information, and relationships across modules.
+The system should avoid duplicating people, organizations, product information, claims, capabilities, content, and relationships across modules.
 
 Records should be connected using stable IDs.
 
@@ -33,7 +41,7 @@ Records should be connected using stable IDs.
 
 ### 2.1 Shared record structure
 
-Most operational records should include:
+Most operational records should support:
 
 - `id`
 - `createdAt`
@@ -50,6 +58,8 @@ Most operational records should include:
 - `evidenceIds`
 - Relevant linked-record IDs
 
+Not every field must appear in every collection.
+
 ### 2.2 Stable identifiers
 
 Every record must have a unique ID.
@@ -61,11 +71,12 @@ Example:
 ```javascript
 {
   personId: "person_001",
-  organizationId: "org_001"
+  organizationId: "org_001",
+  productVersionId: "product_version_001"
 }
 ```
 
-Contact details should not be duplicated inside funding, customer, pathway, or meeting records.
+Contact details, product descriptions, claims, and capability definitions should not be duplicated across modules.
 
 ### 2.3 Data classification
 
@@ -78,7 +89,7 @@ Every record should support one of these classifications:
 
 ### 2.4 Verification metadata
 
-Records based on external rules, funding programs, institutional processes, or policies should include:
+Records based on external rules, funding programs, institutional processes, product claims, case-study results, or public policies should support:
 
 - `sourceUrls`
 - `lastVerifiedDate`
@@ -97,6 +108,33 @@ Any calculated score should retain:
 - Calculation date
 - Explanation
 - Unknowns
+
+### 2.6 Audience awareness
+
+Content and presentations should identify:
+
+- Intended audience
+- Technical depth
+- Purpose
+- Product version
+- Approved claims
+- Supporting evidence
+- Confidentiality
+- Approval status
+
+### 2.7 Claims control
+
+The data model must distinguish between:
+
+- Verified claim
+- Draft claim
+- Planned capability
+- Available capability
+- Research-only capability
+- Demonstrated result
+- Hypothetical example
+- Composite example
+- Completed real-world case study
 
 ---
 
@@ -118,7 +156,7 @@ settings
 activityLog
 ```
 
-### Version 0.5 collections
+### Version 0.5 operating collections
 
 ```text
 people
@@ -138,11 +176,25 @@ evidence
 decisions
 ```
 
+### Product and Market collections
+
+```text
+products
+productVersions
+productCapabilities
+audiences
+contentAssets
+presentations
+useCases
+caseStudies
+approvedClaims
+```
+
 ---
 
 ## 4. Shared Base Record
 
-Most operational records should inherit or support the following fields:
+Most operational records should inherit or support:
 
 ```javascript
 {
@@ -171,17 +223,27 @@ Most operational records should inherit or support the following fields:
   linkedPersonIds: [],
   linkedOrganizationIds: [],
   linkedFundingOpportunityIds: [],
+  linkedFundingApplicationIds: [],
   linkedPathwayIds: [],
   linkedPathwayCaseIds: [],
   linkedWorkPackageIds: [],
   linkedRoadmapItemIds: [],
-  linkedDecisionIds: []
+  linkedDecisionIds: [],
+  linkedDocumentIds: [],
+
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: []
 }
 ```
 
-Not every collection must use every field.
-
-Unused fields should be omitted when practical rather than stored as meaningless empty values.
+Unused fields should be omitted where practical.
 
 ---
 
@@ -195,9 +257,9 @@ people
 
 ### Purpose
 
-Store every external person who touches FedEMR.
+Store every external or relevant internal person who touches FedEMR.
 
-Examples include:
+Examples:
 
 - Advisors
 - Funders
@@ -214,6 +276,10 @@ Examples include:
 - Decision-makers
 - Introducers
 - Subject-matter experts
+- Clinicians
+- Researchers
+- Product users
+- Communications contacts
 
 ### Schema
 
@@ -245,6 +311,7 @@ Examples include:
   profileUrl: "",
 
   relationshipTypes: [],
+  audienceTypes: [],
   focusAreas: [],
   expertiseAreas: [],
 
@@ -257,6 +324,10 @@ Examples include:
 
   lastInteractionDate: "",
   nextFollowUpDate: "",
+
+  productFeedback: [],
+  capabilityRequests: [],
+  presentationPreferences: [],
 
   active: true,
   confidentiality: "Confidential",
@@ -273,6 +344,11 @@ Examples include:
   linkedTaskIds: [],
   linkedFollowUpIds: [],
   linkedInteractionIds: [],
+  linkedPresentationIds: [],
+  linkedAudienceIds: [],
+  linkedProductVersionIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -344,6 +420,12 @@ Store institutions, companies, funders, government departments, research network
   linkedPathwayCaseIds: [],
   linkedTaskIds: [],
   linkedRiskIds: [],
+  linkedPresentationIds: [],
+  linkedAudienceIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -352,6 +434,7 @@ Store institutions, companies, funders, government departments, research network
 
 ### Organization types
 
+- Company
 - University
 - Health system
 - Government
@@ -369,6 +452,8 @@ Store institutions, companies, funders, government departments, research network
 - Technology-transfer organization
 - Accelerator
 - Incubator
+- Pharmaceutical company
+- Medical device company
 
 ---
 
@@ -383,8 +468,6 @@ relationships
 ### Purpose
 
 Store contextual relationships between records.
-
-A person may have multiple roles across different modules.
 
 ### Schema
 
@@ -436,6 +519,12 @@ A person may have multiple roles across different modules.
 - University Contact
 - Privacy Contact
 - Security Contact
+- Product User
+- Product Reviewer
+- Presentation Audience
+- Case-Study Participant
+- Content Approver
+- Claim Approver
 
 ---
 
@@ -449,7 +538,7 @@ interactions
 
 ### Purpose
 
-Track meetings, calls, emails, introductions, commitments, and relationship activity.
+Track meetings, calls, emails, introductions, commitments, presentations, demonstrations, and relationship activity.
 
 ### Schema
 
@@ -471,6 +560,11 @@ Track meetings, calls, emails, introductions, commitments, and relationship acti
   commitmentsMadeByFedEMR: [],
   commitmentsMadeByOthers: [],
 
+  productFeedback: [],
+  capabilityRequests: [],
+  objectionsRaised: [],
+  contentRequests: [],
+
   followUpRequired: false,
   followUpDate: "",
 
@@ -482,6 +576,10 @@ Track meetings, calls, emails, introductions, commitments, and relationship acti
   linkedCustomerIds: [],
   linkedFundingOpportunityIds: [],
   linkedPathwayCaseIds: [],
+  linkedPresentationIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedUseCaseIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -500,6 +598,10 @@ Track meetings, calls, emails, introductions, commitments, and relationship acti
 - Document exchange
 - Decision
 - Follow-up
+- Presentation
+- Product demonstration
+- Product feedback
+- Technical review
 
 ---
 
@@ -513,7 +615,7 @@ followUps
 
 ### Purpose
 
-Track relationship-driven actions, outstanding commitments, and overdue responses.
+Track relationship-driven actions, outstanding commitments, content requests, and overdue responses.
 
 ### Schema
 
@@ -538,6 +640,9 @@ Track relationship-driven actions, outstanding commitments, and overdue response
   linkedCustomerId: "",
   linkedFundingOpportunityId: "",
   linkedPathwayCaseId: "",
+  linkedPresentationId: "",
+  linkedProductVersionId: "",
+  linkedContentAssetId: "",
 
   waitingOn: "",
   completedDate: "",
@@ -652,6 +757,12 @@ Discover, validate, score, and manage potential external funding opportunities.
   linkedPathwayIds: [],
   linkedDocumentIds: [],
   linkedDecisionIds: [],
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedPresentationIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -689,7 +800,7 @@ fundingApplications
 
 ### Purpose
 
-Manage the actual development, review, submission, and outcome of a selected funding opportunity.
+Manage the development, review, submission, and outcome of a selected funding opportunity.
 
 ### Schema
 
@@ -748,6 +859,12 @@ Manage the actual development, review, submission, and outcome of a selected fun
   linkedWorkPackageIds: [],
   linkedPathwayCaseIds: [],
   linkedDecisionIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedPresentationIds: [],
+  linkedApprovedClaimIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -781,8 +898,6 @@ institutionalPathways
 ### Purpose
 
 Store reusable institutional process maps.
-
-Initial focus is the University of Calgary ecosystem.
 
 ### Schema
 
@@ -830,6 +945,8 @@ Initial focus is the University of Calgary ecosystem.
   linkedPersonIds: [],
   linkedOrganizationIds: [],
   linkedCaseIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -844,35 +961,6 @@ Initial focus is the University of Calgary ecosystem.
 - Outdated
 - Needs Verification
 
-### Initial pathway categories
-
-- Company formation
-- University spinout
-- IP disclosure
-- IP ownership
-- Technology licensing
-- Shareholder agreement
-- Conflict of interest
-- Conflict of commitment
-- Faculty participation in company
-- Research agreement
-- Commercial agreement
-- Sponsored research
-- Legal review
-- Sole-source justification
-- Procurement
-- Privacy review
-- Security review
-- Institutional grant approval
-- Innovate Calgary
-- Cumming School of Medicine
-- University legal
-- Hunter Hub
-- Alberta Innovates
-- Research Services
-- Institutional signature
-- University branding
-
 ---
 
 ## 13. Pathway Steps
@@ -882,10 +970,6 @@ Initial focus is the University of Calgary ecosystem.
 ```text
 pathwaySteps
 ```
-
-### Purpose
-
-Store the ordered steps inside an institutional pathway.
 
 ### Schema
 
@@ -939,10 +1023,6 @@ pathwayCases
 
 Track an actual FedEMR situation moving through an institutional pathway.
 
-The pathway is the reusable map.
-
-The pathway case is the real active situation.
-
 ### Schema
 
 ```javascript
@@ -987,6 +1067,8 @@ The pathway case is the real active situation.
   linkedWorkPackageIds: [],
   linkedDecisionIds: [],
   linkedEvidenceIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -1017,7 +1099,7 @@ workPackages
 
 ### Purpose
 
-Group related tasks and estimate what is required to achieve a business outcome.
+Group related tasks and estimate what is required to achieve a business, research, product, content, or deployment outcome.
 
 ### Schema
 
@@ -1077,6 +1159,14 @@ Group related tasks and estimate what is required to achieve a business outcome.
   linkedPathwayCaseIds: [],
   linkedRiskIds: [],
   linkedRoadmapItemIds: [],
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -1097,6 +1187,10 @@ Group related tasks and estimate what is required to achieve a business outcome.
 - University/company legal clarification
 - Commercial pricing package
 - ROI evidence package
+- Product release preparation
+- Clinical audience content package
+- Government presentation package
+- Case-study development
 
 ---
 
@@ -1107,10 +1201,6 @@ Group related tasks and estimate what is required to achieve a business outcome.
 ```text
 resourceRequirements
 ```
-
-### Purpose
-
-Store the labour, expertise, vendor, funding, and capacity requirements for a work package or task.
 
 ### Schema
 
@@ -1153,6 +1243,12 @@ Store the labour, expertise, vendor, funding, and capacity requirements for a wo
   confidence: "Estimated",
   status: "Unassigned",
 
+  linkedProductVersionIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+
   createdAt: "",
   updatedAt: ""
 }
@@ -1173,18 +1269,11 @@ Store the labour, expertise, vendor, funding, and capacity requirements for a wo
 - Equipment
 - Data
 - Approval
-
-### Resource sources
-
-- Internal
-- University
-- Company hire
-- Undergraduate student
-- Graduate student
-- Contractor
-- Consultant
-- External vendor
-- Partner organization
+- Content Development
+- Presentation Design
+- Clinical Review
+- Technical Review
+- Claims Review
 
 ---
 
@@ -1195,10 +1284,6 @@ Store the labour, expertise, vendor, funding, and capacity requirements for a wo
 ```text
 documents
 ```
-
-### Purpose
-
-Track files, links, agreements, policies, grant materials, presentations, and evidence documents.
 
 ### Schema
 
@@ -1235,6 +1320,15 @@ Track files, links, agreements, policies, grant materials, presentations, and ev
   linkedWorkPackageIds: [],
   linkedDecisionIds: [],
   linkedEvidenceIds: [],
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
 
   notes: "",
 
@@ -1264,6 +1358,11 @@ Track files, links, agreements, policies, grant materials, presentations, and ev
 - Report
 - Letter of support
 - Briefing note
+- Product specification
+- Release note
+- Training material
+- Case-study source
+- Claims evidence
 
 ---
 
@@ -1277,7 +1376,7 @@ evidence
 
 ### Purpose
 
-Store the evidence supporting claims, scores, decisions, pathways, and commercialization statements.
+Store evidence supporting claims, scores, decisions, pathways, product capabilities, case studies, and commercialization statements.
 
 ### Schema
 
@@ -1294,11 +1393,15 @@ Store the evidence supporting claims, scores, decisions, pathways, and commercia
   sourceUrl: "",
   sourceDocumentId: "",
 
+  evidenceDate: "",
+  productVersionId: "",
+
   verified: false,
   verificationDate: "",
   verifiedBy: "",
 
   confidence: "Unknown",
+  evidenceStrength: "Unknown",
 
   confidentiality: "Internal",
 
@@ -1308,6 +1411,14 @@ Store the evidence supporting claims, scores, decisions, pathways, and commercia
   linkedPathwayIds: [],
   linkedDecisionIds: [],
   linkedScoreIds: [],
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -1333,6 +1444,13 @@ Store the evidence supporting claims, scores, decisions, pathways, and commercia
 - Audit result
 - Security result
 - Procurement requirement
+- Technical test
+- Product demonstration
+- Deployment result
+- Model-performance result
+- User feedback
+- Published result
+- Internal measurement
 
 ---
 
@@ -1343,10 +1461,6 @@ Store the evidence supporting claims, scores, decisions, pathways, and commercia
 ```text
 decisions
 ```
-
-### Purpose
-
-Track important executive and operational decisions.
 
 ### Schema
 
@@ -1387,6 +1501,14 @@ Track important executive and operational decisions.
   linkedWorkPackageIds: [],
   linkedPersonIds: [],
   linkedOrganizationIds: [],
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
 
   createdAt: "",
   updatedAt: ""
@@ -1405,29 +1527,1015 @@ Track important executive and operational decisions.
 
 ---
 
-## 20. Existing Collection Enhancements
+# Product and Market Data Model
 
-The existing collections should be gradually updated to link to shared Version 0.5 records.
+## 20. Products
 
-### Tasks
+### Collection
 
-Add support for:
+```text
+products
+```
+
+### Purpose
+
+Store the high-level product definition for FedEMR and any future related products or product lines.
+
+### Schema
 
 ```javascript
 {
+  id: "product_001",
+
+  name: "FedEMR",
+  legalProductName: "",
+  shortName: "FedEMR",
+
+  productCategory: "Federated Learning Platform",
+  productType: "Software Platform",
+
+  summary: "",
+  description: "",
+
+  currentValueProposition: "",
+  commercialPositioning: "",
+  researchPositioning: "",
+
+  primaryMarkets: [],
+  primaryUsers: [],
+  primaryAudiences: [],
+
+  currentMaturity: "",
+  currentTrl: 7,
+
+  deploymentModel: "",
+  privacyModel: "",
+  dataHandlingSummary: "",
+
+  differentiators: [],
+  knownLimitations: [],
+
+  supportedEnvironments: [],
+  supportedOperatingSystems: [],
+  supportedDeploymentTypes: [],
+
+  productOwnerPersonId: "",
+  technicalOwnerPersonId: "",
+  commercialOwnerPersonId: "",
+
+  currentProductVersionId: "",
+  nextProductVersionId: "",
+
+  status: "Active",
+  confidentiality: "Internal",
+
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
+  linkedRoadmapItemIds: [],
+  linkedWorkPackageIds: [],
+  linkedFundingOpportunityIds: [],
+  linkedRiskIds: [],
+  linkedDecisionIds: [],
+  linkedDocumentIds: [],
+  linkedEvidenceIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Product statuses
+
+- Concept
+- Active
+- Maintenance
+- Retired
+
+---
+
+## 21. Product Versions
+
+### Collection
+
+```text
+productVersions
+```
+
+### Purpose
+
+Track the current product version, future versions, release plans, improvements, limitations, dependencies, and readiness.
+
+### Schema
+
+```javascript
+{
+  id: "product_version_001",
+
+  productId: "product_001",
+
+  versionName: "",
+  versionNumber: "",
+  releaseType: "",
+
+  status: "Planned",
+
+  plannedReleaseDate: "",
+  actualReleaseDate: "",
+
+  productEnvironment: "",
+  deploymentStage: "",
+
+  summary: "",
+  releaseObjective: "",
+
+  improvementsOverPreviousVersion: [],
+  capabilitiesIncluded: [],
+  knownLimitations: [],
+
+  technicalDependencies: [],
+  infrastructureDependencies: [],
+  integrationDependencies: [],
+
+  securityChanges: [],
+  privacyChanges: [],
+  deploymentChanges: [],
+  integrationChanges: [],
+  userExperienceChanges: [],
+
+  customerRequestsAddressed: [],
+  researchRequestsAddressed: [],
+  technicalDebtAddressed: [],
+
+  commercialReadinessStatus: "",
+  securityReadinessStatus: "",
+  privacyReadinessStatus: "",
+  documentationStatus: "",
+  trainingStatus: "",
+  supportReadinessStatus: "",
+  deploymentReadinessStatus: "",
+
+  productReadinessScore: 0,
+  productReadinessExplanation: "",
+  releaseBlockers: [],
+  releaseRisks: [],
+  decisionsRequired: [],
+
+  releaseDecision: "",
+  releaseDecisionDate: "",
+
+  owner: "",
+  technicalLeadPersonId: "",
+  commercialLeadPersonId: "",
+
+  confidentiality: "Confidential",
+
+  linkedProductCapabilityIds: [],
+  linkedRoadmapItemIds: [],
+  linkedTaskIds: [],
+  linkedWorkPackageIds: [],
+  linkedRiskIds: [],
+  linkedFundingOpportunityIds: [],
+  linkedCustomerIds: [],
+  linkedOrganizationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedPresentationIds: [],
+  linkedContentAssetIds: [],
+  linkedApprovedClaimIds: [],
+  linkedEvidenceIds: [],
+  linkedDecisionIds: [],
+  linkedDocumentIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Version statuses
+
+- Concept
+- Planned
+- In Development
+- Testing
+- Pilot
+- Released
+- Supported
+- Maintenance
+- Retired
+
+### Release types
+
+- Major
+- Minor
+- Patch
+- Research Build
+- Pilot Build
+- Internal Build
+- Commercial Release
+
+---
+
+## 22. Product Capabilities
+
+### Collection
+
+```text
+productCapabilities
+```
+
+### Purpose
+
+Maintain a structured source of truth for what FedEMR can do.
+
+### Schema
+
+```javascript
+{
+  id: "capability_001",
+
+  productId: "product_001",
+
+  name: "",
+  shortName: "",
+  category: "",
+
+  description: "",
+  technicalDescription: "",
+  userDescription: "",
+
+  availabilityStatus: "Planned",
+  supportStatus: "",
+
+  researchOnly: false,
+  commerciallySupported: false,
+  experimental: false,
+
+  firstAvailableVersionId: "",
+  currentSupportedVersionIds: [],
+  plannedVersionIds: [],
+
+  requiredInfrastructure: [],
+  dependencies: [],
+  supportedEnvironments: [],
+  supportedOperatingSystems: [],
+  supportedDeploymentTypes: [],
+
+  knownLimitations: [],
+  securityConsiderations: [],
+  privacyConsiderations: [],
+
+  evidenceStatus: "",
+  demonstrationStatus: "",
+  validationStatus: "",
+
+  customerValue: "",
+  researchValue: "",
+  technicalValue: "",
+  operationalValue: "",
+
+  owner: "",
+  confidentiality: "Internal",
+
+  linkedProductVersionIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedEvidenceIds: [],
+  linkedWorkPackageIds: [],
+  linkedFundingOpportunityIds: [],
+  linkedCustomerIds: [],
+  linkedRiskIds: [],
+  linkedDecisionIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Capability statuses
+
+- Available
+- In Development
+- Planned
+- Experimental
+- Research-Only
+- Pilot-Only
+- Commercially Supported
+- Deprecated
+
+### Capability categories
+
+- Federated learning
+- Federated analytics
+- Model development
+- Model validation
+- Model deployment
+- Model monitoring
+- Site onboarding
+- Orchestration
+- Data governance
+- Privacy
+- Security
+- Cohort discovery
+- Cohort selection
+- Common data models
+- Integration
+- Auditability
+- Reproducibility
+- User experience
+- Research collaboration
+- Pharmaceutical research
+- Health-system implementation
+
+---
+
+## 23. Audiences
+
+### Collection
+
+```text
+audiences
+```
+
+### Purpose
+
+Store reusable audience profiles so content and presentations can be tailored without changing the underlying facts.
+
+### Schema
+
+```javascript
+{
+  id: "audience_001",
+
+  name: "",
+  audienceType: "",
+
+  description: "",
+  knowledgeLevel: "",
+
+  primaryGoals: [],
+  primaryConcerns: [],
+  commonObjections: [],
+  commonQuestions: [],
+
+  preferredTerminology: [],
+  termsToAvoid: [],
+
+  desiredTechnicalDepth: "",
+  preferredEvidenceTypes: [],
+
+  typicalCallToAction: "",
+
+  privacyConcerns: [],
+  securityConcerns: [],
+  commercialConcerns: [],
+  clinicalConcerns: [],
+  researchConcerns: [],
+  procurementConcerns: [],
+
+  decisionCriteria: [],
+  successMeasures: [],
+
+  active: true,
+  confidentiality: "Internal",
+
   linkedPersonIds: [],
   linkedOrganizationIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedApprovedClaimIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Initial audiences
+
+- Clinical physicians
+- Researchers
+- Data scientists
+- Health-system executives
+- Government and policymakers
+- Privacy teams
+- Legal teams
+- Information security teams
+- Procurement teams
+- Pharmaceutical companies
+- Medical device companies
+- Hospitals and health systems
+- Universities
+- Research networks
+- Funders
+- Investors
+- Patients and the public
+- Technical implementation teams
+- Potential partners
+- Students and trainees
+- Media and communications teams
+
+---
+
+## 24. Content Assets
+
+### Collection
+
+```text
+contentAssets
+```
+
+### Purpose
+
+Store reusable audience-specific content for websites, brochures, proposals, grants, presentations, emails, demonstrations, and communications.
+
+### Schema
+
+```javascript
+{
+  id: "content_asset_001",
+
+  title: "",
+  contentType: "",
+  purpose: "",
+
+  audienceIds: [],
+  primaryAudienceId: "",
+
+  productId: "",
+  productVersionId: "",
+
+  technicalDepth: "",
+
+  coreMessage: "",
+  problemStatement: "",
+  productExplanation: "",
+  benefits: [],
+  proofPoints: [],
+  privacyWording: "",
+  securityWording: "",
+
+  objectionsAndResponses: [],
+  frequentlyAskedQuestions: [],
+
+  callToAction: "",
+
+  bodyContent: "",
+  shortVersion: "",
+  longVersion: "",
+
+  draftStatus: "Draft",
+  approvalStatus: "Not Reviewed",
+
+  owner: "",
+  reviewerPersonIds: [],
+  approvedByPersonIds: [],
+
+  lastReviewedDate: "",
+  nextReviewDate: "",
+  reviewCadence: "",
+
+  confidentiality: "Internal",
+
+  linkedApprovedClaimIds: [],
+  linkedEvidenceIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedOrganizationIds: [],
+  linkedMeetingIds: [],
+  linkedFundingApplicationIds: [],
+  linkedProductCapabilityIds: [],
+  linkedDocumentIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Content types
+
+- Product explanation
+- Elevator pitch
+- One-minute pitch
+- Three-minute pitch
+- Problem statement
+- Value proposition
+- Website copy
+- Brochure copy
+- Grant language
+- Proposal language
+- Government briefing language
+- Clinical explanation
+- Research explanation
+- Technical explanation
+- Privacy explanation
+- Security explanation
+- Procurement explanation
+- FAQ
+- Objection response
+- Email language
+- Social media copy
+- Speaker notes
+- Demo script
+- Training content
+- Executive summary
+- Partner brief
+- Product-release summary
+
+### Draft statuses
+
+- Idea
+- Draft
+- In Review
+- Approved
+- Published
+- Retired
+
+### Approval statuses
+
+- Not Reviewed
+- Under Review
+- Approved
+- Approved with Qualification
+- Internal Only
+- Rejected
+- Needs Reverification
+
+---
+
+## 25. Presentations
+
+### Collection
+
+```text
+presentations
+```
+
+### Purpose
+
+Store presentations by audience, purpose, version, and usage rather than treating every deck as an isolated file.
+
+### Schema
+
+```javascript
+{
+  id: "presentation_001",
+
+  title: "",
+  presentationType: "",
+  purpose: "",
+
+  primaryAudienceId: "",
+  audienceIds: [],
+
+  productId: "",
+  productVersionId: "",
+
+  durationMinutes: 0,
+  format: "",
+
+  status: "Draft",
+  approvalStatus: "Not Reviewed",
+
+  fileName: "",
+  fileUrl: "",
+  storageLocation: "",
+  documentId: "",
+
+  outline: [],
+  coreMessages: [],
+  speakerNotes: "",
+  callToAction: "",
+
+  approvedClaimIds: [],
+  evidenceIds: [],
+  useCaseIds: [],
+  caseStudyIds: [],
+  contentAssetIds: [],
+  productCapabilityIds: [],
+
+  lastPresentedDate: "",
+  presentationHistory: [],
+  feedbackReceived: [],
+  requiredRevisions: [],
+
+  owner: "",
+  reviewerPersonIds: [],
+  approvedByPersonIds: [],
+
+  confidentiality: "Internal",
+
+  linkedPersonIds: [],
+  linkedOrganizationIds: [],
+  linkedMeetingIds: [],
+  linkedCustomerIds: [],
   linkedFundingOpportunityIds: [],
-  linkedPathwayCaseIds: [],
+  linkedFundingApplicationIds: [],
+  linkedProductVersionIds: [],
+  linkedDocumentIds: [],
   linkedWorkPackageIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Presentation types
+
+- One-minute pitch
+- Three-minute pitch
+- Government briefing
+- Funder pitch
+- Investor pitch
+- Research collaboration deck
+- Hospital executive presentation
+- Clinical physician presentation
+- Technical architecture presentation
+- Privacy presentation
+- Security presentation
+- Procurement presentation
+- Pharmaceutical use-case deck
+- Conference presentation
+- Conference poster
+- Partner onboarding deck
+- Product demonstration
+- Training presentation
+- Board presentation
+- Product-release briefing
+
+### Presentation statuses
+
+- Idea
+- Draft
+- In Review
+- Approved
+- Ready
+- Presented
+- Needs Update
+- Archived
+
+---
+
+## 26. Use Cases
+
+### Collection
+
+```text
+useCases
+```
+
+### Purpose
+
+Describe what FedEMR could do, is designed to do, is being evaluated to do, or is commercially available to do.
+
+### Schema
+
+```javascript
+{
+  id: "use_case_001",
+
+  title: "",
+  category: "",
+
+  environment: "",
+  primaryUser: "",
+  audienceIds: [],
+
+  problem: "",
+  currentWorkflow: "",
+  fedemrWorkflow: "",
+
+  dataSources: [],
+  participatingSiteProfile: "",
+  modelOrAnalysisType: "",
+
+  privacyConstraints: [],
+  securityConstraints: [],
+  regulatoryConstraints: [],
+
+  deploymentModel: "",
+
+  expectedOutcome: "",
+  economicValue: "",
+  clinicalValue: "",
+  researchValue: "",
+  operationalValue: "",
+  technicalValue: "",
+
+  technicalRequirements: [],
+  requiredProductCapabilityIds: [],
+  requiredProductVersionIds: [],
+
+  knownLimitations: [],
+  dependencies: [],
+  assumptions: [],
+  unknowns: [],
+
+  evidenceStatus: "",
+  readinessLevel: "",
+  status: "Idea",
+
+  owner: "",
+  confidentiality: "Internal",
+
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
+  linkedEvidenceIds: [],
+  linkedOrganizationIds: [],
+  linkedPersonIds: [],
+  linkedCustomerIds: [],
+  linkedFundingOpportunityIds: [],
+  linkedWorkPackageIds: [],
+  linkedRiskIds: [],
   linkedDecisionIds: [],
-  confidentiality: "Internal"
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Use-case statuses
+
+- Idea
+- Hypothetical
+- Designed
+- Demonstrated
+- Validated
+- Active
+- Completed
+- Commercially Available
+- Archived
+
+### Use-case categories
+
+- Model development
+- Model validation
+- External validation
+- Model deployment
+- Model monitoring
+- Cohort discovery
+- Cohort selection
+- Clinical trial feasibility
+- Real-world evidence
+- Precision medicine
+- Sepsis
+- Diabetes
+- Cardiometabolic disease
+- Heart attack
+- Rare disease
+- Capacity forecasting
+- Treatment response
+- Medical imaging
+- Algorithmic fairness
+- Cross-jurisdiction research
+- Quality improvement
+- Federated analytics
+- Pharmaceutical research
+- Research collaboration
+
+---
+
+## 27. Case Studies
+
+### Collection
+
+```text
+caseStudies
+```
+
+### Purpose
+
+Store completed, active, demonstrated, hypothetical, or composite examples with clear classification.
+
+### Schema
+
+```javascript
+{
+  id: "case_study_001",
+
+  title: "",
+  classification: "",
+  publicationStatus: "",
+
+  situation: "",
+  challenge: "",
+  environment: "",
+
+  participatingOrganizationIds: [],
+  participatingPersonIds: [],
+
+  centralizedAnalysisBarrier: "",
+  fedemrApproach: "",
+
+  productId: "",
+  productVersionId: "",
+  productCapabilityIds: [],
+
+  implementationSteps: [],
+  implementationDuration: "",
+  timeRequired: "",
+
+  results: [],
+  modelPerformance: [],
+  operationalBenefit: "",
+  clinicalBenefit: "",
+  researchBenefit: "",
+  economicBenefit: "",
+  privacyOutcome: "",
+  securityOutcome: "",
+
+  lessonsLearned: [],
+  testimonial: "",
+  testimonialApproved: false,
+
+  evidenceDocumentIds: [],
+  evidenceIds: [],
+  approvedClaimIds: [],
+
+  confidentialityRestrictions: [],
+  permissionStatus: "",
+  externalUsePermitted: false,
+
+  reviewDate: "",
+  nextReviewDate: "",
+
+  owner: "",
+  confidentiality: "Confidential",
+
+  linkedUseCaseIds: [],
+  linkedPresentationIds: [],
+  linkedContentAssetIds: [],
+  linkedOrganizationIds: [],
+  linkedPersonIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedApprovedClaimIds: [],
+  linkedFundingOpportunityIds: [],
+  linkedCustomerIds: [],
+  linkedDocumentIds: [],
+  linkedDecisionIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Case-study classifications
+
+- Completed Real-World Case Study
+- Active Implementation
+- Research Demonstration
+- Technical Validation
+- Hypothetical Example
+- Composite Example
+
+### Publication statuses
+
+- Private
+- Internal
+- Draft for Review
+- Approved for Limited Use
+- Approved for Public Use
+- Published
+- Retired
+
+---
+
+## 28. Approved Claims
+
+### Collection
+
+```text
+approvedClaims
+```
+
+### Purpose
+
+Maintain approved, evidence-linked language for external and internal communications.
+
+### Schema
+
+```javascript
+{
+  id: "claim_001",
+
+  claimText: "",
+  shortClaim: "",
+  claimCategory: "",
+
+  audienceIds: [],
+
+  productId: "",
+  productVersionIds: [],
+  productCapabilityIds: [],
+
+  evidenceIds: [],
+  evidenceStrength: "",
+  evidenceSummary: "",
+
+  approvalStatus: "Draft",
+
+  approvedByPersonIds: [],
+  approvalDate: "",
+  reviewDate: "",
+  expiryDate: "",
+
+  permittedContexts: [],
+  prohibitedContexts: [],
+
+  requiredQualifier: "",
+  usageNotes: "",
+
+  publicUsePermitted: false,
+  confidentiality: "Internal",
+
+  linkedPresentationIds: [],
+  linkedContentAssetIds: [],
+  linkedCaseStudyIds: [],
+  linkedUseCaseIds: [],
+  linkedFundingApplicationIds: [],
+  linkedCustomerIds: [],
+  linkedDocumentIds: [],
+  linkedDecisionIds: [],
+
+  createdAt: "",
+  updatedAt: ""
+}
+```
+
+### Claim statuses
+
+- Draft
+- Under Review
+- Approved
+- Approved with Qualification
+- Internal Only
+- Rejected
+- Retired
+- Needs Reverification
+
+### Claim categories
+
+- Product capability
+- Privacy
+- Security
+- Performance
+- Efficiency
+- Research value
+- Clinical value
+- Commercial value
+- Deployment
+- Integration
+- Time savings
+- Cost savings
+- Scalability
+- Differentiation
+- Compliance
+- Evidence statement
+
+---
+
+## 29. Existing Collection Enhancements
+
+### Tasks
+
+Add:
+
+```javascript
+{
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: []
 }
 ```
 
 ### Customers
 
-Add support for:
+Add:
 
 ```javascript
 {
@@ -1435,101 +2543,172 @@ Add support for:
   contactPersonIds: [],
   decisionMakerPersonIds: [],
   championPersonIds: [],
+
+  productVersionRequestedIds: [],
+  productCapabilityRequestedIds: [],
+  useCaseIds: [],
+  presentationIds: [],
+  contentAssetIds: [],
+
   linkedFundingOpportunityIds: [],
   linkedPathwayCaseIds: [],
   linkedWorkPackageIds: [],
   linkedDecisionIds: [],
+
   confidentiality: "Confidential"
 }
 ```
 
 ### Meetings
 
-Add support for:
+Add:
 
 ```javascript
 {
   attendeePersonIds: [],
   organizationIds: [],
-  linkedFundingOpportunityIds: [],
-  linkedPathwayCaseIds: [],
-  linkedWorkPackageIds: [],
-  linkedDecisionIds: [],
+
+  productFeedback: [],
+  capabilityRequests: [],
+  audienceNeeds: [],
+  contentRequests: [],
+
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: [],
+
   confidentiality: "Confidential"
 }
 ```
 
 ### Risks
 
-Add support for:
+Add:
 
 ```javascript
 {
-  linkedPersonIds: [],
-  linkedOrganizationIds: [],
-  linkedFundingOpportunityIds: [],
-  linkedPathwayCaseIds: [],
-  linkedWorkPackageIds: [],
-  linkedDecisionIds: [],
-  confidentiality: "Confidential"
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: []
 }
 ```
 
 ### Funding Needs
 
-Funding Needs should remain separate from Funding Opportunities.
-
-- A Funding Need describes what FedEMR requires.
-- A Funding Opportunity describes a possible external source.
-- A Funding Application describes the submission effort.
-
-Add support for:
+Add:
 
 ```javascript
 {
-  linkedFundingOpportunityIds: [],
-  linkedWorkPackageIds: [],
-  linkedResourceRequirementIds: [],
-  linkedDecisionIds: []
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: []
 }
 ```
 
 ### Advisor Recommendations
 
-Add support for:
+Add:
 
 ```javascript
 {
   advisorPersonId: "",
   advisorOrganizationId: "",
-  linkedFundingOpportunityIds: [],
-  linkedPathwayCaseIds: [],
-  linkedWorkPackageIds: [],
-  linkedDecisionIds: [],
-  confidentiality: "Confidential"
+
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: [],
+  linkedApprovedClaimIds: []
 }
 ```
 
 ### Roadmap Items
 
-Add support for:
+Add:
 
 ```javascript
 {
-  linkedPersonIds: [],
-  linkedOrganizationIds: [],
-  linkedFundingOpportunityIds: [],
-  linkedPathwayCaseIds: [],
-  linkedWorkPackageIds: [],
-  linkedDecisionIds: []
+  linkedProductIds: [],
+  linkedProductVersionIds: [],
+  linkedProductCapabilityIds: [],
+  linkedAudienceIds: [],
+  linkedContentAssetIds: [],
+  linkedPresentationIds: [],
+  linkedUseCaseIds: [],
+  linkedCaseStudyIds: []
 }
 ```
 
 ---
 
-## 21. Funding Fit Scoring
+## 30. Product Readiness Scoring
 
-Funding opportunities should use a transparent weighted score.
+Product versions should support transparent readiness scoring.
+
+### Initial components
+
+- Core capability readiness
+- Product stability
+- Deployment readiness
+- Security readiness
+- Privacy readiness
+- Documentation completeness
+- Support readiness
+- Training readiness
+- Integration readiness
+- Evidence strength
+- Commercial packaging readiness
+- Release-blocker severity
+
+### Example score record
+
+```javascript
+{
+  productVersionId: "",
+
+  coreCapabilityScore: 0,
+  stabilityScore: 0,
+  deploymentReadinessScore: 0,
+  securityReadinessScore: 0,
+  privacyReadinessScore: 0,
+  documentationScore: 0,
+  supportReadinessScore: 0,
+  trainingReadinessScore: 0,
+  integrationReadinessScore: 0,
+  evidenceStrengthScore: 0,
+  commercialPackagingScore: 0,
+  releaseBlockerScore: 0,
+
+  overallProductReadinessScore: 0,
+
+  explanation: "",
+  blockers: [],
+  unknowns: [],
+  sourceRecordIds: [],
+
+  calculatedAt: ""
+}
+```
+
+A Product Readiness score must not imply regulatory, clinical, security, procurement, or commercial approval unless those approvals are explicitly documented.
+
+---
+
+## 31. Funding Fit Scoring
 
 ### Weighting
 
@@ -1541,45 +2720,19 @@ Funding opportunities should use a transparent weighted score.
 - Timing: 10%
 - Partner readiness: 5%
 
-### Score record
+The score should also display:
 
-```javascript
-{
-  eligibilityScore: 0,
-  strategicAlignmentScore: 0,
-  impactScore: 0,
-  fundingVsEffortScore: 0,
-  probabilityScore: 0,
-  timingScore: 0,
-  partnerReadinessScore: 0,
+- Product versions supported
+- Capabilities supported
+- Use cases supported
+- Work packages funded
+- Content or presentation requirements
 
-  overallFitScore: 0,
-
-  explanation: "",
-  eligibilityRisks: [],
-  unknowns: [],
-
-  calculatedAt: ""
-}
-```
-
-### Score rules
-
-The system must:
-
-- Show component scores
-- Show the weighting
-- Explain the final score
-- Identify unknowns
-- Identify eligibility risks
-- Identify missing partners
-- Identify missing evidence
-- Show the source and verification date
-- Never invent funding rules or deadlines
+The system must never invent funding rules or deadlines.
 
 ---
 
-## 22. Executive Score Records
+## 32. Executive Score Records
 
 Future versions should preserve score history.
 
@@ -1609,6 +2762,7 @@ Future versions should preserve score history.
 - Company Health
 - Commercial Readiness
 - Government Readiness
+- Product Readiness
 - Funding Readiness
 - Risk Severity
 - Pipeline Score
@@ -1616,31 +2770,35 @@ Future versions should preserve score history.
 - Security Readiness
 - Procurement Readiness
 - Legal Readiness
+- Content Readiness
+- Evidence Readiness
 
 ---
 
-## 23. Confidentiality Rules
+## 33. Confidentiality Rules
 
 ### Public
 
 May include:
 
 - Public funding deadlines
-- Public program information
 - Public government requirements
 - Public institutional policies
-- Public website links
-- Public contact information
+- Public product descriptions
+- Approved public claims
+- Published case studies
+- Approved public presentations
 
 ### Internal
 
 May include:
 
 - Internal tasks
-- General operating notes
-- Non-sensitive planning
-- High-level work estimates
-- Internal readiness information
+- General planning
+- Draft product descriptions
+- Non-sensitive work estimates
+- Internal audience content
+- Draft use cases
 
 ### Confidential
 
@@ -1650,10 +2808,12 @@ May include:
 - Customer discussions
 - Advisor discussions
 - Funding strategy
-- Institutional cases
-- Legal-process notes
-- Internal budgets
-- Private meeting notes
+- Unreleased product versions
+- Product roadmap details
+- Draft presentations
+- Unpublished case studies
+- Product limitations
+- Internal test results
 
 ### Restricted
 
@@ -1662,38 +2822,53 @@ May include:
 - Detailed finances
 - Cap tables
 - Legal strategy
-- Shareholder information
-- Sensitive commercial agreements
-- Highly sensitive personal information
-- Security credentials
+- Sensitive security details
+- Confidential commercial agreements
+- Restricted customer information
 - Authentication secrets
+- Highly sensitive product vulnerabilities
 
-Restricted data must never be sent to external research tools without explicit approval and a defined purpose.
+Restricted data must never be sent to external research tools without explicit approval.
 
 ---
 
-## 24. IndexedDB Migration Requirements
+## 34. IndexedDB Migration Requirements
 
-When new collections are implemented:
+When Product and Market collections are implemented:
 
-1. Increase the IndexedDB version.
-2. Add missing object stores during `onupgradeneeded`.
+1. Increase the IndexedDB version from 2 to 3.
+2. Add all missing Product and Market object stores.
 3. Do not delete existing object stores.
 4. Do not clear existing records.
-5. Test migration using an existing populated browser database.
-6. Test a clean installation using a fresh browser profile.
-7. Confirm JSON import and export still work.
-8. Confirm legacy exports can be imported safely.
-9. Add default empty arrays for missing new collections.
-10. Log migration errors clearly.
+5. Seed only newly created stores.
+6. Test using the existing populated browser database.
+7. Test a clean installation using a fresh browser profile.
+8. Confirm JSON import and export still work.
+9. Confirm older exports can still be imported safely.
+10. Add missing collections as empty arrays.
 11. Preserve existing record IDs.
-12. Add a schema version to exports.
-13. Back up data before destructive migration.
-14. Never silently discard unknown fields.
+12. Preserve unknown fields.
+13. Log migration errors clearly.
+14. Close duplicate browser tabs before database upgrades.
+15. Never silently discard data.
+
+New object stores:
+
+```text
+products
+productVersions
+productCapabilities
+audiences
+contentAssets
+presentations
+useCases
+caseStudies
+approvedClaims
+```
 
 ---
 
-## 25. Import and Export Requirements
+## 35. Import and Export Requirements
 
 JSON export should include:
 
@@ -1715,9 +2890,15 @@ JSON export should include:
     tasks: [],
     people: [],
     organizations: [],
-    fundingOpportunities: [],
-    institutionalPathways: [],
-    workPackages: []
+    products: [],
+    productVersions: [],
+    productCapabilities: [],
+    audiences: [],
+    contentAssets: [],
+    presentations: [],
+    useCases: [],
+    caseStudies: [],
+    approvedClaims: []
   }
 }
 ```
@@ -1732,195 +2913,292 @@ Import should:
 - Log import activity
 - Preserve record IDs
 - Report migration issues
-- Support older exports when practical
+- Support older exports where practical
 - Never execute code contained in imported data
 
 ---
 
-## 26. Relationship Integrity Rules
-
-The system should enforce these rules:
+## 36. Relationship Integrity Rules
 
 1. People are stored once in `people`.
 2. Organizations are stored once in `organizations`.
-3. Other records refer to people and organizations by ID.
-4. Deleting a person should not silently delete linked history.
-5. Inactive people should normally be archived rather than deleted.
-6. Relationship records should preserve start and end dates.
-7. Reassigning a role should preserve the previous role history.
-8. Duplicate records should be reviewed before merging.
-9. Broken references should be reported.
-10. Import should validate referenced IDs where practical.
+3. Products are stored once in `products`.
+4. Product versions belong to a product.
+5. Product capabilities link to versions by ID.
+6. Audience profiles are reusable.
+7. Content assets link to audiences instead of duplicating audience definitions.
+8. Presentations link to content, claims, evidence, use cases, and product versions.
+9. Case studies must identify their classification.
+10. Claims must link to evidence.
+11. Planned capabilities must not be represented as available.
+12. Research-only capabilities must not be represented as commercially supported.
+13. Hypothetical examples must not be represented as completed deployments.
+14. Deleting a linked record must not silently erase historical records.
+15. Broken references should be reported.
+16. Duplicate records should be reviewed before merging.
+17. Import should validate linked IDs where practical.
 
 ---
 
-## 27. Initial Sample Records
+## 37. Initial Sample Records
 
-Public-repository sample data must be fictional or safely generalized.
+Public-repository sample data must be fictional, approved, or safely generalized.
 
-Version 0.5 should eventually include sample records for:
+### Products
 
-### People
+- FedEMR, using approved high-level product information only
 
-- Fictional funding-program advisor
-- Fictional university legal contact
-- Fictional research collaborator
-- Fictional potential customer contact
+### Product versions
 
-### Organizations
+- Current generalized FedEMR research platform
+- Planned FedEMR V2 zero-code platform
 
-- Fictional funding agency
-- Fictional health system
-- University of Calgary, using only public organizational information
-- FedEMR Technologies Inc., using only approved non-confidential information
+### Product capabilities
 
-### Funding opportunities
+- Federated model training
+- Federated analytics
+- Local data control
+- No patient-level data transfer
+- Multi-site orchestration
+- Zero-code workflow
+- Model validation
+- Deployment support
 
-- Fictional commercialization grant
-- Fictional research grant
-- Fictional hybrid implementation program
+### Audiences
 
-### Institutional pathways
+- Clinical physicians
+- Researchers
+- Government
+- Health-system executives
+- Privacy and legal teams
+- Technical teams
+- Pharmaceutical companies
+- Funders
 
-- Conflict-of-interest review
-- University/company commercial boundary
-- Legal agreement review
+### Content assets
 
-### Work packages
+- General product explanation
+- Physician explanation
+- Researcher explanation
+- Government value proposition
+- Privacy explanation
 
-- Cybersecurity and procurement package
-- First-customer deployment readiness
-- Funding application development
+### Presentations
 
-No private emails, phone numbers, detailed finances, legal strategy, or confidential customer information should be committed.
+- Government briefing
+- Research collaboration deck
+- Technical overview
+- Conference presentation
+
+### Use cases
+
+- Multi-site clinical prediction
+- Federated model validation
+- Cardiometabolic modelling
+- Pharmaceutical cohort discovery
+- Cross-jurisdiction research
+
+### Case studies
+
+Only fictional, generalized, hypothetical, composite, or explicitly approved examples should be included.
+
+### Approved claims
+
+Only claims supported by approved evidence or clearly labelled draft sample claims should be included.
+
+No private emails, phone numbers, customer names, detailed finances, confidential legal strategy, unpublished results, or sensitive product details should be committed.
 
 ---
 
-## 28. Version 0.5 Implementation Priority
+## 38. Version 0.5 Implementation Priority
 
-Implement collections in this order:
+Implement in this order:
 
 1. People
 2. Organizations
-3. Funding Opportunities
-4. Relationships
-5. Follow-Ups
-6. Funding Applications
-7. Institutional Pathways
-8. Pathway Steps
-9. Pathway Cases
-10. Work Packages
-11. Resource Requirements
-12. Documents
-13. Evidence
-14. Decisions
+3. Products
+4. Product Versions
+5. Product Capabilities
+6. Audiences
+7. Content Assets
+8. Presentations
+9. Use Cases
+10. Case Studies
+11. Approved Claims
+12. Funding Opportunities
+13. Relationships
+14. Follow-Ups
+15. Funding Applications
+16. Institutional Pathways
+17. Pathway Steps
+18. Pathway Cases
+19. Work Packages
+20. Resource Requirements
+21. Documents
+22. Evidence
+23. Decisions
 
-Not every advanced field must be exposed in the first user interface.
+Not every advanced field must appear in the first interface.
 
-The data architecture should support expansion without requiring destructive redesign.
+The architecture should support expansion without destructive redesign.
 
 ---
 
-## 29. Version 0.5 Minimum UI Requirements
+## 39. Minimum UI Requirements
 
-### People
+### Products
 
-The first People interface should support:
+- Add product
+- Edit product
+- Product overview
+- Current version
+- Next version
+- Value proposition
+- Product maturity
+- TRL
+- Deployment model
+- Privacy model
+- Differentiators
+- Limitations
 
-- Add person
-- Edit person
-- Archive person
-- Search
-- Organization link
-- Relationship types
-- Focus areas
-- Last interaction
-- Next follow-up
-- Internal relationship owner
+### Product Versions
 
-### Organizations
-
-The first Organizations interface should support:
-
-- Add organization
-- Edit organization
-- Search
-- Organization type
-- Sector
-- Website
-- Linked people
-- Linked opportunities
-
-### Funding Opportunities
-
-The first Funding interface should support:
-
-- Add opportunity
-- Edit opportunity
+- Add version
+- Edit version
+- Version number
 - Status
-- Pathway
-- Amount
-- Deadline
-- Funder
-- Program contact
-- Eligibility summary
-- Verification status
-- Source URL
-- Fit score
-- Unknowns
-- Decision status
+- Planned release date
+- Improvements
+- Capabilities
+- Release blockers
+- Known limitations
+- Readiness status
+- Linked work packages
+- Linked risks
+- Linked funding
 
-### Institutional Pathways
+### Product Capabilities
 
-The first Pathways interface should support:
+- Add capability
+- Edit capability
+- Category
+- Availability status
+- Research-only status
+- Commercial support status
+- Product versions
+- Dependencies
+- Limitations
+- Evidence status
+- Linked use cases
 
-- Add pathway
-- Edit pathway
-- Trigger
-- Intended outcome
-- Departments
-- Contact roles
-- Required documents
-- Open questions
-- Verification status
-- Last verified date
-- Source URLs
+### Audiences
 
-### Work Packages
+- Add audience
+- Edit audience
+- Primary concerns
+- Preferred terminology
+- Technical depth
+- Objections
+- Evidence preferences
+- Call to action
 
-The first Work Package interface should support:
+### Content Assets
 
-- Add work package
-- Edit work package
-- Outcome
-- Pathway
-- Estimated hours
-- Estimated cost
-- Required roles
-- Student suitability
-- Funding requirement
-- Linked funding opportunities
-- Confidence level
+- Add content
+- Edit content
+- Audience
+- Content type
+- Product version
+- Core message
+- Approval status
+- Approved claims
+- Review date
+
+### Presentations
+
+- Add presentation
+- Edit presentation
+- Audience
+- Purpose
+- Type
+- Duration
+- Product version
+- File reference
+- Status
+- Approved claims
+- Evidence
+- Use cases
+- Case studies
+- Presentation history
+
+### Use Cases
+
+- Add use case
+- Edit use case
+- Problem
+- FedEMR workflow
+- Environment
+- Required capabilities
+- Product version
+- Benefits
+- Status
+- Evidence
+- Readiness
+
+### Case Studies
+
+- Add case study
+- Edit case study
+- Classification
+- Publication status
+- Environment
+- Approach
+- Results
+- Evidence
+- Permissions
+- Confidentiality
+- Linked claims
+
+### Approved Claims
+
+- Add claim
+- Edit claim
+- Audience
+- Product version
+- Capability
+- Evidence
+- Approval status
+- Required qualifier
+- Permitted contexts
+- Review date
 
 ---
 
-## 30. Acceptance Criteria
+## 40. Acceptance Criteria
 
 The Version 0.5 data model is successful when:
 
-- Existing data survives the IndexedDB upgrade.
+- Existing data survives IndexedDB upgrades.
 - People and organizations are stored centrally.
-- Funding opportunities can link to people and organizations.
-- Funding contacts are not duplicated across modules.
-- Funding opportunities can be scored transparently.
-- Institutional pathways include verification metadata.
-- Active pathway cases can track real FedEMR processes.
-- Work packages can estimate hours, roles, costs, and funding gaps.
-- Resource requirements can identify student-suitable work.
-- Records can link across modules using stable IDs.
+- Product information is stored centrally.
+- The current product version can be identified.
+- The next planned product version can be identified.
+- Product improvements and release blockers can be stored.
+- Capabilities can be classified accurately.
+- Research-only and commercially supported capabilities are distinguishable.
+- Audience profiles can be stored and reused.
+- Audience-specific content can be linked to audiences and product versions.
+- Presentations can link to audiences, claims, evidence, use cases, and case studies.
+- Use cases can be classified by maturity.
+- Case studies can be classified as real, active, demonstrated, hypothetical, or composite.
+- Approved claims can link to evidence and required qualifiers.
+- Planned capabilities are not represented as available.
+- Hypothetical examples are not represented as completed deployments.
+- Funding opportunities can link to product versions, capabilities, and use cases.
+- Institutional pathways retain verification metadata.
+- Work packages can link to product releases, content, and presentations.
 - Import and export remain functional.
 - Confidentiality classifications are supported.
-- No confidential sample data is committed to the public repository.
-- No API keys are stored in browser code.
+- No confidential sample data is committed.
 - No existing user data is silently deleted.
 - No browser console errors are introduced.
