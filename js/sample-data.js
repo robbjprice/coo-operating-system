@@ -4696,7 +4696,441 @@ export const sampleData = {
     })
   ],
 
-  presentations: [],
+    presentations: [
+    fixed('presentation_government', {
+      title: 'FedEMR Government Briefing',
+      presentationType: 'Government Briefing',
+
+      purpose:
+        'Explain public value, privacy-preserving collaboration, commercialization readiness, and implementation needs.',
+
+      primaryAudienceId:
+        'audience_government',
+
+      audienceIds: [
+        'audience_government',
+        'audience_funders',
+        'audience_health_executives'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_v2',
+
+      durationMinutes: 10,
+      format: 'Presentation',
+
+      status: 'Draft',
+      approvalStatus: 'Not Reviewed',
+
+      fileName: '',
+      fileUrl: '',
+      storageLocation: '',
+      documentId: '',
+
+      outline: [
+        'Health-system problem',
+        'FedEMR approach',
+        'Privacy and local control',
+        'Public value',
+        'Product roadmap',
+        'Investment and implementation ask'
+      ],
+
+      coreMessages: [
+        'Health-data collaboration remains difficult across institutions and jurisdictions.',
+        'FedEMR supports distributed computation and local data control.',
+        'Investment should unlock defined product, security, procurement, deployment, and evidence milestones.'
+      ],
+
+      speakerNotes: '',
+
+      callToAction:
+        'Support a defined commercialization and implementation program with measurable public-value outcomes.',
+
+      approvedClaimIds: [],
+      evidenceIds: [],
+
+      useCaseIds: [],
+
+      caseStudyIds: [],
+
+      contentAssetIds: [
+        'content_general_explanation',
+        'content_government_value',
+        'content_privacy_explanation'
+      ],
+
+      productCapabilityIds: [
+        'capability_local_control',
+        'capability_federated_analytics',
+        'capability_orchestration',
+        'capability_zero_code'
+      ],
+
+      lastPresentedDate: '',
+      presentationHistory: [],
+      feedbackReceived: [],
+
+      requiredRevisions: [
+        'Add verified public-value evidence.',
+        'Confirm current and V2 product wording.',
+        'Add approved implementation milestones.',
+        'Add evidence-linked claims before external use.'
+      ],
+
+      owner: 'Robb',
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      confidentiality: 'Confidential',
+
+      linkedPersonIds: [],
+      linkedOrganizationIds: [],
+      linkedMeetingIds: [],
+      linkedCustomerIds: [],
+
+      linkedFundingOpportunityIds: [
+        'funding_commercialization',
+        'funding_implementation'
+      ],
+
+      linkedFundingApplicationIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_v2'
+      ],
+
+      linkedDocumentIds: [],
+
+      linkedWorkPackageIds: [
+        'workpackage_security',
+        'workpackage_deployment'
+      ]
+    }),
+
+    fixed('presentation_research', {
+      title: 'FedEMR Research Collaboration Deck',
+      presentationType:
+        'Research Collaboration Deck',
+
+      purpose:
+        'Explain federated research, multi-site analysis, model development, and external validation.',
+
+      primaryAudienceId:
+        'audience_researchers',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_clinicians'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      durationMinutes: 20,
+      format: 'Presentation',
+
+      status: 'Draft',
+      approvalStatus: 'Under Review',
+
+      fileName: '',
+      fileUrl: '',
+      storageLocation: '',
+      documentId: '',
+
+      outline: [
+        'Multi-site research challenge',
+        'Federated workflow',
+        'Product architecture',
+        'Research use cases',
+        'Participating-site requirements',
+        'Collaboration pathway'
+      ],
+
+      coreMessages: [
+        'FedEMR supports approved distributed research workflows.',
+        'Participating sites retain local control of patient-level source data.',
+        'Use cases, data requirements, governance, and validation protocols must be defined clearly.'
+      ],
+
+      speakerNotes: '',
+
+      callToAction:
+        'Define a research question, participating sites, analytical protocol, governance requirements, and implementation plan.',
+
+      approvedClaimIds: [],
+      evidenceIds: [],
+
+      useCaseIds: [],
+
+      caseStudyIds: [],
+
+      contentAssetIds: [
+        'content_general_explanation',
+        'content_researcher_explanation',
+        'content_privacy_explanation'
+      ],
+
+      productCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration',
+        'capability_model_validation'
+      ],
+
+      lastPresentedDate: '',
+      presentationHistory: [],
+      feedbackReceived: [],
+
+      requiredRevisions: [
+        'Add verified research examples.',
+        'Confirm supported workflow types.',
+        'Add evidence-linked claims and citations.',
+        'Clarify participating-site technical requirements.'
+      ],
+
+      owner: 'Robb',
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      confidentiality: 'Internal',
+
+      linkedPersonIds: [],
+      linkedOrganizationIds: [],
+      linkedMeetingIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current'
+      ],
+
+      linkedDocumentIds: [],
+      linkedWorkPackageIds: []
+      }),
+
+    fixed('presentation_technical', {
+      title: 'FedEMR Technical Overview',
+      presentationType:
+        'Technical Architecture Presentation',
+
+      purpose:
+        'Explain architecture, deployment assumptions, local computation, orchestration, security responsibilities, and implementation requirements.',
+
+      primaryAudienceId:
+        'audience_technical',
+
+      audienceIds: [
+        'audience_technical',
+        'audience_privacy'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      durationMinutes: 30,
+      format: 'Presentation',
+
+      status: 'Draft',
+      approvalStatus: 'Not Reviewed',
+
+      fileName: '',
+      fileUrl: '',
+      storageLocation: '',
+      documentId: '',
+
+      outline: [
+        'Architecture overview',
+        'Participating-site environment',
+        'Workflow orchestration',
+        'Data and output flows',
+        'Security responsibilities',
+        'Deployment requirements',
+        'Support boundaries'
+      ],
+
+      coreMessages: [
+        'Approved computation occurs within participating controlled environments.',
+        'Deployment and support requirements vary by institution.',
+        'Each implementation requires defined security, privacy, legal, and governance controls.'
+      ],
+
+      speakerNotes: '',
+
+      callToAction:
+        'Complete technical discovery and an environment-readiness assessment.',
+
+      approvedClaimIds: [],
+      evidenceIds: [],
+
+      useCaseIds: [],
+      caseStudyIds: [],
+
+      contentAssetIds: [
+        'content_general_explanation',
+        'content_privacy_explanation',
+        'content_researcher_explanation'
+      ],
+
+      productCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration',
+        'capability_model_validation',
+        'capability_zero_code'
+      ],
+
+      lastPresentedDate: '',
+      presentationHistory: [],
+      feedbackReceived: [],
+
+      requiredRevisions: [
+        'Add the current architecture diagram.',
+        'Document supported operating systems and environments.',
+        'Add verified deployment and network requirements.',
+        'Define logging, access-control, and support expectations.',
+        'Separate current capabilities from planned V2 capabilities.'
+      ],
+
+      owner: 'FedEMR Team',
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      confidentiality: 'Confidential',
+
+      linkedPersonIds: [],
+      linkedOrganizationIds: [],
+      linkedMeetingIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedDocumentIds: [],
+
+      linkedWorkPackageIds: [
+        'workpackage_security',
+        'workpackage_deployment'
+      ]
+    }),
+
+    fixed('presentation_conference', {
+      title: 'FedEMR Conference Presentation',
+      presentationType:
+        'Conference Presentation',
+
+      purpose:
+        'Present a careful research-focused overview of federated learning, distributed collaboration, and potential applications.',
+
+      primaryAudienceId:
+        'audience_researchers',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_clinicians',
+        'audience_technical'
+      ],
+
+      productId: 'product_fedemr',
+
+      productVersionId:
+        'product_version_current',
+
+      durationMinutes: 10,
+      format: 'Presentation',
+
+      status: 'Draft',
+      approvalStatus: 'Not Reviewed',
+
+      fileName: '',
+      fileUrl: '',
+      storageLocation: '',
+      documentId: '',
+
+      outline: [
+        'Research collaboration problem',
+        'Federated approach',
+        'Generalized workflow',
+        'Potential research applications',
+        'Privacy and governance considerations',
+        'Collaboration opportunity'
+      ],
+
+      coreMessages: [
+        'Federated approaches can support multi-site collaboration while participating organizations retain local control of patient-level source data.',
+        'FedEMR coordinates approved distributed computation across participating environments.',
+        'Each project still requires appropriate research, privacy, legal, security, ethics, and governance review.'
+      ],
+
+      speakerNotes: '',
+
+      callToAction:
+        'Explore a defined multi-site research collaboration.',
+
+      approvedClaimIds: [],
+      evidenceIds: [],
+
+      useCaseIds: [],
+      caseStudyIds: [],
+
+      contentAssetIds: [
+        'content_researcher_explanation',
+        'content_privacy_explanation'
+      ],
+
+      productCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_model_validation'
+      ],
+
+      lastPresentedDate: '',
+      presentationHistory: [],
+      feedbackReceived: [],
+
+      requiredRevisions: [
+        'Add approved evidence and citations.',
+        'Add a verified use-case example.',
+        'Confirm product-version wording.',
+        'Review all privacy and capability claims before external use.'
+      ],
+
+      owner: 'Robb',
+      reviewerPersonIds: [],
+      approvedByPersonIds: [],
+
+      confidentiality: 'Internal',
+
+      linkedPersonIds: [],
+      linkedOrganizationIds: [],
+      linkedMeetingIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedFundingApplicationIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current'
+      ],
+
+      linkedDocumentIds: [],
+      linkedWorkPackageIds: []
+    })
+  ],
+
   useCases: [],
   caseStudies: [],
   approvedClaims: [],
