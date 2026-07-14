@@ -5131,7 +5131,820 @@ export const sampleData = {
     })
   ],
 
-  useCases: [],
+   useCases: [
+    fixed('usecase_multisite_prediction', {
+      title:
+        'Multi-Site Clinical Prediction Model Development',
+
+      category: 'Model Development',
+
+      environment:
+        'Multiple participating health-data environments',
+
+      primaryUser:
+        'Research team or health-data science team',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_clinicians',
+        'audience_technical'
+      ],
+
+      problem:
+        'A model developed using one organization may not represent patients across other populations and settings.',
+
+      currentWorkflow:
+        'Organizations may attempt to transfer data centrally or conduct disconnected local analyses.',
+
+      fedemrWorkflow:
+        'Participating sites perform approved local model-training steps and exchange permitted model information through a coordinated federated workflow.',
+
+      dataSources: [
+        'Institution-controlled health datasets'
+      ],
+
+      participatingSiteProfile:
+        'Multiple organizations with sufficiently compatible data and approved local participation.',
+
+      modelOrAnalysisType:
+        'Supervised prediction model',
+
+      privacyConstraints: [
+        'Patient-level source records remain under participating-site control.',
+        'Permitted model information and outputs must be defined.'
+      ],
+
+      securityConstraints: [
+        'Participating environments require appropriate access controls.'
+      ],
+
+      regulatoryConstraints: [
+        'Research, privacy, legal, ethics, and clinical requirements depend on the intended use.'
+      ],
+
+      deploymentModel:
+        'Distributed participating-site deployment',
+
+      expectedOutcome:
+        'A model informed by multiple participating populations.',
+
+      economicValue:
+        'May reduce the need to create one centralized patient-level dataset.',
+
+      clinicalValue:
+        'May support development using more diverse participating populations.',
+
+      researchValue:
+        'Supports multi-site model development.',
+
+      operationalValue:
+        'Coordinates participating-site execution.',
+
+      technicalValue:
+        'Supports distributed model training and orchestration.',
+
+      technicalRequirements: [
+        'Compatible local datasets',
+        'Approved analysis protocol',
+        'Participating-site compute',
+        'Configured workflow'
+      ],
+
+      requiredProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      requiredProductVersionIds: [
+        'product_version_current'
+      ],
+
+      knownLimitations: [
+        'Data comparability and quality may vary across sites.',
+        'Federated training does not eliminate bias or validation requirements.'
+      ],
+
+      dependencies: [
+        'Site participation',
+        'Data harmonization',
+        'Governance approval'
+      ],
+
+      assumptions: [
+        'Participating sites can implement the approved workflow.'
+      ],
+
+      unknowns: [
+        'Use-case-specific model and data requirements'
+      ],
+
+      evidenceStatus:
+        'Evidence is required for each specific implementation.',
+
+      readinessLevel: 'Demonstration Ready',
+      status: 'Demonstrated',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductIds: [
+        'product_fedemr'
+      ],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedAudienceIds: [
+        'audience_researchers',
+        'audience_clinicians',
+        'audience_technical'
+      ],
+
+      linkedContentAssetIds: [
+        'content_general_explanation',
+        'content_clinician_explanation',
+        'content_researcher_explanation'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_research',
+        'presentation_technical',
+        'presentation_conference'
+      ],
+
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedWorkPackageIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('usecase_external_validation', {
+      title:
+        'Federated External Model Validation',
+
+      category: 'External Validation',
+
+      environment:
+        'Multiple independent participating institutions',
+
+      primaryUser:
+        'Research or model-evaluation team',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_clinicians',
+        'audience_technical',
+        'audience_pharma'
+      ],
+
+      problem:
+        'A model evaluated only at its development site may not perform similarly elsewhere.',
+
+      currentWorkflow:
+        'Organizations may transfer validation data centrally or conduct disconnected evaluations.',
+
+      fedemrWorkflow:
+        'Participating sites execute an approved validation workflow locally and return permitted performance summaries.',
+
+      dataSources: [
+        'Local validation datasets'
+      ],
+
+      participatingSiteProfile:
+        'Institutions with comparable outcomes, variables, and validation readiness.',
+
+      modelOrAnalysisType:
+        'External model validation',
+
+      privacyConstraints: [
+        'Patient-level validation records remain local.',
+        'Only approved validation outputs are exchanged.'
+      ],
+
+      securityConstraints: [
+        'Model access and output exchange must be controlled.'
+      ],
+
+      regulatoryConstraints: [
+        'Requirements depend on the intended research or clinical use.'
+      ],
+
+      deploymentModel:
+        'Distributed validation deployment',
+
+      expectedOutcome:
+        'Evidence describing model performance across participating environments.',
+
+      economicValue:
+        'May support broader evaluation without centralizing validation records.',
+
+      clinicalValue:
+        'Supports assessment across different patient populations.',
+
+      researchValue:
+        'Generates external-validation evidence.',
+
+      operationalValue:
+        'Coordinates consistent validation workflows.',
+
+      technicalValue:
+        'Supports distributed model evaluation.',
+
+      technicalRequirements: [
+        'Approved validation protocol',
+        'Compatible outcome definitions',
+        'Validation-ready datasets'
+      ],
+
+      requiredProductCapabilityIds: [
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      requiredProductVersionIds: [
+        'product_version_current'
+      ],
+
+      knownLimitations: [
+        'Results depend on data quality and protocol consistency.',
+        'Validation does not itself authorize clinical deployment.'
+      ],
+
+      dependencies: [
+        'Validated outcome definitions',
+        'Participating-site approval'
+      ],
+
+      assumptions: [],
+      unknowns: [],
+
+      evidenceStatus:
+        'Specific validation evidence is required.',
+
+      readinessLevel: 'Demonstration Ready',
+      status: 'Demonstrated',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductIds: [
+        'product_fedemr'
+      ],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedAudienceIds: [
+        'audience_researchers',
+        'audience_clinicians',
+        'audience_technical',
+        'audience_pharma'
+      ],
+
+      linkedContentAssetIds: [
+        'content_general_explanation',
+        'content_researcher_explanation'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_research',
+        'presentation_technical',
+        'presentation_conference'
+      ],
+
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedWorkPackageIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+        }),
+
+    fixed('usecase_cardiometabolic', {
+      title:
+        'Multi-Site Cardiometabolic Risk Modelling',
+
+      category: 'Cardiometabolic Disease',
+
+      environment:
+        'Multiple healthcare or research organizations',
+
+      primaryUser:
+        'Clinical research and health-data science teams',
+
+      audienceIds: [
+        'audience_clinicians',
+        'audience_researchers',
+        'audience_government'
+      ],
+
+      problem:
+        'Cardiometabolic risk models may require large, diverse populations and validation across different care settings.',
+
+      currentWorkflow:
+        'Sites may conduct independent analyses or attempt difficult centralized data collection.',
+
+      fedemrWorkflow:
+        'Participating sites could train or evaluate an approved cardiometabolic model using a coordinated federated workflow.',
+
+      dataSources: [
+        'Generalized electronic-health-record variables',
+        'Approved clinical outcome variables'
+      ],
+
+      participatingSiteProfile:
+        'Organizations with compatible cardiometabolic variables, appropriate approvals, and technical readiness.',
+
+      modelOrAnalysisType:
+        'Risk prediction or stratification',
+
+      privacyConstraints: [
+        'Patient-level source data remains local.',
+        'Permitted outputs must be defined before execution.'
+      ],
+
+      securityConstraints: [
+        'Participating environments require appropriate access and deployment controls.'
+      ],
+
+      regulatoryConstraints: [
+        'Clinical use would require appropriate validation, oversight, and approval.'
+      ],
+
+      deploymentModel:
+        'Distributed research workflow',
+
+      expectedOutcome:
+        'A research model or validation result informed by multiple participating settings.',
+
+      economicValue:
+        'Potential future value depends on validated implementation outcomes.',
+
+      clinicalValue:
+        'May support broader population representation in research and validation.',
+
+      researchValue:
+        'Supports multi-site cardiometabolic research.',
+
+      operationalValue:
+        'Coordinates participating-site analysis.',
+
+      technicalValue:
+        'Supports federated training or validation.',
+
+      technicalRequirements: [
+        'Harmonized variables',
+        'Approved protocol',
+        'Participating-site infrastructure',
+        'Compatible outcome definitions'
+      ],
+
+      requiredProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      requiredProductVersionIds: [
+        'product_version_current'
+      ],
+
+      knownLimitations: [
+        'This is a generalized use case, not a claim of completed clinical deployment.',
+        'Model quality depends on data quality, population differences, and validation design.'
+      ],
+
+      dependencies: [
+        'Clinical leadership',
+        'Research approval',
+        'Data harmonization',
+        'Participating-site readiness'
+      ],
+
+      assumptions: [],
+
+      unknowns: [
+        'Specific disease outcome',
+        'Participating sites',
+        'Model design',
+        'Deployment pathway'
+      ],
+
+      evidenceStatus: 'Hypothetical Example',
+      readinessLevel: 'Concept',
+      status: 'Hypothetical',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductIds: [
+        'product_fedemr'
+      ],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_model_validation',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedAudienceIds: [
+        'audience_clinicians',
+        'audience_researchers',
+        'audience_government'
+      ],
+
+      linkedContentAssetIds: [
+        'content_clinician_explanation',
+        'content_researcher_explanation',
+        'content_government_value'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_government',
+        'presentation_research',
+        'presentation_conference'
+      ],
+
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedCustomerIds: [],
+
+      linkedFundingOpportunityIds: [
+        'funding_implementation'
+      ],
+
+      linkedWorkPackageIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('usecase_pharma_cohort', {
+      title:
+        'Distributed Pharmaceutical Cohort Feasibility',
+
+      category: 'Cohort Discovery',
+
+      environment:
+        'Multiple participating data-holding organizations',
+
+      primaryUser:
+        'Pharmaceutical research or real-world-evidence team',
+
+      audienceIds: [
+        'audience_pharma',
+        'audience_researchers',
+        'audience_technical'
+      ],
+
+      problem:
+        'Sponsors may need to estimate eligible cohorts across organizations without centralizing patient-level records.',
+
+      currentWorkflow:
+        'Sites may perform disconnected manual feasibility counts or transfer data under complex agreements.',
+
+      fedemrWorkflow:
+        'Participating sites could run an approved cohort definition locally and return permitted aggregate feasibility results.',
+
+      dataSources: [
+        'Local approved health-data sources'
+      ],
+
+      participatingSiteProfile:
+        'Organizations able to implement a consistent cohort definition and approved output rules.',
+
+      modelOrAnalysisType:
+        'Distributed cohort query or feasibility analysis',
+
+      privacyConstraints: [
+        'Patient-level records remain local.',
+        'Aggregate outputs require disclosure review.'
+      ],
+
+      securityConstraints: [
+        'Query execution and output exchange require controlled access.'
+      ],
+
+      regulatoryConstraints: [
+        'Sponsor, site, privacy, research, legal, and contracting requirements apply.'
+      ],
+
+      deploymentModel:
+        'Distributed analysis workflow',
+
+      expectedOutcome:
+        'Aggregate information about potential cohort availability across participating sites.',
+
+      economicValue:
+        'May improve study-feasibility planning and reduce duplicated manual work.',
+
+      clinicalValue: '',
+
+      researchValue:
+        'Supports distributed cohort assessment.',
+
+      operationalValue:
+        'Coordinates common cohort definitions across participating sites.',
+
+      technicalValue:
+        'Supports federated analytics and controlled output aggregation.',
+
+      technicalRequirements: [
+        'Common cohort definition',
+        'Compatible local variables',
+        'Output-disclosure rules',
+        'Participating-site technical readiness'
+      ],
+
+      requiredProductCapabilityIds: [
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      requiredProductVersionIds: [
+        'product_version_current'
+      ],
+
+      knownLimitations: [
+        'This is a generalized hypothetical use case.',
+        'Cohort counts depend on site data quality and definition consistency.',
+        'Aggregate outputs may still require disclosure controls.'
+      ],
+
+      dependencies: [
+        'Participating sites',
+        'Agreements',
+        'Cohort specification',
+        'Local data mapping'
+      ],
+
+      assumptions: [],
+
+      unknowns: [
+        'Specific sponsor requirements',
+        'Participating sites',
+        'Required output thresholds'
+      ],
+
+      evidenceStatus: 'Hypothetical Example',
+      readinessLevel: 'Concept',
+      status: 'Hypothetical',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductIds: [
+        'product_fedemr'
+      ],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedAudienceIds: [
+        'audience_pharma',
+        'audience_researchers',
+        'audience_technical'
+      ],
+
+      linkedContentAssetIds: [
+        'content_general_explanation',
+        'content_researcher_explanation',
+        'content_privacy_explanation'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_research',
+        'presentation_technical'
+      ],
+
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedWorkPackageIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+        }),
+
+    fixed('usecase_cross_jurisdiction', {
+      title:
+        'Cross-Jurisdiction Federated Research',
+
+      category:
+        'Cross-Jurisdiction Research',
+
+      environment:
+        'Organizations operating under different institutional or geographic governance environments',
+
+      primaryUser:
+        'Multi-institution research network',
+
+      audienceIds: [
+        'audience_researchers',
+        'audience_government',
+        'audience_privacy',
+        'audience_technical'
+      ],
+
+      problem:
+        'Cross-jurisdiction research may be slowed by legal, governance, privacy, contracting, and data-transfer barriers.',
+
+      currentWorkflow:
+        'Projects may attempt to create a central dataset or conduct disconnected local analyses.',
+
+      fedemrWorkflow:
+        'Participating organizations could run an approved common analytical workflow locally and exchange permitted results.',
+
+      dataSources: [
+        'Institution-controlled research datasets'
+      ],
+
+      participatingSiteProfile:
+        'Organizations with compatible data, required approvals, agreements, and technical capacity.',
+
+      modelOrAnalysisType:
+        'Federated analytics or model workflow',
+
+      privacyConstraints: [
+        'Local data control',
+        'Jurisdiction-specific requirements',
+        'Defined permitted outputs'
+      ],
+
+      securityConstraints: [
+        'Cross-site identity, access, communication, and logging controls'
+      ],
+
+      regulatoryConstraints: [
+        'Jurisdiction-specific legal, privacy, research, and ethics requirements'
+      ],
+
+      deploymentModel:
+        'Distributed cross-jurisdiction deployment',
+
+      expectedOutcome:
+        'A coordinated multi-jurisdiction analysis without creating a routine central patient-level repository.',
+
+      economicValue:
+        'May reduce duplicated analysis and central data-transfer effort.',
+
+      clinicalValue: '',
+
+      researchValue:
+        'Supports broader collaborative research across institutions and jurisdictions.',
+
+      operationalValue:
+        'Provides one coordinated workflow across participating organizations.',
+
+      technicalValue:
+        'Supports distributed execution and permitted-output aggregation.',
+
+      technicalRequirements: [
+        'Compatible data model',
+        'Institutional approvals',
+        'Technical environment',
+        'Common analysis protocol',
+        'Cross-site agreements'
+      ],
+
+      requiredProductCapabilityIds: [
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      requiredProductVersionIds: [
+        'product_version_current'
+      ],
+
+      knownLimitations: [
+        'Federated architecture does not remove jurisdiction-specific legal or governance requirements.',
+        'Technical compatibility and data harmonization remain necessary.'
+      ],
+
+      dependencies: [
+        'Cross-site agreements',
+        'Research approvals',
+        'Privacy and legal review',
+        'Technical compatibility',
+        'Data harmonization'
+      ],
+
+      assumptions: [
+        'Participating sites can approve and operate the defined workflow.'
+      ],
+
+      unknowns: [
+        'Jurisdiction-specific requirements',
+        'Permitted outputs',
+        'Participating-site infrastructure'
+      ],
+
+      evidenceStatus:
+        'Generalized use case requiring project-specific evidence.',
+
+      readinessLevel: 'Designed',
+      status: 'Designed',
+
+      owner: 'FedEMR Team',
+      confidentiality: 'Internal',
+
+      linkedProductIds: [
+        'product_fedemr'
+      ],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration'
+      ],
+
+      linkedAudienceIds: [
+        'audience_researchers',
+        'audience_government',
+        'audience_privacy',
+        'audience_technical'
+      ],
+
+      linkedContentAssetIds: [
+        'content_researcher_explanation',
+        'content_government_value',
+        'content_privacy_explanation'
+      ],
+
+      linkedPresentationIds: [
+        'presentation_government',
+        'presentation_research',
+        'presentation_technical'
+      ],
+
+      linkedCaseStudyIds: [],
+      linkedApprovedClaimIds: [],
+      linkedEvidenceIds: [],
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedCustomerIds: [],
+      linkedFundingOpportunityIds: [],
+      linkedWorkPackageIds: [],
+      linkedRiskIds: [],
+      linkedDecisionIds: []
+    })
+  ],
+
   caseStudies: [],
   approvedClaims: [],
 
