@@ -3142,7 +3142,922 @@ export const sampleData = {
     })
   ],
 
-  audiences: [],
+    audiences: [
+    fixed('audience_researchers', {
+      name: 'Researchers',
+      audienceType: 'Research',
+
+      description:
+        'Researchers interested in multi-site collaboration, methodology, reproducibility, governance, and publication.',
+
+      knowledgeLevel: 'Medium to High',
+
+      primaryGoals: [
+        'Conduct multi-site research',
+        'Access broader populations',
+        'Validate models externally',
+        'Produce reproducible evidence'
+      ],
+
+      primaryConcerns: [
+        'Methodological validity',
+        'Data harmonization',
+        'Governance',
+        'Reproducibility',
+        'Publication'
+      ],
+
+      commonObjections: [
+        'Will participating sites produce comparable results?',
+        'How are workflows reproduced?',
+        'What analysis types are supported?'
+      ],
+
+      commonQuestions: [
+        'How are sites onboarded?',
+        'How is model validation performed?',
+        'What data standards are required?'
+      ],
+
+      preferredTerminology: [
+        'Federated analysis',
+        'External validation',
+        'Multi-site research',
+        'Reproducible workflow'
+      ],
+
+      termsToAvoid: [
+        'Oversimplified claims',
+        'Unsupported performance claims'
+      ],
+
+      desiredTechnicalDepth: 'Medium to High',
+
+      preferredEvidenceTypes: [
+        'Methods documentation',
+        'Technical validation',
+        'Research publications',
+        'Reproducible examples'
+      ],
+
+      typicalCallToAction:
+        'Define a multi-site research question and participating-site requirements.',
+
+      privacyConcerns: [
+        'Research governance',
+        'Permitted data use'
+      ],
+
+      securityConcerns: [],
+
+      commercialConcerns: [],
+
+      clinicalConcerns: [],
+
+      researchConcerns: [
+        'Methodology',
+        'Reproducibility',
+        'Data comparability'
+      ],
+
+      procurementConcerns: [],
+
+      decisionCriteria: [
+        'Scientific fit',
+        'Feasibility',
+        'Site readiness',
+        'Methodological quality'
+      ],
+
+      successMeasures: [
+        'Successful multi-site analysis',
+        'Valid results',
+        'Reproducible workflow'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_model_validation'
+      ]
+    }),
+
+    fixed('audience_government', {
+      name: 'Government and Policymakers',
+      audienceType: 'Government',
+
+      description:
+        'Government stakeholders interested in public value, health-system capacity, privacy, economic development, and scalability.',
+
+      knowledgeLevel: 'Variable',
+
+      primaryGoals: [
+        'Improve health-system capacity',
+        'Support responsible innovation',
+        'Demonstrate public value',
+        'Strengthen domestic health technology'
+      ],
+
+      primaryConcerns: [
+        'Value for public investment',
+        'Privacy',
+        'System scalability',
+        'Procurement',
+        'Accountability'
+      ],
+
+      commonObjections: [
+        'How does this create measurable public value?',
+        'Can it be deployed across jurisdictions?',
+        'What implementation risks remain?'
+      ],
+
+      commonQuestions: [
+        'What does each dollar invested unlock?',
+        'How does the approach protect patient information?',
+        'What system-capacity problem does it address?'
+      ],
+
+      preferredTerminology: [
+        'System capacity',
+        'Public value',
+        'Privacy-preserving collaboration',
+        'Economic development'
+      ],
+
+      termsToAvoid: [
+        'Unsupported savings claims',
+        'Guaranteed outcomes'
+      ],
+
+      desiredTechnicalDepth: 'Low to Medium',
+
+      preferredEvidenceTypes: [
+        'Economic analysis',
+        'Implementation results',
+        'System-level outcomes',
+        'Published evidence'
+      ],
+
+      typicalCallToAction:
+        'Support a defined implementation, evidence, or commercialization program.',
+
+      privacyConcerns: [
+        'Public trust',
+        'Patient-data governance'
+      ],
+
+      securityConcerns: [
+        'Government security expectations'
+      ],
+
+      commercialConcerns: [
+        'Company sustainability',
+        'Economic impact'
+      ],
+
+      clinicalConcerns: [],
+
+      researchConcerns: [],
+
+      procurementConcerns: [
+        'Vendor readiness',
+        'Contracting',
+        'Value demonstration'
+      ],
+
+      decisionCriteria: [
+        'Public value',
+        'Feasibility',
+        'Evidence',
+        'Risk',
+        'Scalability'
+      ],
+
+      successMeasures: [
+        'Improved capacity',
+        'Responsible implementation',
+        'Measurable system value'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control',
+        'capability_orchestration'
+      ]
+      }),
+
+    fixed('audience_clinicians', {
+      name: 'Clinical Physicians',
+      audienceType: 'Clinical',
+
+      description:
+        'Clinicians interested in patient relevance, clinical usefulness, workflow impact, and evidence.',
+
+      knowledgeLevel:
+        'Clinical expert with variable technical knowledge',
+
+      primaryGoals: [
+        'Improve patient care',
+        'Understand clinical usefulness',
+        'Reduce workflow burden',
+        'Trust model performance'
+      ],
+
+      primaryConcerns: [
+        'Clinical validity',
+        'Patient safety',
+        'Workflow disruption',
+        'Interpretability',
+        'Privacy'
+      ],
+
+      commonObjections: [
+        'Will this change clinical workflow?',
+        'How do we know the model works locally?',
+        'Who remains accountable?'
+      ],
+
+      commonQuestions: [
+        'What clinical problem does it solve?',
+        'Has it been validated?',
+        'How is patient information protected?'
+      ],
+
+      preferredTerminology: [
+        'Clinical value',
+        'Patient outcomes',
+        'Local validation',
+        'Participating health systems'
+      ],
+
+      termsToAvoid: [
+        'Unqualified technical jargon',
+        'Claims of guaranteed clinical benefit'
+      ],
+
+      desiredTechnicalDepth: 'Low to Medium',
+
+      preferredEvidenceTypes: [
+        'Clinical validation',
+        'Peer-reviewed research',
+        'Implementation results'
+      ],
+
+      typicalCallToAction:
+        'Identify a clinically meaningful use case and local validation pathway.',
+
+      privacyConcerns: [
+        'Patient confidentiality',
+        'Appropriate data use'
+      ],
+
+      securityConcerns: [],
+      commercialConcerns: [],
+
+      clinicalConcerns: [
+        'Validation',
+        'Safety',
+        'Workflow fit'
+      ],
+
+      researchConcerns: [
+        'Evidence quality'
+      ],
+
+      procurementConcerns: [],
+
+      decisionCriteria: [
+        'Clinical relevance',
+        'Evidence strength',
+        'Workflow impact'
+      ],
+
+      successMeasures: [
+        'Improved decision support',
+        'Acceptable workflow burden',
+        'Validated local performance'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control',
+        'capability_model_validation'
+      ]
+    }),
+
+    fixed('audience_health_executives', {
+      name: 'Health-System Executives',
+      audienceType: 'Executive',
+
+      description:
+        'Leaders focused on strategic value, implementation risk, operational outcomes, procurement, and sustainability.',
+
+      knowledgeLevel: 'Executive',
+
+      primaryGoals: [
+        'Improve system performance',
+        'Reduce implementation risk',
+        'Demonstrate value',
+        'Support responsible innovation'
+      ],
+
+      primaryConcerns: [
+        'ROI',
+        'Deployment effort',
+        'Procurement',
+        'Security',
+        'Operational ownership'
+      ],
+
+      commonObjections: [
+        'How much work is required from our team?',
+        'What measurable value will result?',
+        'Who supports deployment?'
+      ],
+
+      commonQuestions: [
+        'What does implementation require?',
+        'What is the business case?',
+        'How is risk managed?'
+      ],
+
+      preferredTerminology: [
+        'Operational value',
+        'Implementation readiness',
+        'Time to value',
+        'Governed deployment'
+      ],
+
+      termsToAvoid: [
+        'Research-only framing without operational relevance'
+      ],
+
+      desiredTechnicalDepth: 'Low to Medium',
+
+      preferredEvidenceTypes: [
+        'ROI evidence',
+        'Implementation plan',
+        'Operational measures',
+        'Reference case study'
+      ],
+
+      typicalCallToAction:
+        'Define a paid pilot or implementation pathway with measurable outcomes.',
+
+      privacyConcerns: [
+        'Institutional accountability'
+      ],
+
+      securityConcerns: [
+        'Security package',
+        'Incident response',
+        'Vendor risk'
+      ],
+
+      commercialConcerns: [
+        'Pricing',
+        'Support',
+        'Contracting'
+      ],
+
+      clinicalConcerns: [
+        'Clinical ownership'
+      ],
+
+      researchConcerns: [],
+
+      procurementConcerns: [
+        'Vendor readiness',
+        'Insurance',
+        'Contracting'
+      ],
+
+      decisionCriteria: [
+        'Value',
+        'Risk',
+        'Implementation effort',
+        'Evidence'
+      ],
+
+      successMeasures: [
+        'Time to value',
+        'Operational adoption',
+        'Measured outcomes'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: []
+       }),
+
+    fixed('audience_privacy', {
+      name: 'Privacy and Legal Teams',
+      audienceType: 'Privacy and Legal',
+
+      description:
+        'Reviewers focused on data flows, governance, agreements, accountability, and permitted use.',
+
+      knowledgeLevel: 'Specialist',
+
+      primaryGoals: [
+        'Understand data flows',
+        'Confirm lawful and governed use',
+        'Clarify accountability',
+        'Reduce institutional risk'
+      ],
+
+      primaryConcerns: [
+        'Patient-level data movement',
+        'Data use',
+        'Output disclosure',
+        'Contracts',
+        'Jurisdiction'
+      ],
+
+      commonObjections: [
+        'What information leaves each organization?',
+        'Who controls the workflow?',
+        'What agreements are required?'
+      ],
+
+      commonQuestions: [
+        'Where does patient-level data reside?',
+        'What outputs are exchanged?',
+        'Who is responsible at each site?'
+      ],
+
+      preferredTerminology: [
+        'Local data control',
+        'Permitted outputs',
+        'Institution-controlled environment',
+        'Governed workflow'
+      ],
+
+      termsToAvoid: [
+        'Absolute privacy guarantees',
+        'Claims that technical design eliminates legal review'
+      ],
+
+      desiredTechnicalDepth: 'Medium to High',
+
+      preferredEvidenceTypes: [
+        'Data-flow documentation',
+        'Privacy assessment',
+        'Agreements',
+        'Architecture documentation'
+      ],
+
+      typicalCallToAction:
+        'Review the use case, data flows, outputs, agreements, and responsibilities.',
+
+      privacyConcerns: [
+        'Patient-level data handling',
+        'Permitted data use',
+        'Output disclosure'
+      ],
+
+      securityConcerns: [
+        'Access controls',
+        'Auditability'
+      ],
+
+      commercialConcerns: [
+        'Contract terms'
+      ],
+
+      clinicalConcerns: [],
+
+      researchConcerns: [
+        'Research permissions'
+      ],
+
+      procurementConcerns: [],
+
+      decisionCriteria: [
+        'Data minimization',
+        'Governance',
+        'Accountability',
+        'Evidence'
+      ],
+
+      successMeasures: [
+        'Approved data flow',
+        'Clear responsibilities',
+        'Documented controls'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_local_control'
+      ]
+    }),
+
+    fixed('audience_technical', {
+      name: 'Technical Implementation Teams',
+      audienceType: 'Technical',
+
+      description:
+        'Technical teams responsible for architecture, deployment, integration, security, and operations.',
+
+      knowledgeLevel: 'High',
+
+      primaryGoals: [
+        'Understand architecture',
+        'Estimate deployment effort',
+        'Confirm compatibility',
+        'Operate safely'
+      ],
+
+      primaryConcerns: [
+        'Infrastructure',
+        'Integration',
+        'Security',
+        'Observability',
+        'Support'
+      ],
+
+      commonObjections: [
+        'What must be installed locally?',
+        'How are workflows controlled?',
+        'How are failures handled?'
+      ],
+
+      commonQuestions: [
+        'What operating systems are supported?',
+        'What network access is required?',
+        'How are logs and permissions managed?'
+      ],
+
+      preferredTerminology: [
+        'Architecture',
+        'Deployment',
+        'Orchestration',
+        'Local compute',
+        'Integration'
+      ],
+
+      termsToAvoid: [
+        'Vague technical claims'
+      ],
+
+      desiredTechnicalDepth: 'High',
+
+      preferredEvidenceTypes: [
+        'Architecture diagrams',
+        'Technical documentation',
+        'Test results',
+        'Deployment guide'
+      ],
+
+      typicalCallToAction:
+        'Complete a technical-discovery and environment-readiness assessment.',
+
+      privacyConcerns: [
+        'Data flow',
+        'Output handling'
+      ],
+
+      securityConcerns: [
+        'Authentication',
+        'Authorization',
+        'Logging',
+        'Network controls'
+      ],
+
+      commercialConcerns: [
+        'Support boundaries'
+      ],
+
+      clinicalConcerns: [],
+      researchConcerns: [],
+
+      procurementConcerns: [
+        'Technical security requirements'
+      ],
+
+      decisionCriteria: [
+        'Compatibility',
+        'Security',
+        'Maintainability',
+        'Supportability'
+      ],
+
+      successMeasures: [
+        'Successful deployment',
+        'Stable operation',
+        'Clear support process'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_training',
+        'capability_federated_analytics',
+        'capability_local_control',
+        'capability_orchestration',
+        'capability_model_validation',
+        'capability_zero_code'
+      ]
+        }),
+
+    fixed('audience_pharma', {
+      name: 'Pharmaceutical Companies',
+      audienceType: 'Pharmaceutical',
+
+      description:
+        'Pharmaceutical stakeholders interested in distributed research, cohort feasibility, real-world evidence, and multi-site analysis.',
+
+      knowledgeLevel: 'Medium to High',
+
+      primaryGoals: [
+        'Assess cohorts across sites',
+        'Generate real-world evidence',
+        'Support distributed studies',
+        'Reduce data-access barriers'
+      ],
+
+      primaryConcerns: [
+        'Feasibility',
+        'Data consistency',
+        'Contracting',
+        'Timelines',
+        'Evidence quality'
+      ],
+
+      commonObjections: [
+        'Can participating sites support the required analysis?',
+        'How consistent are cohort definitions?',
+        'What deployment and contracting effort is required?'
+      ],
+
+      commonQuestions: [
+        'Can this support cohort feasibility?',
+        'Can models be evaluated across institutions?',
+        'What data remains local?'
+      ],
+
+      preferredTerminology: [
+        'Real-world evidence',
+        'Cohort feasibility',
+        'Distributed analysis',
+        'Multi-site validation'
+      ],
+
+      termsToAvoid: [
+        'Unsupported regulatory claims'
+      ],
+
+      desiredTechnicalDepth: 'Medium',
+
+      preferredEvidenceTypes: [
+        'Technical feasibility',
+        'Study results',
+        'Implementation plan',
+        'Data-quality assessment'
+      ],
+
+      typicalCallToAction:
+        'Define a scoped feasibility or evidence-generation use case.',
+
+      privacyConcerns: [
+        'Permitted data use',
+        'Cross-organization governance'
+      ],
+
+      securityConcerns: [],
+
+      commercialConcerns: [
+        'Timeline',
+        'Pricing',
+        'Contracting'
+      ],
+
+      clinicalConcerns: [],
+
+      researchConcerns: [
+        'Scientific validity',
+        'Cohort comparability'
+      ],
+
+      procurementConcerns: [],
+
+      decisionCriteria: [
+        'Scientific fit',
+        'Site readiness',
+        'Timeline',
+        'Evidence quality'
+      ],
+
+      successMeasures: [
+        'Feasibility established',
+        'Valid evidence generated',
+        'Sites successfully coordinated'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: [
+        'capability_federated_analytics',
+        'capability_model_validation'
+      ]
+    }),
+
+    fixed('audience_funders', {
+      name: 'Funders and Investors',
+      audienceType: 'Funding',
+
+      description:
+        'Stakeholders evaluating strategic fit, product maturity, evidence, market opportunity, milestones, and risk.',
+
+      knowledgeLevel: 'Variable',
+
+      primaryGoals: [
+        'Understand the opportunity',
+        'Assess readiness',
+        'Evaluate impact',
+        'Assess execution capacity'
+      ],
+
+      primaryConcerns: [
+        'Market need',
+        'Product maturity',
+        'Evidence',
+        'Team',
+        'Commercialization pathway'
+      ],
+
+      commonObjections: [
+        'What has been demonstrated?',
+        'What remains to be built?',
+        'How will funding unlock commercialization?'
+      ],
+
+      commonQuestions: [
+        'What is the current TRL?',
+        'What is the next product milestone?',
+        'What measurable outcome will funding produce?'
+      ],
+
+      preferredTerminology: [
+        'Milestones',
+        'Commercialization readiness',
+        'Product readiness',
+        'Market opportunity',
+        'Evidence'
+      ],
+
+      termsToAvoid: [
+        'Unsupported market or performance claims'
+      ],
+
+      desiredTechnicalDepth: 'Low to Medium',
+
+      preferredEvidenceTypes: [
+        'Milestone plan',
+        'Market evidence',
+        'Technical validation',
+        'Customer evidence',
+        'Budget'
+      ],
+
+      typicalCallToAction:
+        'Fund a defined milestone with measurable commercialization outcomes.',
+
+      privacyConcerns: [],
+      securityConcerns: [],
+
+      commercialConcerns: [
+        'Market',
+        'Business model',
+        'Execution'
+      ],
+
+      clinicalConcerns: [],
+      researchConcerns: [],
+      procurementConcerns: [],
+
+      decisionCriteria: [
+        'Strategic fit',
+        'Impact',
+        'Readiness',
+        'Execution plan',
+        'Risk'
+      ],
+
+      successMeasures: [
+        'Milestones completed',
+        'Readiness improved',
+        'Customer or deployment progress'
+      ],
+
+      active: true,
+      confidentiality: 'Internal',
+
+      linkedContentAssetIds: [],
+      linkedPresentationIds: [],
+      linkedApprovedClaimIds: [],
+      linkedUseCaseIds: [],
+      linkedCaseStudyIds: [],
+
+      linkedProductVersionIds: [
+        'product_version_current',
+        'product_version_v2'
+      ],
+
+      linkedProductCapabilityIds: []
+    })
+  ],
+
   contentAssets: [],
   presentations: [],
   useCases: [],
