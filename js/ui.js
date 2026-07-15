@@ -1809,6 +1809,1613 @@ function renderProductCapabilities(items) {
     </section>
   `;
 }
+function renderAudiences(items) {
+  const activeAudiences = items.filter(
+    (item) => item.active !== false
+  );
+
+  const renderAudienceCard = (audience) => `
+    <article class="item-card">
+      <div>
+        <p class="eyebrow">
+          ${escapeHtml(audience.audienceType || 'Audience')}
+        </p>
+
+        <h3>
+          ${escapeHtml(audience.name || 'Unnamed Audience')}
+        </h3>
+
+        <p>
+          ${escapeHtml(audience.description || '')}
+        </p>
+      </div>
+
+      <div class="item-meta">
+        ${
+          audience.knowledgeLevel
+            ? `
+              <span>
+                Knowledge:
+                ${escapeHtml(audience.knowledgeLevel)}
+              </span>
+            `
+            : ''
+        }
+
+        ${
+          audience.desiredTechnicalDepth
+            ? `
+              <span>
+                Technical Depth:
+                ${escapeHtml(audience.desiredTechnicalDepth)}
+              </span>
+            `
+            : ''
+        }
+
+        <span>
+          ${audience.active === false ? 'Inactive' : 'Active'}
+        </span>
+
+        ${
+          audience.confidentiality
+            ? `
+              <span>
+                ${escapeHtml(audience.confidentiality)}
+              </span>
+            `
+            : ''
+        }
+      </div>
+
+      ${
+        audience.primaryGoals?.length
+          ? `
+            <h3>Primary Goals</h3>
+
+            <div class="tag-list">
+              ${audience.primaryGoals
+                .map(
+                  (goal) => `
+                    <span>${escapeHtml(goal)}</span>
+                  `
+                )
+                .join('')}
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        audience.primaryConcerns?.length
+          ? `
+            <h3>Primary Concerns</h3>
+
+            <ul>
+              ${audience.primaryConcerns
+                .map(
+                  (concern) => `
+                    <li>${escapeHtml(concern)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        audience.commonQuestions?.length
+          ? `
+            <h3>Common Questions</h3>
+
+            <ul>
+              ${audience.commonQuestions
+                .map(
+                  (question) => `
+                    <li>${escapeHtml(question)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        audience.preferredTerminology?.length
+          ? `
+            <h3>Preferred Terminology</h3>
+
+            <div class="tag-list">
+              ${audience.preferredTerminology
+                .map(
+                  (term) => `
+                    <span>${escapeHtml(term)}</span>
+                  `
+                )
+                .join('')}
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        audience.termsToAvoid?.length
+          ? `
+            <h3>Terms to Avoid</h3>
+
+            <ul>
+              ${audience.termsToAvoid
+                .map(
+                  (term) => `
+                    <li>${escapeHtml(term)}</li>
+                  `
+                )
+                .join('')}
+            </ul>
+          `
+          : ''
+      }
+
+      ${
+        audience.typicalCallToAction
+          ? `
+            <div class="linked-records">
+              <strong>Typical Call to Action</strong>
+
+              <span>
+                ${escapeHtml(audience.typicalCallToAction)}
+              </span>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        audience.preferredEvidenceTypes?.length
+          ? `
+            <h3>Preferred Evidence</h3>
+
+            <div class="tag-list">
+              ${audience.preferredEvidenceTypes
+                .map(
+                  (evidenceType) => `
+                    <span>${escapeHtml(evidenceType)}</span>
+                  `
+                )
+                .join('')}
+            </div>
+          `
+          : ''
+      }
+    </article>
+  `;
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Audience Intelligence</h2>
+
+        <p>
+          Track what each audience needs to hear, what they worry
+          about, what evidence they expect, and how FedEMR should be
+          explained without changing the underlying facts.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Active Audiences</span>
+        <strong>${escapeHtml(activeAudiences.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Total Audiences', items.length)}
+
+      ${renderMetricCard(
+        'Clinical and Executive',
+        items.filter((item) =>
+          ['Clinical', 'Executive'].includes(item.audienceType)
+        ).length
+      )}
+
+      ${renderMetricCard(
+        'Research and Technical',
+        items.filter((item) =>
+          ['Research', 'Technical'].includes(item.audienceType)
+        ).length
+      )}
+
+      ${renderMetricCard(
+        'Government and Funding',
+        items.filter((item) =>
+          ['Government', 'Funding'].includes(item.audienceType)
+        ).length
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderAudienceCard).join('')
+          : '<p>No audiences recorded.</p>'
+      }
+    </section>
+  `;
+}
+function renderContentAssets(items, data) {
+  const approved = items.filter(
+    (item) => item.approvalStatus === 'Approved'
+  );
+
+  const underReview = items.filter(
+    (item) => item.approvalStatus === 'Under Review'
+  );
+
+  const notReviewed = items.filter(
+    (item) =>
+      !item.approvalStatus ||
+      item.approvalStatus === 'Not Reviewed'
+  );
+
+  const getAudienceNames = (audienceIds = []) =>
+    audienceIds
+      .map((id) =>
+        (data.audiences || []).find(
+          (audience) => audience.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((audience) => audience.name);
+
+  const getVersionName = (versionId) => {
+    const version = (data.productVersions || []).find(
+      (item) => item.id === versionId
+    );
+
+    return (
+      version?.versionName ||
+      version?.versionNumber ||
+      ''
+    );
+  };
+
+  const renderContentAssetCard = (asset) => {
+    const audienceNames = getAudienceNames(
+      asset.audienceIds || []
+    );
+
+    const versionName = getVersionName(
+      asset.productVersionId
+    );
+
+    return `
+      <article class="item-card">
+        <div>
+          <p class="eyebrow">
+            ${escapeHtml(asset.contentType || 'Content Asset')}
+          </p>
+
+          <h3>
+            ${escapeHtml(asset.title || 'Untitled Content Asset')}
+          </h3>
+
+          <p>
+            ${escapeHtml(asset.purpose || '')}
+          </p>
+        </div>
+
+        <div class="item-meta">
+          ${
+            asset.approvalStatus
+              ? `
+                <span>
+                  Approval:
+                  ${escapeHtml(asset.approvalStatus)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            asset.draftStatus
+              ? `
+                <span>
+                  Draft:
+                  ${escapeHtml(asset.draftStatus)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            asset.technicalDepth
+              ? `
+                <span>
+                  Depth:
+                  ${escapeHtml(asset.technicalDepth)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            asset.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(asset.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          versionName
+            ? `
+              <p>
+                <strong>Product Version:</strong>
+                ${escapeHtml(versionName)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          audienceNames.length
+            ? `
+              <h3>Audiences</h3>
+
+              <div class="tag-list">
+                ${audienceNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          asset.coreMessage
+            ? `
+              <div class="linked-records">
+                <strong>Core Message</strong>
+
+                <span>
+                  ${escapeHtml(asset.coreMessage)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          asset.shortVersion
+            ? `
+              <div class="linked-records">
+                <strong>Short Version</strong>
+
+                <span>
+                  ${escapeHtml(asset.shortVersion)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          asset.privacyWording
+            ? `
+              <div class="linked-records">
+                <strong>Privacy Wording</strong>
+
+                <span>
+                  ${escapeHtml(asset.privacyWording)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          asset.benefits?.length
+            ? `
+              <h3>Benefits</h3>
+
+              <ul>
+                ${asset.benefits
+                  .map(
+                    (benefit) => `
+                      <li>${escapeHtml(benefit)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          asset.callToAction
+            ? `
+              <div class="linked-records">
+                <strong>Call to Action</strong>
+
+                <span>
+                  ${escapeHtml(asset.callToAction)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          asset.reviewCadence
+            ? `
+              <p>
+                <strong>Review Cadence:</strong>
+                ${escapeHtml(asset.reviewCadence)}
+              </p>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Content Assets</h2>
+
+        <p>
+          Maintain reusable, audience-specific FedEMR language while
+          controlling approval status, product-version alignment,
+          evidence, privacy wording, and review cadence.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Assets</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Approved', approved.length)}
+      ${renderMetricCard('Under Review', underReview.length)}
+      ${renderMetricCard('Not Reviewed', notReviewed.length)}
+      ${renderMetricCard(
+        'Audience Coverage',
+        new Set(
+          items.flatMap((item) => item.audienceIds || [])
+        ).size
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderContentAssetCard).join('')
+          : '<p>No content assets recorded.</p>'
+      }
+    </section>
+  `;
+}
+function renderPresentations(items, data) {
+  const approved = items.filter(
+    (item) => item.approvalStatus === 'Approved'
+  );
+
+  const draft = items.filter(
+    (item) =>
+      item.status === 'Draft' ||
+      item.approvalStatus === 'Not Reviewed' ||
+      item.approvalStatus === 'Under Review'
+  );
+
+  const getAudienceNames = (audienceIds = []) =>
+    audienceIds
+      .map((id) =>
+        (data.audiences || []).find(
+          (audience) => audience.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((audience) => audience.name);
+
+  const getVersionName = (versionId) => {
+    const version = (data.productVersions || []).find(
+      (item) => item.id === versionId
+    );
+
+    return (
+      version?.versionName ||
+      version?.versionNumber ||
+      ''
+    );
+  };
+
+  const renderPresentationCard = (presentation) => {
+    const audienceNames = getAudienceNames(
+      presentation.audienceIds || []
+    );
+
+    const versionName = getVersionName(
+      presentation.productVersionId
+    );
+
+    return `
+      <article class="item-card">
+        <div>
+          <p class="eyebrow">
+            ${escapeHtml(
+              presentation.presentationType || 'Presentation'
+            )}
+          </p>
+
+          <h3>
+            ${escapeHtml(
+              presentation.title || 'Untitled Presentation'
+            )}
+          </h3>
+
+          <p>
+            ${escapeHtml(presentation.purpose || '')}
+          </p>
+        </div>
+
+        <div class="item-meta">
+          ${
+            presentation.status
+              ? `
+                <span>
+                  Status:
+                  ${escapeHtml(presentation.status)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            presentation.approvalStatus
+              ? `
+                <span>
+                  Approval:
+                  ${escapeHtml(presentation.approvalStatus)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            presentation.durationMinutes
+              ? `
+                <span>
+                  ${escapeHtml(presentation.durationMinutes)}
+                  minutes
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            presentation.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(presentation.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          versionName
+            ? `
+              <p>
+                <strong>Product Version:</strong>
+                ${escapeHtml(versionName)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          audienceNames.length
+            ? `
+              <h3>Audiences</h3>
+
+              <div class="tag-list">
+                ${audienceNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          presentation.outline?.length
+            ? `
+              <h3>Outline</h3>
+
+              <ol>
+                ${presentation.outline
+                  .map(
+                    (item) => `
+                      <li>${escapeHtml(item)}</li>
+                    `
+                  )
+                  .join('')}
+              </ol>
+            `
+            : ''
+        }
+
+        ${
+          presentation.coreMessages?.length
+            ? `
+              <h3>Core Messages</h3>
+
+              <ul>
+                ${presentation.coreMessages
+                  .map(
+                    (message) => `
+                      <li>${escapeHtml(message)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          presentation.callToAction
+            ? `
+              <div class="linked-records">
+                <strong>Call to Action</strong>
+
+                <span>
+                  ${escapeHtml(presentation.callToAction)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          presentation.requiredRevisions?.length
+            ? `
+              <h3>Required Revisions</h3>
+
+              <ul>
+                ${presentation.requiredRevisions
+                  .map(
+                    (revision) => `
+                      <li>${escapeHtml(revision)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          presentation.fileName ||
+          presentation.fileUrl ||
+          presentation.storageLocation
+            ? `
+              <div class="linked-records">
+                <strong>Presentation File</strong>
+
+                ${
+                  presentation.fileName
+                    ? `
+                      <span>
+                        ${escapeHtml(presentation.fileName)}
+                      </span>
+                    `
+                    : ''
+                }
+
+                ${
+                  presentation.storageLocation
+                    ? `
+                      <span>
+                        ${escapeHtml(
+                          presentation.storageLocation
+                        )}
+                      </span>
+                    `
+                    : ''
+                }
+
+                ${
+                  presentation.fileUrl
+                    ? `
+                      <span>
+                        ${escapeHtml(presentation.fileUrl)}
+                      </span>
+                    `
+                    : ''
+                }
+              </div>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Presentations</h2>
+
+        <p>
+          Track presentation purpose, audience, product version,
+          core messages, claims, evidence, files, review status,
+          feedback, and required revisions.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Presentations</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Approved', approved.length)}
+      ${renderMetricCard('Draft or Review', draft.length)}
+      ${renderMetricCard(
+        'Audience Coverage',
+        new Set(
+          items.flatMap((item) => item.audienceIds || [])
+        ).size
+      )}
+      ${renderMetricCard(
+        'With Files',
+        items.filter(
+          (item) =>
+            item.fileName ||
+            item.fileUrl ||
+            item.storageLocation
+        ).length
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderPresentationCard).join('')
+          : '<p>No presentations recorded.</p>'
+      }
+    </section>
+  `;
+}
+function renderUseCases(items, data) {
+  const demonstrated = items.filter(
+    (item) => item.status === 'Demonstrated'
+  );
+
+  const designed = items.filter(
+    (item) => item.status === 'Designed'
+  );
+
+  const hypothetical = items.filter(
+    (item) => item.status === 'Hypothetical'
+  );
+
+  const getAudienceNames = (audienceIds = []) =>
+    audienceIds
+      .map((id) =>
+        (data.audiences || []).find(
+          (audience) => audience.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((audience) => audience.name);
+
+  const getCapabilityNames = (capabilityIds = []) =>
+    capabilityIds
+      .map((id) =>
+        (data.productCapabilities || []).find(
+          (capability) => capability.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((capability) => capability.name);
+
+  const renderUseCaseCard = (useCase) => {
+    const audienceNames = getAudienceNames(
+      useCase.audienceIds ||
+      useCase.linkedAudienceIds ||
+      []
+    );
+
+    const capabilityNames = getCapabilityNames(
+      useCase.requiredProductCapabilityIds ||
+      useCase.linkedProductCapabilityIds ||
+      []
+    );
+
+    return `
+      <article class="item-card">
+        <div>
+          <p class="eyebrow">
+            ${escapeHtml(useCase.category || 'Use Case')}
+          </p>
+
+          <h3>
+            ${escapeHtml(useCase.title || 'Untitled Use Case')}
+          </h3>
+
+          <p>
+            ${escapeHtml(useCase.problem || '')}
+          </p>
+        </div>
+
+        <div class="item-meta">
+          ${
+            useCase.status
+              ? `
+                <span>
+                  Status: ${escapeHtml(useCase.status)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            useCase.readinessLevel
+              ? `
+                <span>
+                  Readiness:
+                  ${escapeHtml(useCase.readinessLevel)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            useCase.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(useCase.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          useCase.environment
+            ? `
+              <p>
+                <strong>Environment:</strong>
+                ${escapeHtml(useCase.environment)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          useCase.primaryUser
+            ? `
+              <p>
+                <strong>Primary User:</strong>
+                ${escapeHtml(useCase.primaryUser)}
+              </p>
+            `
+            : ''
+        }
+
+        ${
+          useCase.fedemrWorkflow
+            ? `
+              <div class="linked-records">
+                <strong>FedEMR Workflow</strong>
+
+                <span>
+                  ${escapeHtml(useCase.fedemrWorkflow)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          useCase.expectedOutcome
+            ? `
+              <div class="linked-records">
+                <strong>Expected Outcome</strong>
+
+                <span>
+                  ${escapeHtml(useCase.expectedOutcome)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          audienceNames.length
+            ? `
+              <h3>Audiences</h3>
+
+              <div class="tag-list">
+                ${audienceNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          capabilityNames.length
+            ? `
+              <h3>Required Capabilities</h3>
+
+              <div class="tag-list">
+                ${capabilityNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          useCase.dependencies?.length
+            ? `
+              <h3>Dependencies</h3>
+
+              <ul>
+                ${useCase.dependencies
+                  .map(
+                    (dependency) => `
+                      <li>${escapeHtml(dependency)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          useCase.knownLimitations?.length
+            ? `
+              <h3>Known Limitations</h3>
+
+              <ul>
+                ${useCase.knownLimitations
+                  .map(
+                    (limitation) => `
+                      <li>${escapeHtml(limitation)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          useCase.evidenceStatus
+            ? `
+              <div class="linked-records">
+                <strong>Evidence Status</strong>
+
+                <span>
+                  ${escapeHtml(useCase.evidenceStatus)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Use Cases</h2>
+
+        <p>
+          Track the problem, participating environment, FedEMR
+          workflow, required capabilities, evidence status,
+          limitations, dependencies, and readiness level for each
+          potential application.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Use Cases</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Demonstrated', demonstrated.length)}
+      ${renderMetricCard('Designed', designed.length)}
+      ${renderMetricCard('Hypothetical', hypothetical.length)}
+      ${renderMetricCard(
+        'Audience Coverage',
+        new Set(
+          items.flatMap(
+            (item) =>
+              item.audienceIds ||
+              item.linkedAudienceIds ||
+              []
+          )
+        ).size
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderUseCaseCard).join('')
+          : '<p>No use cases recorded.</p>'
+      }
+    </section>
+  `;
+}
+function renderCaseStudies(items, data) {
+  const hypothetical = items.filter(
+    (item) => item.classification === 'Hypothetical Example'
+  );
+
+  const composite = items.filter(
+    (item) => item.classification === 'Composite Example'
+  );
+
+  const externalUsePermitted = items.filter(
+    (item) => item.externalUsePermitted
+  );
+
+  const getCapabilityNames = (capabilityIds = []) =>
+    capabilityIds
+      .map((id) =>
+        (data.productCapabilities || []).find(
+          (capability) => capability.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((capability) => capability.name);
+
+  const renderCaseStudyCard = (caseStudy) => {
+    const capabilityNames = getCapabilityNames(
+      caseStudy.productCapabilityIds ||
+      caseStudy.linkedProductCapabilityIds ||
+      []
+    );
+
+    return `
+      <article class="item-card">
+        <div>
+          <p class="eyebrow">
+            ${escapeHtml(caseStudy.classification || 'Case Study')}
+          </p>
+
+          <h3>
+            ${escapeHtml(caseStudy.title || 'Untitled Case Study')}
+          </h3>
+
+          <p>
+            ${escapeHtml(caseStudy.situation || '')}
+          </p>
+        </div>
+
+        <div class="item-meta">
+          ${
+            caseStudy.publicationStatus
+              ? `
+                <span>
+                  Publication:
+                  ${escapeHtml(caseStudy.publicationStatus)}
+                </span>
+              `
+              : ''
+          }
+
+          <span>
+            ${
+              caseStudy.externalUsePermitted
+                ? 'External Use Permitted'
+                : 'Internal Use Only'
+            }
+          </span>
+
+          ${
+            caseStudy.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(caseStudy.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          caseStudy.challenge
+            ? `
+              <div class="linked-records">
+                <strong>Challenge</strong>
+
+                <span>
+                  ${escapeHtml(caseStudy.challenge)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.fedemrApproach
+            ? `
+              <div class="linked-records">
+                <strong>FedEMR Approach</strong>
+
+                <span>
+                  ${escapeHtml(caseStudy.fedemrApproach)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          capabilityNames.length
+            ? `
+              <h3>Capabilities</h3>
+
+              <div class="tag-list">
+                ${capabilityNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.implementationSteps?.length
+            ? `
+              <h3>Implementation Steps</h3>
+
+              <ol>
+                ${caseStudy.implementationSteps
+                  .map(
+                    (step) => `
+                      <li>${escapeHtml(step)}</li>
+                    `
+                  )
+                  .join('')}
+              </ol>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.researchBenefit
+            ? `
+              <div class="linked-records">
+                <strong>Research Benefit</strong>
+
+                <span>
+                  ${escapeHtml(caseStudy.researchBenefit)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.privacyOutcome
+            ? `
+              <div class="linked-records">
+                <strong>Privacy Outcome</strong>
+
+                <span>
+                  ${escapeHtml(caseStudy.privacyOutcome)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.lessonsLearned?.length
+            ? `
+              <h3>Lessons Learned</h3>
+
+              <ul>
+                ${caseStudy.lessonsLearned
+                  .map(
+                    (lesson) => `
+                      <li>${escapeHtml(lesson)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          caseStudy.confidentialityRestrictions?.length
+            ? `
+              <h3>Use Restrictions</h3>
+
+              <ul>
+                ${caseStudy.confidentialityRestrictions
+                  .map(
+                    (restriction) => `
+                      <li>${escapeHtml(restriction)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Case Studies</h2>
+
+        <p>
+          Separate real evidence from illustrative, hypothetical,
+          and composite examples. Track permissions, restrictions,
+          outcomes, lessons, and supporting evidence.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Case Studies</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Hypothetical', hypothetical.length)}
+      ${renderMetricCard('Composite', composite.length)}
+      ${renderMetricCard(
+        'External Use Permitted',
+        externalUsePermitted.length
+      )}
+      ${renderMetricCard(
+        'With Evidence',
+        items.filter(
+          (item) =>
+            (item.evidenceIds || []).length > 0 ||
+            (item.evidenceDocumentIds || []).length > 0
+        ).length
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderCaseStudyCard).join('')
+          : '<p>No case studies recorded.</p>'
+      }
+    </section>
+  `;
+}
+function renderApprovedClaims(items, data) {
+  const approved = items.filter(
+    (item) => item.approvalStatus === 'Approved'
+  );
+
+  const underReview = items.filter(
+    (item) => item.approvalStatus === 'Under Review'
+  );
+
+  const publicUse = items.filter(
+    (item) => item.publicUsePermitted
+  );
+
+  const getAudienceNames = (audienceIds = []) =>
+    audienceIds
+      .map((id) =>
+        (data.audiences || []).find(
+          (audience) => audience.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((audience) => audience.name);
+
+  const getCapabilityNames = (capabilityIds = []) =>
+    capabilityIds
+      .map((id) =>
+        (data.productCapabilities || []).find(
+          (capability) => capability.id === id
+        )
+      )
+      .filter(Boolean)
+      .map((capability) => capability.name);
+
+  const renderClaimCard = (claim) => {
+    const audienceNames = getAudienceNames(
+      claim.audienceIds || []
+    );
+
+    const capabilityNames = getCapabilityNames(
+      claim.productCapabilityIds || []
+    );
+
+    return `
+      <article class="item-card">
+        <div>
+          <p class="eyebrow">
+            ${escapeHtml(claim.claimCategory || 'Claim')}
+          </p>
+
+          <h3>
+            ${escapeHtml(
+              claim.shortClaim ||
+              claim.claimText ||
+              'Untitled Claim'
+            )}
+          </h3>
+
+          ${
+            claim.claimText &&
+            claim.claimText !== claim.shortClaim
+              ? `
+                <p>
+                  ${escapeHtml(claim.claimText)}
+                </p>
+              `
+              : ''
+          }
+        </div>
+
+        <div class="item-meta">
+          ${
+            claim.approvalStatus
+              ? `
+                <span>
+                  Approval:
+                  ${escapeHtml(claim.approvalStatus)}
+                </span>
+              `
+              : ''
+          }
+
+          ${
+            claim.evidenceStrength
+              ? `
+                <span>
+                  Evidence:
+                  ${escapeHtml(claim.evidenceStrength)}
+                </span>
+              `
+              : ''
+          }
+
+          <span>
+            ${
+              claim.publicUsePermitted
+                ? 'Public Use Permitted'
+                : 'Public Use Not Permitted'
+            }
+          </span>
+
+          ${
+            claim.confidentiality
+              ? `
+                <span>
+                  ${escapeHtml(claim.confidentiality)}
+                </span>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          audienceNames.length
+            ? `
+              <h3>Audiences</h3>
+
+              <div class="tag-list">
+                ${audienceNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          capabilityNames.length
+            ? `
+              <h3>Capabilities</h3>
+
+              <div class="tag-list">
+                ${capabilityNames
+                  .map(
+                    (name) => `
+                      <span>${escapeHtml(name)}</span>
+                    `
+                  )
+                  .join('')}
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          claim.evidenceSummary
+            ? `
+              <div class="linked-records">
+                <strong>Evidence Summary</strong>
+
+                <span>
+                  ${escapeHtml(claim.evidenceSummary)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          claim.requiredQualifier
+            ? `
+              <div class="linked-records">
+                <strong>Required Qualifier</strong>
+
+                <span>
+                  ${escapeHtml(claim.requiredQualifier)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          claim.permittedContexts?.length
+            ? `
+              <h3>Permitted Contexts</h3>
+
+              <ul>
+                ${claim.permittedContexts
+                  .map(
+                    (context) => `
+                      <li>${escapeHtml(context)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          claim.prohibitedContexts?.length
+            ? `
+              <h3>Prohibited Contexts</h3>
+
+              <ul>
+                ${claim.prohibitedContexts
+                  .map(
+                    (context) => `
+                      <li>${escapeHtml(context)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            `
+            : ''
+        }
+
+        ${
+          claim.usageNotes
+            ? `
+              <div class="linked-records">
+                <strong>Usage Notes</strong>
+
+                <span>
+                  ${escapeHtml(claim.usageNotes)}
+                </span>
+              </div>
+            `
+            : ''
+        }
+      </article>
+    `;
+  };
+
+  return `
+    <section class="dashboard-hero">
+      <div>
+        <p class="eyebrow">Product & Market</p>
+
+        <h2>Approved Claims</h2>
+
+        <p>
+          Control what FedEMR is permitted to say, where it may be
+          used, what evidence supports it, which qualifiers are
+          required, and when public use is allowed.
+        </p>
+      </div>
+
+      <div class="score-card">
+        <span>Total Claims</span>
+        <strong>${escapeHtml(items.length)}</strong>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      ${renderMetricCard('Approved', approved.length)}
+      ${renderMetricCard('Under Review', underReview.length)}
+      ${renderMetricCard('Public Use Permitted', publicUse.length)}
+      ${renderMetricCard(
+        'With Evidence Linked',
+        items.filter(
+          (item) => (item.evidenceIds || []).length > 0
+        ).length
+      )}
+    </section>
+
+    <section class="directory-grid">
+      ${
+        items.length
+          ? items.map(renderClaimCard).join('')
+          : '<p>No approved claims recorded.</p>'
+      }
+    </section>
+  `;
+}
 function bindCollectionActions(handlers) {
   if (!appRoot) return;
 
@@ -1993,6 +3600,42 @@ export function renderCollection(
 
   if (collection === 'productCapabilities') {
     appRoot.innerHTML = renderProductCapabilities(items);
+
+    return;
+  }
+
+  if (collection === 'audiences') {
+    appRoot.innerHTML = renderAudiences(items);
+
+    return;
+  }
+
+  if (collection === 'contentAssets') {
+    appRoot.innerHTML = renderContentAssets(items, data);
+
+    return;
+  }
+
+  if (collection === 'presentations') {
+    appRoot.innerHTML = renderPresentations(items, data);
+
+    return;
+  }
+
+  if (collection === 'useCases') {
+    appRoot.innerHTML = renderUseCases(items, data);
+
+    return;
+  }
+
+  if (collection === 'caseStudies') {
+    appRoot.innerHTML = renderCaseStudies(items, data);
+
+    return;
+  }
+
+  if (collection === 'approvedClaims') {
+    appRoot.innerHTML = renderApprovedClaims(items, data);
 
     return;
   }
