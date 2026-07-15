@@ -3969,63 +3969,440 @@ export function renderDashboard(model, handlers) {
   const people = data.people || [];
   const organizations = data.organizations || [];
   const followUps = data.followUps || [];
+  const fundingOpportunities =
+    data.fundingOpportunities || [];
+  const decisions = data.decisions || [];
+  const productVersions = data.productVersions || [];
+  const readinessItems = data.readinessItems || [];
+
+  const openTasks = tasks.filter(
+    (item) =>
+      !['Complete', 'Completed', 'Done'].includes(
+        item.status
+      )
+  );
+
+  const criticalTasks = openTasks.filter(
+    (item) =>
+      item.priority === 'Critical' ||
+      item.priority === 'High'
+  );
+
+  const activeRisks = risks.filter(
+    (item) =>
+      !['Closed', 'Resolved', 'Accepted'].includes(
+        item.status
+      )
+  );
+
+  const urgentRisks = activeRisks.filter(
+    (item) =>
+      item.priority === 'Critical' ||
+      item.priority === 'High' ||
+      item.severity === 'Critical' ||
+      item.severity === 'High'
+  );
+
+  const pendingFollowUps = followUps.filter(
+    (item) =>
+      !['Complete', 'Completed', 'Done'].includes(
+        item.status
+      )
+  );
+
+  const upcomingFunding = fundingOpportunities.filter(
+    (item) =>
+      !['Closed', 'Declined', 'Ineligible'].includes(
+        item.status
+      )
+  );
+
+  const openDecisions = decisions.filter(
+    (item) =>
+      !['Decided', 'Closed', 'Complete'].includes(
+        item.status
+      )
+  );
+
+  const nextVersion = productVersions.find(
+    (item) => item.id === 'product_version_v2'
+  );
+
+  const readinessComplete = readinessItems.filter(
+    (item) =>
+      ['Complete', 'Completed', 'Ready'].includes(
+        item.status
+      )
+  ).length;
+
+  const readinessPercent = readinessItems.length
+    ? Math.round(
+        (readinessComplete / readinessItems.length) * 100
+      )
+    : 0;
+
+  const renderDashboardListItem = (
+    item,
+    collection,
+    emptyLabel
+  ) => {
+    if (!item) {
+      return `
+        <div class="dashboard-empty">
+          ${escapeHtml(emptyLabel)}
+        </div>
+      `;
+    }
+
+    return `
+      <button
+        class="dashboard-list-item"
+        type="button"
+        data-dashboard-view="${escapeHtml(collection)}"
+      >
+        <div>
+          <strong>${escapeHtml(getItemTitle(item))}</strong>
+
+          <span>
+            ${escapeHtml(getItemSubtitle(item))}
+          </span>
+        </div>
+
+        <span class="dashboard-list-arrow">›</span>
+      </button>
+    `;
+  };
 
   setPageTitle('Dashboard');
 
   appRoot.innerHTML = `
-    <section class="dashboard-hero">
-      <div>
+    <section class="executive-welcome">
+      <div class="executive-welcome-copy">
         <p class="eyebrow">FedEMR Technologies</p>
 
-        <h2>Executive Operating Dashboard</h2>
+        <h2>Everything that needs your attention, in one place.</h2>
 
         <p>
-          Commercialization, funding, institutional pathways,
-          relationships, resources, risks, and execution in one
-          local-first command centre.
+          Track execution, commercialization, funding, product,
+          institutional pathways, relationships, and risk from one
+          operating workspace.
+        </p>
+
+        <div class="executive-welcome-actions">
+          <button
+            class="create-button"
+            type="button"
+            data-dashboard-create
+          >
+            <span aria-hidden="true">+</span>
+            <span>Create item</span>
+          </button>
+
+          <button
+            class="dashboard-secondary-action"
+            type="button"
+            data-dashboard-view="tasks"
+          >
+            Review priorities
+          </button>
+        </div>
+      </div>
+
+      <div class="executive-score">
+        <div
+          class="executive-score-ring"
+          style="--score: ${escapeHtml(executiveScore)}"
+        >
+          <div>
+            <strong>${escapeHtml(executiveScore)}%</strong>
+            <span>Executive health</span>
+          </div>
+        </div>
+
+        <p>
+          Based on execution, readiness, funding, relationships,
+          and active risk.
         </p>
       </div>
-
-      <div class="score-card">
-        <span>Executive Score</span>
-        <strong>${escapeHtml(executiveScore)}%</strong>
-      </div>
     </section>
 
-    <section class="metric-grid">
-      ${renderMetricCard('Open Tasks', tasks.length)}
-      ${renderMetricCard('People', people.length)}
-      ${renderMetricCard('Organizations', organizations.length)}
-      ${renderMetricCard('Follow-Ups', followUps.length)}
-      ${renderMetricCard('Risks', risks.length)}
+    <section class="dashboard-kpi-strip">
+      <button
+        class="dashboard-kpi"
+        type="button"
+        data-dashboard-view="tasks"
+      >
+        <span>Open priorities</span>
+        <strong>${escapeHtml(openTasks.length)}</strong>
+        <small>${escapeHtml(criticalTasks.length)} high priority</small>
+      </button>
+
+      <button
+        class="dashboard-kpi"
+        type="button"
+        data-dashboard-view="risks"
+      >
+        <span>Active risks</span>
+        <strong>${escapeHtml(activeRisks.length)}</strong>
+        <small>${escapeHtml(urgentRisks.length)} need attention</small>
+      </button>
+
+      <button
+        class="dashboard-kpi"
+        type="button"
+        data-dashboard-view="followUps"
+      >
+        <span>Follow-ups</span>
+        <strong>${escapeHtml(pendingFollowUps.length)}</strong>
+        <small>${escapeHtml(people.length)} people tracked</small>
+      </button>
+
+      <button
+        class="dashboard-kpi"
+        type="button"
+        data-dashboard-view="fundingOpportunities"
+      >
+        <span>Funding pipeline</span>
+        <strong>${escapeHtml(upcomingFunding.length)}</strong>
+        <small>active opportunities</small>
+      </button>
     </section>
 
-    <section class="content-grid">
-      <article class="panel">
-        <h2>Top Priorities</h2>
+    <section class="dashboard-bento">
+      <article class="dashboard-card dashboard-card-priorities">
+        <div class="dashboard-card-header">
+          <div>
+            <p class="eyebrow">Execution</p>
+            <h3>Top priorities</h3>
+          </div>
 
-        ${
-          tasks
-            .slice(0, 5)
-            .map((item) => renderGenericItemCard('tasks', item))
-            .join('') || '<p>No tasks yet.</p>'
-        }
+          <button
+            class="dashboard-card-link"
+            type="button"
+            data-dashboard-view="tasks"
+          >
+            View all
+          </button>
+        </div>
+
+        <div class="dashboard-list">
+          ${
+            openTasks
+              .slice(0, 4)
+              .map((item) =>
+                renderDashboardListItem(
+                  item,
+                  'tasks',
+                  'No open priorities'
+                )
+              )
+              .join('') ||
+            renderDashboardListItem(
+              null,
+              'tasks',
+              'No open priorities'
+            )
+          }
+        </div>
       </article>
 
-      <article class="panel">
-        <h2>Active Risks</h2>
+      <article class="dashboard-card dashboard-card-readiness">
+        <div class="dashboard-card-header">
+          <div>
+            <p class="eyebrow">Commercialization</p>
+            <h3>Readiness</h3>
+          </div>
 
-        ${
-          risks
-            .slice(0, 5)
-            .map((item) => renderGenericItemCard('risks', item))
-            .join('') || '<p>No risks yet.</p>'
-        }
+          <span class="dashboard-status-pill">
+            ${escapeHtml(readinessPercent)}%
+          </span>
+        </div>
+
+        <div class="readiness-progress">
+          <span
+            style="width: ${escapeHtml(readinessPercent)}%"
+          ></span>
+        </div>
+
+        <div class="readiness-stat">
+          <strong>${escapeHtml(readinessComplete)}</strong>
+          <span>
+            of ${escapeHtml(readinessItems.length)}
+            readiness items complete
+          </span>
+        </div>
+
+        <button
+          class="dashboard-card-action"
+          type="button"
+          data-dashboard-view="readinessItems"
+        >
+          Open readiness workspace
+        </button>
+      </article>
+
+      <article class="dashboard-card dashboard-card-risks">
+        <div class="dashboard-card-header">
+          <div>
+            <p class="eyebrow">Attention</p>
+            <h3>Risk watch</h3>
+          </div>
+
+          <span class="dashboard-alert-count">
+            ${escapeHtml(urgentRisks.length)}
+          </span>
+        </div>
+
+        <div class="dashboard-list">
+          ${
+            activeRisks
+              .slice(0, 3)
+              .map((item) =>
+                renderDashboardListItem(
+                  item,
+                  'risks',
+                  'No active risks'
+                )
+              )
+              .join('') ||
+            renderDashboardListItem(
+              null,
+              'risks',
+              'No active risks'
+            )
+          }
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-product">
+        <div>
+          <p class="eyebrow">Product</p>
+          <h3>Next release</h3>
+
+          <p class="dashboard-product-version">
+            ${escapeHtml(
+              nextVersion?.versionName ||
+                nextVersion?.versionNumber ||
+                'V2 Zero-Code'
+            )}
+          </p>
+
+          <p>
+            ${
+              escapeHtml(
+                nextVersion?.summary ||
+                  nextVersion?.releaseObjective ||
+                  'Track product readiness, blockers, capabilities, and release planning.'
+              )
+            }
+          </p>
+        </div>
+
+        <div class="dashboard-product-footer">
+          <span>
+            ${
+              nextVersion?.productReadinessScore !== undefined
+                ? `${escapeHtml(
+                    nextVersion.productReadinessScore
+                  )}% ready`
+                : 'Readiness not set'
+            }
+          </span>
+
+          <button
+            type="button"
+            data-dashboard-view="productVersions"
+          >
+            Open product
+          </button>
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-decisions">
+        <div class="dashboard-card-header">
+          <div>
+            <p class="eyebrow">Leadership</p>
+            <h3>Open decisions</h3>
+          </div>
+
+          <span class="dashboard-status-pill">
+            ${escapeHtml(openDecisions.length)}
+          </span>
+        </div>
+
+        <div class="dashboard-list">
+          ${
+            openDecisions
+              .slice(0, 3)
+              .map((item) =>
+                renderDashboardListItem(
+                  item,
+                  'decisions',
+                  'No open decisions'
+                )
+              )
+              .join('') ||
+            renderDashboardListItem(
+              null,
+              'decisions',
+              'No open decisions'
+            )
+          }
+        </div>
+      </article>
+
+      <article class="dashboard-card dashboard-card-network">
+        <p class="eyebrow">Relationships</p>
+        <h3>Network intelligence</h3>
+
+        <div class="network-metrics">
+          <div>
+            <strong>${escapeHtml(people.length)}</strong>
+            <span>People</span>
+          </div>
+
+          <div>
+            <strong>${escapeHtml(organizations.length)}</strong>
+            <span>Organizations</span>
+          </div>
+
+          <div>
+            <strong>${escapeHtml(pendingFollowUps.length)}</strong>
+            <span>Follow-ups</span>
+          </div>
+        </div>
+
+        <button
+          class="dashboard-card-action"
+          type="button"
+          data-dashboard-view="people"
+        >
+          Open relationships
+        </button>
       </article>
     </section>
   `;
 
-  bindCollectionActions(handlers);
+  appRoot
+    .querySelectorAll('[data-dashboard-view]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        const view = button.dataset.dashboardView;
+
+        updateActiveNavigation(view);
+        handlers.onNavigate(view);
+      });
+    });
+
+  const dashboardCreateButton = appRoot.querySelector(
+    '[data-dashboard-create]'
+  );
+
+  if (dashboardCreateButton && quickAddButton) {
+    dashboardCreateButton.addEventListener('click', () => {
+      quickAddButton.click();
+    });
+  }
 }
 
 export function renderCollection(
