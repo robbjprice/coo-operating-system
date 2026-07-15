@@ -8,6 +8,46 @@ const searchInput = document.querySelector('#globalSearch');
 const importInput = document.querySelector('#importInput');
 const exportButton = document.querySelector('#exportButton');
 
+const appFrame = document.querySelector('.app-frame');
+const sidebar = document.querySelector('#sidebar');
+const sectionPanelTitle = document.querySelector(
+  '#sectionPanelTitle'
+);
+
+const primaryRailButtons = document.querySelectorAll(
+  '[data-primary-section]'
+);
+
+const sidebarSearchInput = document.querySelector(
+  '#sidebarSearch'
+);
+
+const sidebarCollapseButton = document.querySelector(
+  '#sidebarCollapseButton'
+);
+const desktopPanelToggle = document.querySelector(
+  '#desktopPanelToggle'
+);
+
+const mobileMenuButton = document.querySelector(
+  '#mobileMenuButton'
+);
+
+const mobileSidebarBackdrop = document.querySelector(
+  '#mobileSidebarBackdrop'
+);
+
+const commandButton = document.querySelector('#commandButton');
+const settingsButton = document.querySelector('#settingsButton');
+
+const brandLogoElements = document.querySelectorAll(
+  '#appBrandLogo, #sectionBrandLogo'
+);
+
+const brandFallback = document.querySelector(
+  '#appBrandFallback'
+);
+
 const collectionLabels = {
   tasks: 'Tasks',
   readinessItems: 'Commercial Readiness',
@@ -125,72 +165,482 @@ export function showStatus(message) {
     toastRoot.innerHTML = '';
   }, 3000);
 }
+const navigationSections = {
+  home: {
+    title: 'Operating System',
+    defaultView: 'dashboard',
+    pages: [
+      ['dashboard', 'Dashboard'],
+      ['readinessItems', 'Commercial Readiness'],
+      [
+        'governmentReadinessItems',
+        'Government Readiness'
+      ],
+      ['customers', 'Customers'],
+      ['risks', 'Risks']
+    ]
+  },
 
+  execution: {
+    title: 'Execution',
+    defaultView: 'tasks',
+    pages: [
+      ['tasks', 'Tasks'],
+      ['roadmapItems', 'Roadmap'],
+      ['workPackages', 'Work Packages'],
+      ['resourceRequirements', 'Resources'],
+      ['decisions', 'Decisions']
+    ]
+  },
+
+  relationships: {
+    title: 'Relationships',
+    defaultView: 'people',
+    pages: [
+      ['people', 'People'],
+      ['organizations', 'Organizations'],
+      ['interactions', 'Interactions'],
+      ['followUps', 'Follow-Ups']
+    ]
+  },
+
+  product: {
+    title: 'Product & Market',
+    defaultView: 'products',
+    pages: [
+      ['products', 'Product Overview'],
+      ['productVersions', 'Product Versions'],
+      ['productCapabilities', 'Capabilities'],
+      ['audiences', 'Audiences'],
+      ['contentAssets', 'Content Assets'],
+      ['presentations', 'Presentations'],
+      ['useCases', 'Use Cases'],
+      ['caseStudies', 'Case Studies'],
+      ['approvedClaims', 'Approved Claims']
+    ]
+  },
+
+  funding: {
+    title: 'Funding',
+    defaultView: 'fundingNeeds',
+    pages: [
+      ['fundingNeeds', 'Funding Needs'],
+      ['fundingOpportunities', 'Funding Opportunities'],
+      ['fundingApplications', 'Funding Applications']
+    ]
+  },
+
+  institutional: {
+    title: 'Institutional Pathways',
+    defaultView: 'institutionalPathways',
+    pages: [
+      ['institutionalPathways', 'Institutional Pathways'],
+      ['pathwayCases', 'Pathway Cases']
+    ]
+  },
+
+  knowledge: {
+    title: 'Knowledge',
+    defaultView: 'meetings',
+    pages: [
+      ['meetings', 'Meetings'],
+      ['advisorRecommendations', 'Advisors'],
+      ['documents', 'Documents'],
+      ['evidence', 'Evidence']
+    ]
+  }
+};
+
+let activeNavigationSection = 'home';
+let activeNavigationView = 'dashboard';
+
+function findSectionForView(view) {
+  return Object.entries(navigationSections).find(
+    ([, section]) =>
+      section.pages.some(([pageView]) => pageView === view)
+  )?.[0];
+}
+
+function closeMobileNavigation() {
+  if (!sidebar || !mobileSidebarBackdrop) return;
+
+  sidebar.classList.remove('mobile-open');
+  mobileSidebarBackdrop.hidden = true;
+
+  if (mobileMenuButton) {
+    mobileMenuButton.setAttribute(
+      'aria-expanded',
+      'false'
+    );
+  }
+}
+
+function updatePrimaryRail(sectionName) {
+  primaryRailButtons.forEach((button) => {
+    const isActive =
+      button.dataset.primarySection === sectionName;
+
+    button.classList.toggle('active', isActive);
+
+    if (isActive) {
+      button.setAttribute('aria-current', 'page');
+    } else {
+      button.removeAttribute('aria-current');
+    }
+  });
+}
+
+function renderSectionNavigation(sectionName) {
+  const section =
+    navigationSections[sectionName] ||
+    navigationSections.home;
+
+  activeNavigationSection = sectionName;
+
+  if (sectionPanelTitle) {
+    sectionPanelTitle.textContent = section.title;
+  }
+
+  navEl.innerHTML = section.pages
+    .map(
+      ([view, label]) => `
+        <button
+          type="button"
+          data-view="${escapeHtml(view)}"
+          ${
+            view === activeNavigationView
+              ? 'class="active" aria-current="page"'
+              : ''
+          }
+        >
+          ${escapeHtml(label)}
+        </button>
+      `
+    )
+    .join('');
+
+  updatePrimaryRail(sectionName);
+}
+
+function updateActiveNavigation(view) {
+  activeNavigationView = view;
+
+  const sectionName = findSectionForView(view);
+
+  if (
+    sectionName &&
+    sectionName !== activeNavigationSection
+  ) {
+    renderSectionNavigation(sectionName);
+  }
+
+  navEl
+    .querySelectorAll('[data-view]')
+    .forEach((button) => {
+      const isActive = button.dataset.view === view;
+
+      button.classList.toggle('active', isActive);
+
+      if (isActive) {
+        button.setAttribute('aria-current', 'page');
+      } else {
+        button.removeAttribute('aria-current');
+      }
+    });
+}
+
+function openCommandSearch(handlers) {
+  if (!modalRoot) return;
+
+  modalRoot.innerHTML = `
+    <div class="modal-backdrop" data-command-backdrop>
+      <section
+        class="modal command-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="commandSearchTitle"
+      >
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Command Centre</p>
+            <h2 id="commandSearchTitle">
+              Search the operating system
+            </h2>
+          </div>
+
+          <button
+            class="ghost-button"
+            type="button"
+            data-close-command
+          >
+            Close
+          </button>
+        </div>
+
+        <label>
+          Search
+          <input
+            id="commandSearchInput"
+            type="search"
+            placeholder="Search tasks, people, funding, risks..."
+            autocomplete="off"
+          />
+        </label>
+
+        <p class="command-help">
+          Results will appear in the main workspace as you type.
+        </p>
+      </section>
+    </div>
+  `;
+
+  const commandSearchInput = modalRoot.querySelector(
+    '#commandSearchInput'
+  );
+
+  const closeCommand = () => {
+    modalRoot.innerHTML = '';
+  };
+
+  modalRoot
+    .querySelector('[data-close-command]')
+    .addEventListener('click', closeCommand);
+
+  modalRoot
+    .querySelector('[data-command-backdrop]')
+    .addEventListener('click', (event) => {
+      if (event.target === event.currentTarget) {
+        closeCommand();
+      }
+    });
+
+  commandSearchInput.addEventListener(
+    'input',
+    (event) => {
+      const value = event.target.value;
+
+      if (searchInput) {
+        searchInput.value = value;
+      }
+
+      handlers.onSearch(value);
+    }
+  );
+
+  commandSearchInput.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key === 'Escape') {
+        closeCommand();
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        closeCommand();
+      }
+    }
+  );
+
+  window.setTimeout(() => {
+    commandSearchInput.focus();
+  }, 0);
+}
 export function bindNavigation(handlers) {
   if (!navEl) return;
 
-  navEl.innerHTML = `
-    <button data-view="dashboard">Dashboard</button>
-
-    <div class="nav-section-label">Execution</div>
-    <button data-view="tasks">Tasks</button>
-    <button data-view="roadmapItems">Roadmap</button>
-    <button data-view="workPackages">Work Packages</button>
-    <button data-view="resourceRequirements">Resources</button>
-    <button data-view="decisions">Decisions</button>
-
-    <div class="nav-section-label">Relationships</div>
-    <button data-view="people">People</button>
-    <button data-view="organizations">Organizations</button>
-    <button data-view="interactions">Interactions</button>
-    <button data-view="followUps">Follow-Ups</button>
-
-    <div class="nav-section-label">Product & Market</div>
-    <button data-view="products">Product Overview</button>
-    <button data-view="productVersions">Product Versions</button>
-    <button data-view="productCapabilities">Capabilities</button>
-    <button data-view="audiences">Audiences</button>
-    <button data-view="contentAssets">Content Assets</button>
-    <button data-view="presentations">Presentations</button>
-    <button data-view="useCases">Use Cases</button>
-    <button data-view="caseStudies">Case Studies</button>
-    <button data-view="approvedClaims">Approved Claims</button>
-
-    <div class="nav-section-label">Commercialization</div>
-    <button data-view="readinessItems">Commercial Readiness</button>
-    <button data-view="governmentReadinessItems">Government Readiness</button>
-    <button data-view="customers">Customers</button>
-    <button data-view="risks">Risks</button>
-
-    <div class="nav-section-label">Funding</div>
-    <button data-view="fundingNeeds">Funding Needs</button>
-    <button data-view="fundingOpportunities">Funding Opportunities</button>
-    <button data-view="fundingApplications">Funding Applications</button>
-
-    <div class="nav-section-label">Institutional</div>
-    <button data-view="institutionalPathways">Institutional Pathways</button>
-    <button data-view="pathwayCases">Pathway Cases</button>
-
-    <div class="nav-section-label">Knowledge</div>
-    <button data-view="meetings">Meetings</button>
-    <button data-view="advisorRecommendations">Advisors</button>
-    <button data-view="documents">Documents</button>
-    <button data-view="evidence">Evidence</button>
-  `;
+  renderSectionNavigation(activeNavigationSection);
 
   navEl.addEventListener('click', (event) => {
     const button = event.target.closest('[data-view]');
 
     if (!button) return;
 
-    handlers.onNavigate(button.dataset.view);
+    const view = button.dataset.view;
+
+    updateActiveNavigation(view);
+    closeMobileNavigation();
+    handlers.onNavigate(view);
   });
+
+  primaryRailButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const sectionName =
+        button.dataset.primarySection;
+
+      const section =
+        navigationSections[sectionName];
+
+      if (!section) return;
+
+      activeNavigationSection = sectionName;
+      activeNavigationView = section.defaultView;
+
+      renderSectionNavigation(sectionName);
+      handlers.onNavigate(section.defaultView);
+    });
+  });
+
+  if (sidebarSearchInput) {
+    sidebarSearchInput.addEventListener(
+      'input',
+      (event) => {
+        const query = event.target.value
+          .trim()
+          .toLowerCase();
+
+        navEl
+          .querySelectorAll('[data-view]')
+          .forEach((button) => {
+            const matches =
+              !query ||
+              button.textContent
+                .trim()
+                .toLowerCase()
+                .includes(query);
+
+            button.hidden = !matches;
+          });
+      }
+    );
+  }
 
   if (searchInput) {
     searchInput.addEventListener('input', (event) => {
       handlers.onSearch(event.target.value);
     });
   }
+
+    const setSectionPanelCollapsed = (collapsed) => {
+    if (!appFrame) return;
+
+    appFrame.classList.toggle(
+      'section-panel-collapsed',
+      collapsed
+    );
+
+    if (sidebarCollapseButton) {
+      sidebarCollapseButton.setAttribute(
+        'aria-expanded',
+        String(!collapsed)
+      );
+    }
+
+    if (desktopPanelToggle) {
+      desktopPanelToggle.setAttribute(
+        'aria-expanded',
+        String(!collapsed)
+      );
+
+      desktopPanelToggle.setAttribute(
+        'aria-label',
+        collapsed
+          ? 'Expand navigation'
+          : 'Collapse navigation'
+      );
+
+      desktopPanelToggle.setAttribute(
+        'title',
+        collapsed
+          ? 'Expand navigation'
+          : 'Collapse navigation'
+      );
+
+      desktopPanelToggle.innerHTML = `
+        <span aria-hidden="true">
+          ${collapsed ? '›' : '‹'}
+        </span>
+      `;
+    }
+  };
+
+  if (sidebarCollapseButton && appFrame) {
+    sidebarCollapseButton.addEventListener(
+      'click',
+      () => {
+        setSectionPanelCollapsed(true);
+      }
+    );
+  }
+
+  if (desktopPanelToggle && appFrame) {
+    desktopPanelToggle.addEventListener(
+      'click',
+      () => {
+        const collapsed =
+          appFrame.classList.contains(
+            'section-panel-collapsed'
+          );
+
+        setSectionPanelCollapsed(!collapsed);
+      }
+    );
+  }
+
+  if (
+    mobileMenuButton &&
+    sidebar &&
+    mobileSidebarBackdrop
+  ) {
+    mobileMenuButton.addEventListener('click', () => {
+      const isOpen =
+        sidebar.classList.toggle('mobile-open');
+
+      mobileSidebarBackdrop.hidden = !isOpen;
+
+      mobileMenuButton.setAttribute(
+        'aria-expanded',
+        String(isOpen)
+      );
+    });
+
+    mobileSidebarBackdrop.addEventListener(
+      'click',
+      closeMobileNavigation
+    );
+  }
+
+  if (commandButton) {
+    commandButton.addEventListener('click', () => {
+      openCommandSearch(handlers);
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    const commandKey =
+      navigator.platform.toLowerCase().includes('mac')
+        ? event.metaKey
+        : event.ctrlKey;
+
+    if (
+      commandKey &&
+      event.key.toLowerCase() === 'k'
+    ) {
+      event.preventDefault();
+      openCommandSearch(handlers);
+    }
+
+    if (event.key === 'Escape') {
+      closeMobileNavigation();
+    }
+  });
+
+  if (settingsButton) {
+    settingsButton.addEventListener('click', () => {
+      activeNavigationView = 'settings';
+      closeMobileNavigation();
+      handlers.onNavigate('settings');
+    });
+  }
+
+  brandLogoElements.forEach((logo) => {
+    logo.addEventListener('error', () => {
+      logo.hidden = true;
+
+      if (brandFallback) {
+        brandFallback.style.display = 'grid';
+      }
+    });
+  });
 }
 export function bindQuickAdd(handlers) {
   if (!quickAddButton || !modalRoot) return;

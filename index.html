@@ -2,51 +2,353 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#f4f7fb"
+  />
+
   <title>FedEMR COO Operating System</title>
-  <link rel="stylesheet" href="css/styles.css" />
+
+  <link
+    rel="stylesheet"
+    href="css/styles.css"
+  />
 </head>
+
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="Main navigation">
-      <div class="brand">
-        <div class="brand-mark">F</div>
-        <div>
-          <strong>FedEMR</strong>
-          <span>COO OS</span>
+  <div class="app-frame">
+    <aside
+      class="primary-rail"
+      id="primaryRail"
+      aria-label="Primary navigation"
+    >
+      <a
+        class="rail-brand"
+        href="#"
+        aria-label="Application home"
+      >
+        <img
+          id="appBrandLogo"
+          class="rail-brand-logo"
+          src="assets/branding/app-logo.png"
+          alt="FedEMR"
+        />
+
+        <div
+          class="rail-brand-fallback"
+          id="appBrandFallback"
+          aria-hidden="true"
+        >
+          F
         </div>
+      </a>
+
+      <nav class="rail-navigation">
+        <button
+          class="rail-button active"
+          type="button"
+          data-primary-section="home"
+          aria-label="Home"
+          title="Home"
+        >
+          <span class="rail-icon" aria-hidden="true">⌂</span>
+          <span class="rail-label">Home</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="execution"
+          aria-label="Execution"
+          title="Execution"
+        >
+          <span class="rail-icon" aria-hidden="true">✓</span>
+          <span class="rail-label">Execute</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="relationships"
+          aria-label="Relationships"
+          title="Relationships"
+        >
+          <span class="rail-icon" aria-hidden="true">◎</span>
+          <span class="rail-label">People</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="product"
+          aria-label="Product and Market"
+          title="Product and Market"
+        >
+          <span class="rail-icon" aria-hidden="true">◇</span>
+          <span class="rail-label">Product</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="funding"
+          aria-label="Funding"
+          title="Funding"
+        >
+          <span class="rail-icon" aria-hidden="true">$</span>
+          <span class="rail-label">Funding</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="institutional"
+          aria-label="Institutional pathways"
+          title="Institutional pathways"
+        >
+          <span class="rail-icon" aria-hidden="true">⌘</span>
+          <span class="rail-label">Pathways</span>
+        </button>
+
+        <button
+          class="rail-button"
+          type="button"
+          data-primary-section="knowledge"
+          aria-label="Knowledge"
+          title="Knowledge"
+        >
+          <span class="rail-icon" aria-hidden="true">◫</span>
+          <span class="rail-label">Knowledge</span>
+        </button>
+      </nav>
+
+      <div class="rail-footer">
+        <button
+          class="rail-button"
+          id="settingsButton"
+          type="button"
+          aria-label="Settings"
+          title="Settings"
+        >
+          <span class="rail-icon" aria-hidden="true">⚙</span>
+          <span class="rail-label">Settings</span>
+        </button>
+      </div>
+    </aside>
+
+    <aside
+      class="section-panel"
+      id="sidebar"
+      aria-label="Section navigation"
+    >
+      <div class="section-panel-header">
+        <div class="section-brand">
+          <img
+            id="sectionBrandLogo"
+            class="section-brand-logo"
+            src="assets/branding/app-logo.png"
+            alt="FedEMR"
+          />
+
+          <div class="section-brand-copy">
+            <strong id="appBrandName">FedEMR</strong>
+            <span id="appBrandSubtitle">
+              COO Operating System
+            </span>
+          </div>
+        </div>
+
+        <button
+          class="minimal-icon-button"
+          id="sidebarCollapseButton"
+          type="button"
+          aria-label="Collapse navigation"
+          aria-expanded="true"
+          title="Collapse navigation"
+        >
+          <span aria-hidden="true">‹</span>
+        </button>
       </div>
 
-      <nav class="nav" id="sidebarNav"></nav>
+      <div class="section-context">
+        <p class="section-context-label">Workspace</p>
+        <h2 id="sectionPanelTitle">Operating System</h2>
+      </div>
 
-      <div class="sidebar-footer">
-        <button class="ghost-button full-width" id="exportButton">Export JSON</button>
-        <label class="ghost-button full-width file-label" for="importInput">Import JSON</label>
-        <input id="importInput" type="file" accept="application/json" hidden />
+      <div class="sidebar-search">
+        <span
+          class="sidebar-search-icon"
+          aria-hidden="true"
+        >
+          ⌕
+        </span>
+
+        <input
+          id="sidebarSearch"
+          type="search"
+          placeholder="Find a page"
+          aria-label="Search navigation"
+          autocomplete="off"
+        />
+      </div>
+
+      <nav
+        class="nav"
+        id="sidebarNav"
+        aria-label="Application pages"
+      ></nav>
+
+      <div class="section-panel-footer">
+        <button
+          class="utility-row"
+          id="exportButton"
+          type="button"
+        >
+          <span aria-hidden="true">⇧</span>
+          <span>Export workspace</span>
+        </button>
+
+        <label
+          class="utility-row file-label"
+          for="importInput"
+        >
+          <span aria-hidden="true">⇩</span>
+          <span>Import workspace</span>
+        </label>
+
+        <input
+          id="importInput"
+          type="file"
+          accept="application/json"
+          hidden
+        />
+
+        <div class="local-status">
+          <span class="local-status-dot"></span>
+
+          <div>
+            <strong>Local-first</strong>
+            <span>Data stays in this browser</span>
+          </div>
+        </div>
       </div>
     </aside>
 
     <div class="workspace">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Commercialization Command Centre</p>
-          <h1 id="pageTitle">Dashboard</h1>
-        </div>
-        <div class="topbar-actions">
-          <div class="search-wrap">
-            <input id="globalSearch" type="search" placeholder="Search tasks, risks, customers..." aria-label="Global search" />
+      <header class="workspace-header">
+        <div class="workspace-header-leading">
+          <button
+            class="minimal-icon-button mobile-menu-button"
+            id="mobileMenuButton"
+            type="button"
+            aria-label="Open navigation"
+            aria-controls="sidebar"
+            aria-expanded="false"
+          >
+            <span aria-hidden="true">☰</span>
+          </button>
+          <button
+  class="minimal-icon-button desktop-panel-toggle"
+  id="desktopPanelToggle"
+  type="button"
+  aria-label="Expand navigation"
+  aria-expanded="true"
+  title="Expand navigation"
+>
+  <span aria-hidden="true">›</span>
+</button>
+
+          <div class="page-heading">
+            <p class="eyebrow">
+              Commercialization Command Centre
+            </p>
+
+            <h1 id="pageTitle">Dashboard</h1>
           </div>
-          <button class="primary-button" id="quickAddButton">Quick Add</button>
+        </div>
+
+        <div class="workspace-header-actions">
+          <button
+            class="command-button"
+            id="commandButton"
+            type="button"
+          >
+            <span class="command-icon" aria-hidden="true">⌕</span>
+            <span>Search or run a command</span>
+            <kbd>⌘ K</kbd>
+          </button>
+
+          <button
+            class="create-button"
+            id="quickAddButton"
+            type="button"
+          >
+            <span aria-hidden="true">+</span>
+            <span>Create</span>
+          </button>
         </div>
       </header>
 
-      <main id="app" class="main-content" tabindex="-1"></main>
+      <div class="workspace-subbar">
+        <div class="workspace-status">
+          <span class="workspace-status-dot"></span>
+          <span>Workspace online</span>
+        </div>
+
+        <div class="workspace-subbar-actions">
+          <input
+            id="globalSearch"
+            class="hidden-global-search"
+            type="search"
+            aria-label="Global search"
+            autocomplete="off"
+          />
+
+          <button
+            class="subtle-button"
+            type="button"
+            id="viewOptionsButton"
+          >
+            View options
+          </button>
+        </div>
+      </div>
+
+      <main
+        id="app"
+        class="main-content"
+        tabindex="-1"
+      ></main>
     </div>
   </div>
 
-  <div id="modalRoot" class="modal-root" aria-live="polite"></div>
-  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <div
+    class="mobile-sidebar-backdrop"
+    id="mobileSidebarBackdrop"
+    hidden
+  ></div>
 
-  <script type="module" src="js/app.js"></script>
+  <div
+    id="modalRoot"
+    class="modal-root"
+    aria-live="polite"
+  ></div>
+
+  <div
+    id="toastRoot"
+    class="toast-root"
+    aria-live="polite"
+  ></div>
+
+  <script
+    type="module"
+    src="js/app.js"
+  ></script>
 </body>
 </html>
