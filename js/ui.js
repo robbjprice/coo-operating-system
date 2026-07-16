@@ -63,7 +63,9 @@ const collectionLabels = {
   organizations: 'Organizations',
   relationships: 'Relationships',
   interactions: 'Interactions',
-  followUps: 'Follow-Ups',
+conversations: 'Conversations',
+conversationInsights: 'Conversation Insights',
+followUps: 'Follow-Ups',
 
   products: 'Product Overview',
   productVersions: 'Product Versions',
@@ -202,15 +204,16 @@ const navigationSections = {
   },
 
   relationships: {
-    title: 'Relationships',
-    defaultView: 'people',
-    pages: [
-      ['people', 'People'],
-      ['organizations', 'Organizations'],
-      ['interactions', 'Interactions'],
-      ['followUps', 'Follow-Ups']
-    ]
-  },
+  title: 'Relationships',
+  defaultView: 'conversations',
+  pages: [
+    ['conversations', 'Conversations'],
+    ['people', 'People'],
+    ['organizations', 'Organizations'],
+    ['interactions', 'Interactions'],
+    ['followUps', 'Follow-Ups']
+  ]
+},
 
   product: {
     title: 'Product & Market',
@@ -3874,6 +3877,805 @@ function renderApprovedClaims(items, data) {
     </section>
   `;
 }
+function renderConversationForm(item = {}, data = {}) {
+  const selectedPersonIds = Array.isArray(item.personIds)
+    ? item.personIds
+    : [];
+
+  const selectedOrganizationIds = Array.isArray(
+    item.organizationIds
+  )
+    ? item.organizationIds
+    : [];
+
+  return `
+    <form
+      class="item-form conversation-form"
+      data-form-type="conversation"
+      data-collection="conversations"
+      data-id="${escapeHtml(item.id || '')}"
+    >
+      <div class="form-grid-two">
+        <label>
+          Conversation Title
+          <input
+            name="title"
+            required
+            placeholder="Example: Alberta Health introduction call"
+            value="${escapeHtml(item.title || '')}"
+          />
+        </label>
+
+        <label>
+          Conversation Type
+          <select name="conversationType">
+            <option value="Meeting" ${
+              item.conversationType === 'Meeting'
+                ? 'selected'
+                : ''
+            }>Meeting</option>
+
+            <option value="Prospect Call" ${
+              item.conversationType === 'Prospect Call'
+                ? 'selected'
+                : ''
+            }>Prospect Call</option>
+
+            <option value="Partner Call" ${
+              item.conversationType === 'Partner Call'
+                ? 'selected'
+                : ''
+            }>Partner Call</option>
+
+            <option value="Advisor Call" ${
+              item.conversationType === 'Advisor Call'
+                ? 'selected'
+                : ''
+            }>Advisor Call</option>
+
+            <option value="Email Thread" ${
+              item.conversationType === 'Email Thread'
+                ? 'selected'
+                : ''
+            }>Email Thread</option>
+
+            <option value="Conference Conversation" ${
+              item.conversationType === 'Conference Conversation'
+                ? 'selected'
+                : ''
+            }>Conference Conversation</option>
+
+            <option value="Internal Discussion" ${
+              item.conversationType === 'Internal Discussion'
+                ? 'selected'
+                : ''
+            }>Internal Discussion</option>
+
+            <option value="Other" ${
+              item.conversationType === 'Other'
+                ? 'selected'
+                : ''
+            }>Other</option>
+          </select>
+        </label>
+
+        <label>
+          Date
+          <input
+            type="date"
+            name="date"
+            value="${escapeHtml(item.date || '')}"
+          />
+        </label>
+
+        <label>
+          Analysis Status
+          <select name="analysisStatus">
+            <option value="Draft" ${
+              !item.analysisStatus ||
+              item.analysisStatus === 'Draft'
+                ? 'selected'
+                : ''
+            }>Draft</option>
+
+            <option value="Ready for Analysis" ${
+              item.analysisStatus === 'Ready for Analysis'
+                ? 'selected'
+                : ''
+            }>Ready for Analysis</option>
+
+            <option value="Analyzed" ${
+              item.analysisStatus === 'Analyzed'
+                ? 'selected'
+                : ''
+            }>Analyzed</option>
+
+            <option value="Reviewed" ${
+              item.analysisStatus === 'Reviewed'
+                ? 'selected'
+                : ''
+            }>Reviewed</option>
+
+            <option value="Actions Created" ${
+              item.analysisStatus === 'Actions Created'
+                ? 'selected'
+                : ''
+            }>Actions Created</option>
+          </select>
+        </label>
+
+        <label>
+          Owner
+          <input
+            name="owner"
+            value="${escapeHtml(item.owner || 'Robb')}"
+          />
+        </label>
+
+        <label>
+          Confidentiality
+          <select name="confidentiality">
+            <option value="Internal" ${
+              !item.confidentiality ||
+              item.confidentiality === 'Internal'
+                ? 'selected'
+                : ''
+            }>Internal</option>
+
+            <option value="Confidential" ${
+              item.confidentiality === 'Confidential'
+                ? 'selected'
+                : ''
+            }>Confidential</option>
+
+            <option value="Restricted" ${
+              item.confidentiality === 'Restricted'
+                ? 'selected'
+                : ''
+            }>Restricted</option>
+
+            <option value="Public" ${
+              item.confidentiality === 'Public'
+                ? 'selected'
+                : ''
+            }>Public</option>
+          </select>
+        </label>
+      </div>
+
+      <fieldset class="conversation-link-fieldset">
+        <legend>People</legend>
+
+        <div class="conversation-checkbox-grid">
+          ${(data.people || [])
+            .map(
+              (person) => `
+                <label class="conversation-checkbox">
+                  <input
+                    type="checkbox"
+                    name="personIds"
+                    value="${escapeHtml(person.id)}"
+                    ${
+                      selectedPersonIds.includes(person.id)
+                        ? 'checked'
+                        : ''
+                    }
+                  />
+
+                  <span>
+                    ${escapeHtml(
+                      person.displayName || 'Unnamed Person'
+                    )}
+                  </span>
+                </label>
+              `
+            )
+            .join('')}
+        </div>
+      </fieldset>
+
+      <fieldset class="conversation-link-fieldset">
+        <legend>Organizations</legend>
+
+        <div class="conversation-checkbox-grid">
+          ${(data.organizations || [])
+            .map(
+              (organization) => `
+                <label class="conversation-checkbox">
+                  <input
+                    type="checkbox"
+                    name="organizationIds"
+                    value="${escapeHtml(organization.id)}"
+                    ${
+                      selectedOrganizationIds.includes(
+                        organization.id
+                      )
+                        ? 'checked'
+                        : ''
+                    }
+                  />
+
+                  <span>
+                    ${escapeHtml(
+                      organization.name ||
+                        'Unnamed Organization'
+                    )}
+                  </span>
+                </label>
+              `
+            )
+            .join('')}
+        </div>
+      </fieldset>
+
+      <label>
+        Transcript, Notes, or Email Content
+        <textarea
+          class="conversation-source-text"
+          name="sourceText"
+          required
+          placeholder="Paste the complete transcript, meeting notes, call summary, or email thread here."
+        >${escapeHtml(
+          item.sourceText ||
+            item.transcript ||
+            item.notes ||
+            ''
+        )}</textarea>
+      </label>
+
+      <section class="conversation-structured-fields">
+        <div class="conversation-section-heading">
+          <p class="eyebrow">Structured Review</p>
+          <h3>Known outcomes and operating implications</h3>
+
+          <p>
+            These fields may be entered manually now and later
+            populated by the secure AI analysis workflow.
+          </p>
+        </div>
+
+        <label>
+          Executive Summary
+          <textarea name="summary">${escapeHtml(
+            item.summary || ''
+          )}</textarea>
+        </label>
+
+        <div class="form-grid-two">
+          <label>
+            Decisions Made
+            <textarea
+              name="decisions"
+              placeholder="One decision per line"
+            >${escapeHtml(
+              joinList(item.decisions).replaceAll(', ', '\n')
+            )}</textarea>
+          </label>
+
+          <label>
+            Questions Requiring Answers
+            <textarea
+              name="openQuestions"
+              placeholder="One question per line"
+            >${escapeHtml(
+              joinList(item.openQuestions).replaceAll(', ', '\n')
+            )}</textarea>
+          </label>
+
+          <label>
+            FedEMR Commitments
+            <textarea
+              name="fedemrCommitments"
+              placeholder="One commitment per line"
+            >${escapeHtml(
+              joinList(item.fedemrCommitments).replaceAll(
+                ', ',
+                '\n'
+              )
+            )}</textarea>
+          </label>
+
+          <label>
+            Other-Party Commitments
+            <textarea
+              name="externalCommitments"
+              placeholder="One commitment per line"
+            >${escapeHtml(
+              joinList(item.externalCommitments).replaceAll(
+                ', ',
+                '\n'
+              )
+            )}</textarea>
+          </label>
+
+          <label>
+            Risks or Concerns
+            <textarea
+              name="risksRaised"
+              placeholder="One risk per line"
+            >${escapeHtml(
+              joinList(item.risksRaised).replaceAll(', ', '\n')
+            )}</textarea>
+          </label>
+
+          <label>
+            Opportunities
+            <textarea
+              name="opportunities"
+              placeholder="One opportunity per line"
+            >${escapeHtml(
+              joinList(item.opportunities).replaceAll(', ', '\n')
+            )}</textarea>
+          </label>
+
+          <label>
+            Product Requests
+            <textarea
+              name="productRequests"
+              placeholder="One request per line"
+            >${escapeHtml(
+              joinList(item.productRequests).replaceAll(', ', '\n')
+            )}</textarea>
+          </label>
+
+          <label>
+            Suggested Follow-Ups
+            <textarea
+              name="suggestedFollowUps"
+              placeholder="One follow-up per line"
+            >${escapeHtml(
+              joinList(item.suggestedFollowUps).replaceAll(
+                ', ',
+                '\n'
+              )
+            )}</textarea>
+          </label>
+        </div>
+      </section>
+
+      <div class="conversation-form-actions">
+        <button class="primary-button" type="submit">
+          ${item.id ? 'Save Conversation' : 'Add Conversation'}
+        </button>
+
+        ${
+          item.id
+            ? `
+              <button
+                class="ghost-button"
+                type="button"
+                data-request-conversation-analysis="${escapeHtml(
+                  item.id
+                )}"
+              >
+                Prepare AI Analysis
+              </button>
+            `
+            : ''
+        }
+      </div>
+    </form>
+  `;
+}
+
+function renderConversationList(
+  values = [],
+  emptyMessage = 'None recorded.'
+) {
+  if (!values.length) {
+    return `
+      <p class="conversation-empty-detail">
+        ${escapeHtml(emptyMessage)}
+      </p>
+    `;
+  }
+
+  return `
+    <ul class="conversation-detail-list">
+      ${values
+        .map(
+          (value) => `
+            <li>${escapeHtml(value)}</li>
+          `
+        )
+        .join('')}
+    </ul>
+  `;
+}
+
+function renderConversationCard(conversation, data = {}) {
+  const people = (conversation.personIds || [])
+    .map((personId) =>
+      (data.people || []).find(
+        (person) => person.id === personId
+      )
+    )
+    .filter(Boolean);
+
+  const organizations = (
+    conversation.organizationIds || []
+  )
+    .map((organizationId) =>
+      (data.organizations || []).find(
+        (organization) =>
+          organization.id === organizationId
+      )
+    )
+    .filter(Boolean);
+
+  const relatedProposals = (
+    data.aiActionProposals || []
+  ).filter(
+    (proposal) =>
+      proposal.sourceType === 'Conversation' &&
+      proposal.sourceRecordId === conversation.id
+  );
+
+  return `
+    <article class="conversation-card">
+      <div class="conversation-card-header">
+        <div>
+          <div class="conversation-card-topline">
+            <span class="conversation-status">
+              ${escapeHtml(
+                conversation.analysisStatus || 'Draft'
+              )}
+            </span>
+
+            <span>
+              ${escapeHtml(
+                conversation.conversationType ||
+                  'Conversation'
+              )}
+            </span>
+          </div>
+
+          <h3>
+            ${escapeHtml(
+              conversation.title || 'Untitled Conversation'
+            )}
+          </h3>
+
+          <p>
+            ${escapeHtml(conversation.date || 'Date not set')}
+          </p>
+        </div>
+
+        <div class="conversation-card-owner">
+          <span>Owner</span>
+          <strong>
+            ${escapeHtml(conversation.owner || 'Unassigned')}
+          </strong>
+        </div>
+      </div>
+
+      ${
+        people.length || organizations.length
+          ? `
+            <div class="conversation-participants">
+              ${people
+                .map(
+                  (person) => `
+                    <span>
+                      ${escapeHtml(person.displayName)}
+                    </span>
+                  `
+                )
+                .join('')}
+
+              ${organizations
+                .map(
+                  (organization) => `
+                    <span>
+                      ${escapeHtml(organization.name)}
+                    </span>
+                  `
+                )
+                .join('')}
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        conversation.summary
+          ? `
+            <div class="conversation-summary">
+              <strong>Summary</strong>
+              <p>${escapeHtml(conversation.summary)}</p>
+            </div>
+          `
+          : `
+            <div class="conversation-summary conversation-summary-empty">
+              <strong>No summary yet</strong>
+              <p>
+                Save the source conversation and prepare it for
+                structured analysis.
+              </p>
+            </div>
+          `
+      }
+
+      <div class="conversation-insight-grid">
+        <div>
+          <span>Decisions</span>
+          <strong>
+            ${(conversation.decisions || []).length}
+          </strong>
+        </div>
+
+        <div>
+          <span>Commitments</span>
+          <strong>
+            ${
+              (conversation.fedemrCommitments || []).length +
+              (conversation.externalCommitments || []).length
+            }
+          </strong>
+        </div>
+
+        <div>
+          <span>Risks</span>
+          <strong>
+            ${(conversation.risksRaised || []).length}
+          </strong>
+        </div>
+
+        <div>
+          <span>Opportunities</span>
+          <strong>
+            ${(conversation.opportunities || []).length}
+          </strong>
+        </div>
+
+        <div>
+          <span>AI Proposals</span>
+          <strong>${relatedProposals.length}</strong>
+        </div>
+      </div>
+
+      <details class="conversation-details">
+        <summary>Review structured outcomes</summary>
+
+        <div class="conversation-outcome-grid">
+          <section>
+            <h4>Decisions</h4>
+            ${renderConversationList(
+              conversation.decisions || []
+            )}
+          </section>
+
+          <section>
+            <h4>Questions</h4>
+            ${renderConversationList(
+              conversation.openQuestions || []
+            )}
+          </section>
+
+          <section>
+            <h4>FedEMR Commitments</h4>
+            ${renderConversationList(
+              conversation.fedemrCommitments || []
+            )}
+          </section>
+
+          <section>
+            <h4>Other-Party Commitments</h4>
+            ${renderConversationList(
+              conversation.externalCommitments || []
+            )}
+          </section>
+
+          <section>
+            <h4>Risks</h4>
+            ${renderConversationList(
+              conversation.risksRaised || []
+            )}
+          </section>
+
+          <section>
+            <h4>Opportunities</h4>
+            ${renderConversationList(
+              conversation.opportunities || []
+            )}
+          </section>
+
+          <section>
+            <h4>Product Requests</h4>
+            ${renderConversationList(
+              conversation.productRequests || []
+            )}
+          </section>
+
+          <section>
+            <h4>Suggested Follow-Ups</h4>
+            ${renderConversationList(
+              conversation.suggestedFollowUps || []
+            )}
+          </section>
+        </div>
+      </details>
+
+      <details class="conversation-source-details">
+        <summary>View source text</summary>
+
+        <div class="conversation-source-preview">
+          ${escapeHtml(
+            conversation.sourceText ||
+              conversation.transcript ||
+              conversation.notes ||
+              ''
+          )}
+        </div>
+      </details>
+
+      <details class="conversation-edit-details">
+        <summary>Edit Conversation</summary>
+
+        ${renderConversationForm(conversation, data)}
+      </details>
+
+      <div class="conversation-card-actions">
+        <button
+          class="primary-button"
+          type="button"
+          data-request-conversation-analysis="${escapeHtml(
+            conversation.id
+          )}"
+        >
+          Prepare AI Analysis
+        </button>
+
+        <button
+          class="danger-button"
+          type="button"
+          data-delete="${escapeHtml(conversation.id)}"
+          data-collection="conversations"
+        >
+          Delete
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function renderConversations(
+  conversations,
+  handlers,
+  data = {}
+) {
+  const drafts = conversations.filter(
+    (item) =>
+      !item.analysisStatus ||
+      item.analysisStatus === 'Draft'
+  );
+
+  const ready = conversations.filter(
+    (item) =>
+      item.analysisStatus === 'Ready for Analysis'
+  );
+
+  const analyzed = conversations.filter(
+    (item) =>
+      ['Analyzed', 'Reviewed', 'Actions Created'].includes(
+        item.analysisStatus
+      )
+  );
+
+  appRoot.innerHTML = `
+    <section class="conversation-hero">
+      <div>
+        <p class="eyebrow">Conversation Intelligence</p>
+
+        <h2>Turn conversations into action.</h2>
+
+        <p>
+          Capture partner, prospect, collaborator, advisor, funder,
+          government, university, customer, and internal
+          conversations. Structure what was decided, promised,
+          requested, or discovered, then convert approved insights
+          into accountable work.
+        </p>
+      </div>
+
+      <div class="conversation-hero-metrics">
+        <div>
+          <strong>${conversations.length}</strong>
+          <span>Total</span>
+        </div>
+
+        <div>
+          <strong>${drafts.length}</strong>
+          <span>Draft</span>
+        </div>
+
+        <div>
+          <strong>${ready.length}</strong>
+          <span>Ready</span>
+        </div>
+
+        <div>
+          <strong>${analyzed.length}</strong>
+          <span>Analyzed</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="conversation-intake-panel">
+      <div class="conversation-section-heading">
+        <p class="eyebrow">New Conversation</p>
+        <h2>Add transcript, notes, or email content</h2>
+
+        <p>
+          Everything remains local in the browser until a future
+          secure AI analysis action is explicitly approved.
+        </p>
+      </div>
+
+      ${renderConversationForm({}, data)}
+    </section>
+
+    <section class="conversation-library">
+      <div class="conversation-library-header">
+        <div>
+          <p class="eyebrow">Conversation Library</p>
+          <h2>Saved conversations</h2>
+        </div>
+
+        <span>${conversations.length}</span>
+      </div>
+
+      <div class="conversation-card-grid">
+        ${
+          conversations.length
+            ? conversations
+                .map((conversation) =>
+                  renderConversationCard(
+                    conversation,
+                    data
+                  )
+                )
+                .join('')
+            : `
+              <div class="action-empty-state">
+                No conversations have been added yet.
+              </div>
+            `
+        }
+      </div>
+    </section>
+  `;
+
+  bindCollectionActions(handlers);
+  bindConversationActions(handlers);
+}
+
+function bindConversationActions(handlers) {
+  if (!appRoot) return;
+
+  appRoot
+    .querySelectorAll(
+      '[data-request-conversation-analysis]'
+    )
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        if (
+          typeof handlers.onPrepareConversationAnalysis ===
+          'function'
+        ) {
+          handlers.onPrepareConversationAnalysis(
+            button.dataset.requestConversationAnalysis
+          );
+
+          return;
+        }
+
+        showStatus(
+          'Conversation saved. Secure AI analysis is the next build step.'
+        );
+      });
+    });
+}
 function getActionDisplayStatus(action) {
   return (
     action.derivedStatus ||
@@ -4589,7 +5391,8 @@ function bindCollectionActions(handlers) {
       if (formType === 'person') {
         const firstName = formData.get('firstName') || '';
         const lastName = formData.get('lastName') || '';
-        const enteredDisplayName = formData.get('displayName') || '';
+        const enteredDisplayName =
+          formData.get('displayName') || '';
 
         await handlers.onSave('people', {
           id: form.dataset.id || undefined,
@@ -4610,20 +5413,28 @@ function bindCollectionActions(handlers) {
             'relationshipStrength'
           ),
           influenceLevel: formData.get('influenceLevel'),
-          decisionAuthority: formData.get('decisionAuthority'),
-          nextFollowUpDate: formData.get('nextFollowUpDate'),
+          decisionAuthority: formData.get(
+            'decisionAuthority'
+          ),
+          nextFollowUpDate: formData.get(
+            'nextFollowUpDate'
+          ),
           internalRelationshipOwner: formData.get(
             'internalRelationshipOwner'
           ),
           relationshipTypes: parseList(
             formData.get('relationshipTypes')
           ),
-          focusAreas: parseList(formData.get('focusAreas')),
+          focusAreas: parseList(
+            formData.get('focusAreas')
+          ),
           expertiseAreas: parseList(
             formData.get('expertiseAreas')
           ),
           notes: formData.get('notes'),
-          confidentiality: formData.get('confidentiality'),
+          confidentiality: formData.get(
+            'confidentiality'
+          ),
           active: true
         });
 
@@ -4633,16 +5444,101 @@ function bindCollectionActions(handlers) {
       if (formType === 'organization') {
         await handlers.onSave('organizations', {
           id: form.dataset.id || undefined,
-          name: formData.get('name') || 'Unnamed Organization',
+          name:
+            formData.get('name') ||
+            'Unnamed Organization',
           legalName: formData.get('legalName'),
           shortName: formData.get('shortName'),
-          organizationType: formData.get('organizationType'),
+          organizationType: formData.get(
+            'organizationType'
+          ),
           sector: formData.get('sector'),
           country: formData.get('country'),
           website: formData.get('website'),
           active: formData.get('active') === 'true',
           notes: formData.get('notes'),
-          confidentiality: formData.get('confidentiality')
+          confidentiality: formData.get(
+            'confidentiality'
+          )
+        });
+
+        return;
+      }
+
+      if (formType === 'conversation') {
+        const parseLines = (value) =>
+          String(value || '')
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+        await handlers.onSave('conversations', {
+          id: form.dataset.id || undefined,
+
+          title:
+            formData.get('title') ||
+            'Untitled Conversation',
+
+          conversationType:
+            formData.get('conversationType') ||
+            'Meeting',
+
+          date: formData.get('date'),
+
+          analysisStatus:
+            formData.get('analysisStatus') ||
+            'Draft',
+
+          owner:
+            formData.get('owner') ||
+            'Robb',
+
+          confidentiality:
+            formData.get('confidentiality') ||
+            'Internal',
+
+          personIds: formData.getAll('personIds'),
+
+          organizationIds:
+            formData.getAll('organizationIds'),
+
+          sourceText:
+            formData.get('sourceText') || '',
+
+          summary:
+            formData.get('summary') || '',
+
+          decisions: parseLines(
+            formData.get('decisions')
+          ),
+
+          openQuestions: parseLines(
+            formData.get('openQuestions')
+          ),
+
+          fedemrCommitments: parseLines(
+            formData.get('fedemrCommitments')
+          ),
+
+          externalCommitments: parseLines(
+            formData.get('externalCommitments')
+          ),
+
+          risksRaised: parseLines(
+            formData.get('risksRaised')
+          ),
+
+          opportunities: parseLines(
+            formData.get('opportunities')
+          ),
+
+          productRequests: parseLines(
+            formData.get('productRequests')
+          ),
+
+          suggestedFollowUps: parseLines(
+            formData.get('suggestedFollowUps')
+          )
         });
 
         return;
@@ -4656,19 +5552,23 @@ function bindCollectionActions(handlers) {
         status: formData.get('status'),
         priority: formData.get('priority'),
         dueDate: formData.get('dueDate'),
-        confidentiality: formData.get('confidentiality')
+        confidentiality: formData.get(
+          'confidentiality'
+        )
       });
     });
   });
 
-  appRoot.querySelectorAll('[data-delete]').forEach((button) => {
-    button.addEventListener('click', async () => {
-      await handlers.onDelete(
-        button.dataset.collection,
-        button.dataset.delete
-      );
+  appRoot
+    .querySelectorAll('[data-delete]')
+    .forEach((button) => {
+      button.addEventListener('click', async () => {
+        await handlers.onDelete(
+          button.dataset.collection,
+          button.dataset.delete
+        );
+      });
     });
-  });
 }
 
 export function renderDashboard(model, handlers) {
@@ -5214,6 +6114,15 @@ export function renderCollection(
   data = {}
 ) {
     setPageTitle(formatCollectionName(collection));
+      if (collection === 'conversations') {
+    renderConversations(
+      items,
+      handlers,
+      data
+    );
+
+    return;
+  }
   if (collection === 'actionItems') {
     renderActionCenter(
       items,
