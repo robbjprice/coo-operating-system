@@ -92,9 +92,16 @@ const fixed = (id, extra = {}) => ({
 });
 
 export const collections = [
-  'tasks',
+    'tasks',
+
   'readinessItems',
   'governmentReadinessItems',
+
+  'readinessTemplates',
+  'readinessTemplateItems',
+  'readinessAssessments',
+  'readinessAssessmentItems',
+
   'customers',
   'meetings',
   'advisorRecommendations',
@@ -340,7 +347,10 @@ schemaVersion: '0.7',
       completionPercentage: 10
     })
   ],
-
+  readinessTemplates: [],
+  readinessTemplateItems: [],
+  readinessAssessments: [],
+  readinessAssessmentItems: [],
   customers: [
     base('cust', {
       name: 'Government health-system buyer',

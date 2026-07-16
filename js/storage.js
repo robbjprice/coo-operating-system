@@ -1,11 +1,90 @@
 import { collections, sampleData } from './sample-data.js';
 
 const DB_NAME = 'fedemr-coo-os';
-const DB_VERSION = 5;
+const DB_VERSION = 7;
 
 let dbPromise = null;
 
 const collectionIndexes = {
+    readinessTemplates: [
+    {
+      name: 'readinessType',
+      keyPath: 'readinessType'
+    },
+    {
+      name: 'active',
+      keyPath: 'active'
+    },
+    {
+      name: 'version',
+      keyPath: 'version'
+    }
+  ],
+
+  readinessTemplateItems: [
+    {
+      name: 'templateId',
+      keyPath: 'templateId'
+    },
+    {
+      name: 'category',
+      keyPath: 'category'
+    },
+    {
+      name: 'criticality',
+      keyPath: 'criticality'
+    },
+    {
+      name: 'sequence',
+      keyPath: 'sequence'
+    }
+  ],
+
+  readinessAssessments: [
+    {
+      name: 'templateId',
+      keyPath: 'templateId'
+    },
+    {
+      name: 'assessmentType',
+      keyPath: 'assessmentType'
+    },
+    {
+      name: 'status',
+      keyPath: 'status'
+    },
+    {
+      name: 'owner',
+      keyPath: 'owner'
+    },
+    {
+      name: 'linkedRecordId',
+      keyPath: 'linkedRecordId'
+    }
+  ],
+
+  readinessAssessmentItems: [
+    {
+      name: 'assessmentId',
+      keyPath: 'assessmentId'
+    },
+    {
+      name: 'templateItemId',
+      keyPath: 'templateItemId'
+    },
+    {
+      name: 'status',
+      keyPath: 'status'
+    },
+    {
+      name: 'owner',
+      keyPath: 'owner'
+    },
+    {
+      name: 'criticality',
+      keyPath: 'criticality'
+    }
+  ],
   actionItems: [
     {
       name: 'status',
