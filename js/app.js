@@ -38,6 +38,8 @@ const state = {
 
 const PRODUCT_MARKET_SEED_VERSION = 1;
 const ACTION_ENGINE_SEED_VERSION = 1;
+const AI_SERVICE_URL =
+  'http://localhost:3001';
 
 const productMarketCollections = [
   'products',
@@ -84,7 +86,36 @@ function isInactive(item) {
 function normalizeArray(value) {
   return Array.isArray(value) ? value : [];
 }
+function getPersonNames(personIds = []) {
+  return normalizeArray(personIds)
+    .map((personId) =>
+      (state.data.people || []).find(
+        (person) => person.id === personId
+      )
+    )
+    .filter(Boolean)
+    .map(
+      (person) =>
+        person.displayName ||
+        `${person.firstName || ''} ${person.lastName || ''}`.trim()
+    )
+    .filter(Boolean);
+}
 
+function getOrganizationNames(
+  organizationIds = []
+) {
+  return normalizeArray(organizationIds)
+    .map((organizationId) =>
+      (state.data.organizations || []).find(
+        (organization) =>
+          organization.id === organizationId
+      )
+    )
+    .filter(Boolean)
+    .map((organization) => organization.name)
+    .filter(Boolean);
+}
 function getSettingsRecord() {
   return (state.data.settings || []).find(
     (item) => item.id === 'settings_default'
@@ -828,9 +859,7 @@ function buildConversationProposal({
   sequence
 }) {
   return {
-    id: `ai_proposal_${conversation.id}_${category
-      .toLowerCase()
-      .replaceAll(' ', '_')}_${sequence}`,
+    id: uid('ai_proposal'),
 
     title,
     description,
@@ -1011,66 +1040,243 @@ async function handlePrepareConversationAnalysis(
     return;
   }
 
-  const proposals =
-    createConversationProposals(conversation);
+  const sourceText = String(
+    conversation.sourceText ||
+    conversation.transcript ||
+    conversation.notes ||
+    ''
+  ).trim();
 
-  if (proposals.length === 0) {
+  if (!sourceText) {
     showStatus(
-      'Add commitments, follow-ups, questions, risks, opportunities, or product requests before preparing proposals.'
+      'Add transcript, meeting notes, or email content before running analysis.'
     );
 
     return;
   }
 
-  const existingProposals = (
-    state.data.aiActionProposals || []
-  ).filter(
-    (proposal) =>
-      proposal.sourceType === 'Conversation' &&
-      proposal.sourceRecordId === conversationId &&
-      proposal.status !== 'Rejected'
+  const confirmed = window.confirm(
+    `Send the source text from "${conversation.title}" to the secure local AI service for analysis?`
   );
 
-  if (existingProposals.length > 0) {
-    const replaceExisting = window.confirm(
-      `This conversation already has ${existingProposals.length} active proposal${
-        existingProposals.length === 1 ? '' : 's'
-      }. Replace them with newly generated proposals?`
-    );
-
-    if (!replaceExisting) return;
-
-    for (const proposal of existingProposals) {
-      await deleteItem(
-        'aiActionProposals',
-        proposal.id
-      );
-    }
-  }
-
-  for (const proposal of proposals) {
-    await saveItem(
-      'aiActionProposals',
-      proposal
-    );
-  }
-
-  await saveItem('conversations', {
-    ...conversation,
-    analysisStatus: 'Analyzed',
-    analyzedAt: nowIso(),
-    generatedProposalCount:
-      proposals.length,
-    updatedAt: nowIso()
-  });
+  if (!confirmed) return;
 
   showStatus(
-    `${proposals.length} proposed action${
-      proposals.length === 1 ? '' : 's'
-    } prepared for review.`
+    'Analyzing conversation. This may take several seconds.'
   );
 
-  await refresh();
+  try {
+    const response = await fetch(
+      `${AI_SERVICE_URL}/api/analyze-conversation`,
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          title:
+            conversation.title ||
+            'Untitled Conversation',
+
+          conversationType:
+            conversation.conversationType ||
+            'Conversation',
+
+          date:
+            conversation.date || '',
+
+          participantNames:
+            getPersonNames(
+              conversation.personIds
+            ),
+
+          organizationNames:
+            getOrganizationNames(
+              conversation.organizationIds
+            ),
+
+          sourceText
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      throw new Error(
+        result.error ||
+        'Conversation analysis failed.'
+      );
+    }
+
+    const analysis = result.analysis || {};
+
+    const analyzedConversation = {
+      ...conversation,
+
+      summary:
+        analysis.summary || '',
+
+      decisions:
+        normalizeArray(
+          analysis.decisions
+        ),
+
+      openQuestions:
+        normalizeArray(
+          analysis.openQuestions
+        ),
+
+      fedemrCommitments:
+        normalizeArray(
+          analysis.fedemrCommitments
+        ),
+
+      externalCommitments:
+        normalizeArray(
+          analysis.externalCommitments
+        ),
+
+      risksRaised:
+        normalizeArray(
+          analysis.risksRaised
+        ),
+
+      opportunities:
+        normalizeArray(
+          analysis.opportunities
+        ),
+
+      productRequests:
+        normalizeArray(
+          analysis.productRequests
+        ),
+
+      suggestedFollowUps:
+        normalizeArray(
+          analysis.suggestedFollowUps
+        ),
+
+      sentiment:
+        analysis.sentiment || 'Neutral',
+
+      urgency:
+        analysis.urgency || 'Medium',
+
+      confidenceNotes:
+        normalizeArray(
+          analysis.confidenceNotes
+        ),
+
+      analysisStatus: 'Analyzed',
+
+      analysisMethod: 'OpenAI',
+
+      analysisModel:
+        result.model || '',
+
+      analyzedAt: nowIso(),
+      updatedAt: nowIso()
+    };
+
+    const proposals =
+      createConversationProposals(
+        analyzedConversation
+      );
+
+    const existingProposals = (
+      state.data.aiActionProposals || []
+    ).filter(
+      (proposal) =>
+        proposal.sourceType === 'Conversation' &&
+        proposal.sourceRecordId === conversationId &&
+        proposal.status === 'Pending Review'
+    );
+
+    if (existingProposals.length > 0) {
+      const replaceExisting =
+        window.confirm(
+          `This conversation already has ${existingProposals.length} pending proposal${
+            existingProposals.length === 1
+              ? ''
+              : 's'
+          }. Replace them with the new AI analysis?`
+        );
+
+      if (!replaceExisting) {
+        showStatus(
+          'Analysis completed, but existing proposals were kept.'
+        );
+
+        await saveItem(
+          'conversations',
+          analyzedConversation
+        );
+
+        await refresh();
+
+        return;
+      }
+
+      for (const proposal of existingProposals) {
+        await deleteItem(
+          'aiActionProposals',
+          proposal.id
+        );
+      }
+    }
+
+    for (const proposal of proposals) {
+      await saveItem(
+        'aiActionProposals',
+        {
+          ...proposal,
+          confidence: 'AI Extracted',
+          analysisModel:
+            result.model || '',
+          updatedAt: nowIso()
+        }
+      );
+    }
+
+    await saveItem(
+      'conversations',
+      {
+        ...analyzedConversation,
+
+        generatedProposalCount:
+          proposals.length
+      }
+    );
+
+    showStatus(
+      `Analysis complete. ${proposals.length} proposed action${
+        proposals.length === 1
+          ? ''
+          : 's'
+      } created for review.`
+    );
+
+    await refresh();
+  } catch (error) {
+    console.error(
+      'Conversation analysis failed:',
+      error
+    );
+
+    const serverUnavailable =
+      error instanceof TypeError &&
+      error.message.includes('fetch');
+
+    showStatus(
+      serverUnavailable
+        ? 'The local AI server is not running. Start it with npm run server.'
+        : error.message ||
+          'Conversation analysis failed.'
+    );
+  }
 }
 
 
@@ -1131,7 +1337,7 @@ async function handleApproveAiAction(
     linkedRecordType:
       proposal.sourceType || '',
 
-        linkedRecordId:
+          linkedRecordId:
       proposal.sourceRecordId || '',
 
     linkedConversationIds:
@@ -1298,8 +1504,8 @@ const handlers = {
   onNavigate: handleNavigate,
   onSearch: handleSearch,
   onSave: handleSave,
-  onSaveLinkedRecord:
-  handleSaveLinkedRecord,
+    onSaveLinkedRecord:
+    handleSaveLinkedRecord,
   onDelete: handleDelete,
   onQuickAdd: handleQuickAdd,
   onExport: handleExport,
@@ -1311,14 +1517,14 @@ const handlers = {
   onWaitAction: handleWaitAction,
   onCompleteAction: handleCompleteAction,
 
-  onPrepareConversationAnalysis:
-  handlePrepareConversationAnalysis,
+    onPrepareConversationAnalysis:
+    handlePrepareConversationAnalysis,
 
-onApproveAiAction:
-  handleApproveAiAction,
+  onApproveAiAction:
+    handleApproveAiAction,
 
-onRejectAiAction:
-  handleRejectAiAction
+  onRejectAiAction:
+    handleRejectAiAction
 };
 
 async function init() {

@@ -1,0 +1,31 @@
+{
+  "name": "coo-operating-system",
+  "version": "1.0.0",
+  "description": "A local-first commercialization operating system for FedEMR Technologies Inc.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robbjprice/coo-operating-system.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robbjprice/coo-operating-system/issues"
+  },
+  "homepage": "https://github.com/robbjprice/coo-operating-system#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "openai": "^6.47.0"
+  },
+  "type": "module"
+}
