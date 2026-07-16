@@ -82,7 +82,13 @@ const collectionLabels = {
   pathwayCases: 'Pathway Cases',
 
   workPackages: 'Work Packages',
-  resourceRequirements: 'Resource Requirements',
+resourceRequirements: 'Resource Requirements',
+
+actionItems: 'Action Center',
+workflowTemplates: 'Workflow Templates',
+workflowInstances: 'Active Workflows',
+workflowSteps: 'Workflow Steps',
+aiActionProposals: 'AI Action Proposals',
 
   documents: 'Documents',
   decisions: 'Decisions',
@@ -185,12 +191,14 @@ const navigationSections = {
     title: 'Execution',
     defaultView: 'tasks',
     pages: [
-      ['tasks', 'Tasks'],
-      ['roadmapItems', 'Roadmap'],
-      ['workPackages', 'Work Packages'],
-      ['resourceRequirements', 'Resources'],
-      ['decisions', 'Decisions']
-    ]
+  ['actionItems', 'Action Center'],
+  ['workflowInstances', 'Active Workflows'],
+  ['tasks', 'Tasks'],
+  ['roadmapItems', 'Roadmap'],
+  ['workPackages', 'Work Packages'],
+  ['resourceRequirements', 'Resources'],
+  ['decisions', 'Decisions']
+]
   },
 
   relationships: {
@@ -3866,6 +3874,708 @@ function renderApprovedClaims(items, data) {
     </section>
   `;
 }
+function getActionDisplayStatus(action) {
+  return (
+    action.derivedStatus ||
+    action.status ||
+    'Not Started'
+  );
+}
+
+function getActionStatusClass(status) {
+  return String(status)
+    .toLowerCase()
+    .replaceAll(' ', '-');
+}
+
+function renderActionControls(action) {
+  const status = getActionDisplayStatus(action);
+
+  if (status === 'Complete') {
+    return `
+      <div class="action-complete-message">
+        <span aria-hidden="true">✓</span>
+        Completed
+      </div>
+    `;
+  }
+
+  if (status === 'Blocked' || status === 'Waiting') {
+    return `
+      <div class="action-control-row">
+        <button
+          class="primary-button"
+          type="button"
+          data-action-resume="${escapeHtml(action.id)}"
+        >
+          Resume
+        </button>
+      </div>
+    `;
+  }
+
+  if (status === 'In Progress') {
+    return `
+      <div class="action-control-row">
+        <button
+          class="primary-button"
+          type="button"
+          data-action-complete="${escapeHtml(action.id)}"
+        >
+          Complete
+        </button>
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-action-wait="${escapeHtml(action.id)}"
+        >
+          Waiting
+        </button>
+
+        <button
+          class="danger-button"
+          type="button"
+          data-action-block="${escapeHtml(action.id)}"
+        >
+          Block
+        </button>
+      </div>
+    `;
+  }
+
+  if (status === 'Ready') {
+    return `
+      <div class="action-control-row">
+        <button
+          class="primary-button"
+          type="button"
+          data-action-start="${escapeHtml(action.id)}"
+        >
+          Start Action
+        </button>
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-action-wait="${escapeHtml(action.id)}"
+        >
+          Waiting
+        </button>
+
+        <button
+          class="danger-button"
+          type="button"
+          data-action-block="${escapeHtml(action.id)}"
+        >
+          Block
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="action-locked-message">
+      Complete dependent actions to unlock this work.
+    </div>
+  `;
+}
+
+function renderActionCard(action, data = {}) {
+  const status = getActionDisplayStatus(action);
+
+  const workflow = (
+    data.workflowInstances || []
+  ).find(
+    (item) =>
+      item.id === action.workflowInstanceId
+  );
+
+  const workflowStep = (
+    data.workflowSteps || []
+  ).find(
+    (item) =>
+      item.id === action.workflowStepId
+  );
+
+  const dependencyActions = (
+    action.dependencyActionIds || []
+  )
+    .map((dependencyId) =>
+      (data.actionItems || []).find(
+        (item) => item.id === dependencyId
+      )
+    )
+    .filter(Boolean);
+
+  return `
+    <article class="action-card">
+      <div class="action-card-header">
+        <div class="action-card-title">
+          <div class="action-card-topline">
+            <span
+              class="action-status action-status-${escapeHtml(
+                getActionStatusClass(status)
+              )}"
+            >
+              ${escapeHtml(status)}
+            </span>
+
+            ${
+              action.priority
+                ? `
+                  <span class="action-priority">
+                    ${escapeHtml(action.priority)}
+                  </span>
+                `
+                : ''
+            }
+          </div>
+
+          <h3>${escapeHtml(action.title || 'Untitled Action')}</h3>
+
+          ${
+            action.description
+              ? `
+                <p>
+                  ${escapeHtml(action.description)}
+                </p>
+              `
+              : ''
+          }
+        </div>
+
+        ${
+          action.dueDate
+            ? `
+              <div class="action-due-date">
+                <span>Due</span>
+                <strong>${escapeHtml(action.dueDate)}</strong>
+              </div>
+            `
+            : ''
+        }
+      </div>
+
+      <div class="action-meta-grid">
+        <div>
+          <span>Owner</span>
+          <strong>${escapeHtml(action.owner || 'Unassigned')}</strong>
+        </div>
+
+        <div>
+          <span>Type</span>
+          <strong>${escapeHtml(action.actionType || 'Action')}</strong>
+        </div>
+
+        <div>
+          <span>Estimated effort</span>
+          <strong>
+            ${escapeHtml(action.estimatedHours || 0)} hours
+          </strong>
+        </div>
+
+        <div>
+          <span>Source</span>
+          <strong>${escapeHtml(action.sourceType || 'Manual')}</strong>
+        </div>
+      </div>
+
+      ${
+        workflow
+          ? `
+            <div class="action-workflow-link">
+              <span>Workflow</span>
+
+              <strong>
+                ${escapeHtml(workflow.title)}
+              </strong>
+
+              ${
+                workflowStep
+                  ? `
+                    <small>
+                      Step ${escapeHtml(
+                        workflowStep.sequence || ''
+                      )}:
+                      ${escapeHtml(workflowStep.title)}
+                    </small>
+                  `
+                  : ''
+              }
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        action.waitingOn
+          ? `
+            <div class="action-callout action-callout-waiting">
+              <strong>Waiting on</strong>
+              <span>${escapeHtml(action.waitingOn)}</span>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        action.blockedReason
+          ? `
+            <div class="action-callout action-callout-blocked">
+              <strong>Blocked by</strong>
+              <span>${escapeHtml(action.blockedReason)}</span>
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        dependencyActions.length
+          ? `
+            <div class="action-dependencies">
+              <strong>Dependencies</strong>
+
+              ${dependencyActions
+                .map(
+                  (dependency) => `
+                    <div>
+                      <span>
+                        ${
+                          ['Complete', 'Completed', 'Done'].includes(
+                            dependency.status
+                          )
+                            ? '✓'
+                            : '○'
+                        }
+                      </span>
+
+                      <span>
+                        ${escapeHtml(dependency.title)}
+                      </span>
+                    </div>
+                  `
+                )
+                .join('')}
+            </div>
+          `
+          : ''
+      }
+
+      ${
+        action.completionCriteria?.length
+          ? `
+            <details class="action-completion-criteria">
+              <summary>
+                Completion criteria
+              </summary>
+
+              <ul>
+                ${action.completionCriteria
+                  .map(
+                    (criterion) => `
+                      <li>${escapeHtml(criterion)}</li>
+                    `
+                  )
+                  .join('')}
+              </ul>
+            </details>
+          `
+          : ''
+      }
+
+      ${
+        action.suggestedNextAction
+          ? `
+            <div class="action-next-step">
+              <span>After completion</span>
+
+              <strong>
+                ${escapeHtml(action.suggestedNextAction)}
+              </strong>
+            </div>
+          `
+          : ''
+      }
+
+      ${renderActionControls(action)}
+    </article>
+  `;
+}
+
+function renderActionGroup({
+  title,
+  description,
+  actions,
+  data,
+  emptyMessage
+}) {
+  return `
+    <section class="action-group">
+      <div class="action-group-header">
+        <div>
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(description)}</p>
+        </div>
+
+        <span>${escapeHtml(actions.length)}</span>
+      </div>
+
+      <div class="action-card-grid">
+        ${
+          actions.length
+            ? actions
+                .map((action) =>
+                  renderActionCard(action, data)
+                )
+                .join('')
+            : `
+              <div class="action-empty-state">
+                ${escapeHtml(emptyMessage)}
+              </div>
+            `
+        }
+      </div>
+    </section>
+  `;
+}
+
+function renderAiProposalCard(proposal) {
+  return `
+    <article class="ai-proposal-card">
+      <div class="ai-proposal-header">
+        <div>
+          <p class="eyebrow">AI Suggested Action</p>
+
+          <h3>
+            ${escapeHtml(
+              proposal.title || 'Untitled Proposal'
+            )}
+          </h3>
+        </div>
+
+        <span>
+          ${escapeHtml(proposal.confidence || 'Unknown')}
+          confidence
+        </span>
+      </div>
+
+      <p>
+        ${escapeHtml(proposal.description || '')}
+      </p>
+
+      ${
+        proposal.rationale
+          ? `
+            <div class="ai-rationale">
+              <strong>Why this was suggested</strong>
+              <span>${escapeHtml(proposal.rationale)}</span>
+            </div>
+          `
+          : ''
+      }
+
+      <div class="action-meta-grid">
+        <div>
+          <span>Owner</span>
+          <strong>
+            ${escapeHtml(
+              proposal.proposedOwner || 'Unassigned'
+            )}
+          </strong>
+        </div>
+
+        <div>
+          <span>Priority</span>
+          <strong>
+            ${escapeHtml(
+              proposal.proposedPriority || 'Medium'
+            )}
+          </strong>
+        </div>
+
+        <div>
+          <span>Due</span>
+          <strong>
+            ${escapeHtml(
+              proposal.proposedDueDate || 'Not set'
+            )}
+          </strong>
+        </div>
+      </div>
+
+      <div class="action-control-row">
+        <button
+          class="primary-button"
+          type="button"
+          data-ai-approve="${escapeHtml(proposal.id)}"
+        >
+          Approve and Create Action
+        </button>
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-ai-reject="${escapeHtml(proposal.id)}"
+        >
+          Reject
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function bindActionEngineActions(handlers) {
+  if (!appRoot) return;
+
+  appRoot
+    .querySelectorAll('[data-action-start]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onStartAction(
+          button.dataset.actionStart
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-action-block]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onBlockAction(
+          button.dataset.actionBlock
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-action-wait]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onWaitAction(
+          button.dataset.actionWait
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-action-resume]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onResumeAction(
+          button.dataset.actionResume
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-action-complete]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onCompleteAction(
+          button.dataset.actionComplete
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-ai-approve]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onApproveAiAction(
+          button.dataset.aiApprove
+        );
+      });
+    });
+
+  appRoot
+    .querySelectorAll('[data-ai-reject]')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        handlers.onRejectAiAction(
+          button.dataset.aiReject
+        );
+      });
+    });
+}
+
+function renderActionCenter(
+  actionItems,
+  handlers,
+  data = {}
+) {
+  const actions = actionItems.map((action) => ({
+    ...action,
+    derivedStatus:
+      action.derivedStatus ||
+      getActionDisplayStatus(action)
+  }));
+
+  const ready = actions.filter(
+    (action) =>
+      getActionDisplayStatus(action) === 'Ready'
+  );
+
+  const inProgress = actions.filter(
+    (action) =>
+      getActionDisplayStatus(action) === 'In Progress'
+  );
+
+  const waiting = actions.filter(
+    (action) =>
+      getActionDisplayStatus(action) === 'Waiting' ||
+      Boolean(action.waitingOn)
+  );
+
+  const blocked = actions.filter(
+    (action) =>
+      getActionDisplayStatus(action) === 'Blocked' ||
+      action.blocked
+  );
+
+  const complete = actions.filter(
+    (action) =>
+      getActionDisplayStatus(action) === 'Complete'
+  );
+
+  const pendingAiProposals = (
+    data.aiActionProposals || []
+  ).filter(
+    (proposal) =>
+      !proposal.status ||
+      proposal.status === 'Pending Review'
+  );
+
+  appRoot.innerHTML = `
+    <section class="action-centre-hero">
+      <div>
+        <p class="eyebrow">Execution Engine</p>
+
+        <h2>What needs to happen next?</h2>
+
+        <p>
+          Start ready work, resolve blockers, track external
+          dependencies, complete actions, and automatically unlock
+          the next step in each workflow.
+        </p>
+      </div>
+
+      <div class="action-centre-summary">
+        <div>
+          <strong>${escapeHtml(ready.length)}</strong>
+          <span>Ready</span>
+        </div>
+
+        <div>
+          <strong>${escapeHtml(inProgress.length)}</strong>
+          <span>In progress</span>
+        </div>
+
+        <div>
+          <strong>${escapeHtml(waiting.length)}</strong>
+          <span>Waiting</span>
+        </div>
+
+        <div>
+          <strong>${escapeHtml(blocked.length)}</strong>
+          <span>Blocked</span>
+        </div>
+      </div>
+    </section>
+
+    ${
+      pendingAiProposals.length
+        ? `
+          <section class="ai-proposal-section">
+            <div class="action-group-header">
+              <div>
+                <p class="eyebrow">Human Approval Required</p>
+                <h2>AI action proposals</h2>
+
+                <p>
+                  Review each suggestion before it becomes part of
+                  the operating workflow.
+                </p>
+              </div>
+
+              <span>${escapeHtml(pendingAiProposals.length)}</span>
+            </div>
+
+            <div class="action-card-grid">
+              ${pendingAiProposals
+                .map(renderAiProposalCard)
+                .join('')}
+            </div>
+          </section>
+        `
+        : ''
+    }
+
+    ${renderActionGroup({
+      title: 'Ready to Start',
+      description:
+        'These actions have no incomplete dependencies.',
+      actions: ready,
+      data,
+      emptyMessage:
+        'No actions are currently ready to start.'
+    })}
+
+    ${renderActionGroup({
+      title: 'In Progress',
+      description:
+        'Work that is actively moving forward.',
+      actions: inProgress,
+      data,
+      emptyMessage:
+        'No actions are currently in progress.'
+    })}
+
+    ${renderActionGroup({
+      title: 'Waiting On',
+      description:
+        'Work paused while another person, organization, or event responds.',
+      actions: waiting,
+      data,
+      emptyMessage:
+        'Nothing is currently waiting on an external response.'
+    })}
+
+    ${renderActionGroup({
+      title: 'Blocked',
+      description:
+        'Work that cannot proceed until a blocker is resolved.',
+      actions: blocked,
+      data,
+      emptyMessage:
+        'No blocked actions.'
+    })}
+
+    <details class="completed-action-section">
+      <summary>
+        Completed Actions (${escapeHtml(complete.length)})
+      </summary>
+
+      <div class="action-card-grid">
+        ${
+          complete.length
+            ? complete
+                .map((action) =>
+                  renderActionCard(action, data)
+                )
+                .join('')
+            : `
+              <div class="action-empty-state">
+                No actions have been completed yet.
+              </div>
+            `
+        }
+      </div>
+    </details>
+  `;
+
+  bindActionEngineActions(handlers);
+}
 function bindCollectionActions(handlers) {
   if (!appRoot) return;
 
@@ -3962,7 +4672,11 @@ function bindCollectionActions(handlers) {
 }
 
 export function renderDashboard(model, handlers) {
-  const { data, executiveScore } = model;
+  const {
+  data,
+  executiveScore,
+  actionEngine = {}
+} = model;
 
   const tasks = data.tasks || [];
   const risks = data.risks || [];
@@ -4379,7 +5093,93 @@ export function renderDashboard(model, handlers) {
         >
           Open relationships
         </button>
-      </article>
+            </article>
+    </section>
+
+    <section class="dashboard-action-engine">
+      <div class="dashboard-action-engine-header">
+        <div>
+          <p class="eyebrow">Execution Engine</p>
+          <h2>Your next actions</h2>
+
+          <p>
+            Work that is ready now, waiting on others, blocked,
+            overdue, or proposed by AI.
+          </p>
+        </div>
+
+        <button
+          class="primary-button"
+          type="button"
+          data-dashboard-view="actionItems"
+        >
+          Open Action Center
+        </button>
+      </div>
+
+      <div class="dashboard-action-summary">
+        <div>
+          <strong>
+            ${escapeHtml(
+              actionEngine.nextActions?.length || 0
+            )}
+          </strong>
+          <span>Ready or active</span>
+        </div>
+
+        <div>
+          <strong>
+            ${escapeHtml(
+              actionEngine.waitingActions?.length || 0
+            )}
+          </strong>
+          <span>Waiting</span>
+        </div>
+
+        <div>
+          <strong>
+            ${escapeHtml(
+              actionEngine.blockedActions?.length || 0
+            )}
+          </strong>
+          <span>Blocked</span>
+        </div>
+
+        <div>
+          <strong>
+            ${escapeHtml(
+              actionEngine.overdueActions?.length || 0
+            )}
+          </strong>
+          <span>Overdue</span>
+        </div>
+
+        <div>
+          <strong>
+            ${escapeHtml(
+              actionEngine.pendingAiProposals?.length || 0
+            )}
+          </strong>
+          <span>AI proposals</span>
+        </div>
+      </div>
+
+      <div class="dashboard-action-preview">
+        ${
+          actionEngine.nextActions?.length
+            ? actionEngine.nextActions
+                .slice(0, 3)
+                .map((action) =>
+                  renderActionCard(action, data)
+                )
+                .join('')
+            : `
+              <div class="action-empty-state">
+                No ready actions.
+              </div>
+            `
+        }
+      </div>
     </section>
   `;
 
@@ -4403,6 +5203,8 @@ export function renderDashboard(model, handlers) {
       quickAddButton.click();
     });
   }
+
+  bindActionEngineActions(handlers);
 }
 
 export function renderCollection(
@@ -4412,7 +5214,15 @@ export function renderCollection(
   data = {}
 ) {
     setPageTitle(formatCollectionName(collection));
+  if (collection === 'actionItems') {
+    renderActionCenter(
+      items,
+      handlers,
+      data
+    );
 
+    return;
+  }
    if (collection === 'products') {
     appRoot.innerHTML = renderProductOverview(items, data);
 

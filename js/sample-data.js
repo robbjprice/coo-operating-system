@@ -30,7 +30,19 @@ const commonLinks = () => ({
   linkedPresentationIds: [],
   linkedUseCaseIds: [],
   linkedCaseStudyIds: [],
-  linkedApprovedClaimIds: []
+ linkedApprovedClaimIds: [],
+
+linkedActionItemIds: [],
+linkedWorkflowTemplateIds: [],
+linkedWorkflowInstanceIds: [],
+linkedWorkflowStepIds: [],
+
+linkedConversationIds: [],
+linkedConversationInsightIds: [],
+
+linkedCompetitorIds: [],
+linkedCompetitorProductIds: [],
+linkedCompetitiveFindingIds: []
 });
 
 const base = (prefix, extra = {}) => ({
@@ -119,8 +131,27 @@ export const collections = [
   'resourceRequirements',
 
   'documents',
-  'evidence',
-  'decisions'
+'evidence',
+'decisions',
+
+'actionItems',
+'workflowTemplates',
+'workflowInstances',
+'workflowSteps',
+'aiActionProposals',
+
+'conversations',
+'conversationParticipants',
+'conversationInsights',
+
+'competitors',
+'competitorProducts',
+'competitorPricing',
+'competitorMarkets',
+'competitiveComparisons',
+'competitiveFindings',
+'competitiveSources',
+'competitiveResponses'
 ];
 
 export const sampleData = {
@@ -128,8 +159,8 @@ export const sampleData = {
     {
       id: 'settings_default',
       appName: 'FedEMR COO Operating System',
-      appVersion: '0.5',
-      schemaVersion: '0.5',
+      appVersion: '0.7',
+schemaVersion: '0.7',
       theme: 'light',
       createdAt: nowIso(),
       updatedAt: nowIso()
@@ -574,7 +605,699 @@ export const sampleData = {
 
   activityLog: [],
 
-  organizations: [
+workflowTemplates: [
+  fixed('workflow_template_funding_assessment', {
+    title: 'Funding Opportunity Assessment',
+    name: 'Funding Opportunity Assessment',
+    description:
+      'A guided process for validating eligibility, strategic fit, requirements, effort, partners, budget, and the final pursue-or-decline decision for a funding opportunity.',
+
+    category: 'Funding',
+    recordType: 'fundingOpportunity',
+    active: true,
+    version: 1,
+
+    defaultOwner: 'Robb',
+    estimatedDurationDays: 14,
+
+    objectives: [
+      'Confirm eligibility before significant application work begins.',
+      'Identify missing partners, documents, approvals, and budget requirements.',
+      'Determine whether the opportunity should be pursued.',
+      'Convert unresolved requirements into accountable action items.'
+    ],
+
+    completionCriteria: [
+      'Eligibility has been verified from an authoritative source.',
+      'Required partners and approvals have been identified.',
+      'Eligible and ineligible costs have been reviewed.',
+      'Application effort and strategic value have been assessed.',
+      'A pursue, hold, or decline decision has been recorded.'
+    ],
+
+    templateStepIds: [
+      'workflow_step_template_funding_1',
+      'workflow_step_template_funding_2',
+      'workflow_step_template_funding_3',
+      'workflow_step_template_funding_4',
+      'workflow_step_template_funding_5',
+      'workflow_step_template_funding_6'
+    ],
+
+    confidentiality: 'Internal'
+  })
+],
+
+workflowInstances: [
+  fixed('workflow_instance_funding_commercialization', {
+    title:
+      'Assess Example Health AI Commercialization Program',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    category: 'Funding',
+    status: 'In Progress',
+    priority: 'High',
+    owner: 'Robb',
+
+    linkedRecordType: 'fundingOpportunity',
+    linkedRecordId: 'funding_commercialization',
+
+    currentStepId:
+      'workflow_step_funding_commercialization_1',
+
+    startedAt: nowIso(),
+    targetCompletionDate: '2026-07-29',
+    completedAt: '',
+
+    progressPercentage: 10,
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    objective:
+      'Determine whether FedEMR should pursue the commercialization funding opportunity and identify all work required before an application begins.',
+
+    completionCriteria: [
+      'Eligibility confirmed',
+      'Partner requirements confirmed',
+      'Budget requirements understood',
+      'Required documents identified',
+      'Pursue-or-decline decision recorded'
+    ],
+
+    workflowStepIds: [
+      'workflow_step_funding_commercialization_1',
+      'workflow_step_funding_commercialization_2',
+      'workflow_step_funding_commercialization_3',
+      'workflow_step_funding_commercialization_4',
+      'workflow_step_funding_commercialization_5',
+      'workflow_step_funding_commercialization_6'
+    ],
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ],
+
+    linkedActionItemIds: [
+      'action_funding_confirm_eligibility',
+      'action_funding_confirm_matching',
+      'action_funding_confirm_partner',
+      'action_funding_prepare_decision'
+    ],
+
+    confidentiality: 'Internal'
+  })
+],
+
+workflowSteps: [
+  fixed('workflow_step_funding_commercialization_1', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 1,
+    title: 'Confirm basic eligibility',
+    description:
+      'Verify company type, geography, sector, TRL, applicant structure, and any mandatory participation requirements.',
+
+    status: 'Ready',
+    priority: 'High',
+    owner: 'Robb',
+
+    dependencyStepIds: [],
+    unlocksStepIds: [
+      'workflow_step_funding_commercialization_2'
+    ],
+
+    completionCriteria: [
+      'Applicant type confirmed',
+      'Geographic eligibility confirmed',
+      'TRL eligibility confirmed',
+      'Sector eligibility confirmed',
+      'Any disqualifying criteria documented'
+    ],
+
+    requiredDocumentIds: [],
+    requiredEvidenceIds: [],
+
+    estimatedHours: 3,
+    estimatedCost: 0,
+
+    actionItemIds: [
+      'action_funding_confirm_eligibility'
+    ],
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: 'Program advisor confirmation',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('workflow_step_funding_commercialization_2', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 2,
+    title: 'Validate matching and financial requirements',
+    description:
+      'Confirm matching percentage, eligible contribution types, cash requirements, stacking rules, and reimbursement timing.',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dependencyStepIds: [
+      'workflow_step_funding_commercialization_1'
+    ],
+
+    unlocksStepIds: [
+      'workflow_step_funding_commercialization_3'
+    ],
+
+    completionCriteria: [
+      'Matching percentage confirmed',
+      'Cash versus in-kind rules confirmed',
+      'Stacking limits confirmed',
+      'Reimbursement model understood',
+      'FedEMR contribution source identified'
+    ],
+
+    estimatedHours: 4,
+    estimatedCost: 0,
+
+    actionItemIds: [
+      'action_funding_confirm_matching'
+    ],
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('workflow_step_funding_commercialization_3', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 3,
+    title: 'Confirm partner and approval requirements',
+    description:
+      'Determine whether implementation partners, customer letters, university approvals, or other commitments are mandatory.',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dependencyStepIds: [
+      'workflow_step_funding_commercialization_2'
+    ],
+
+    unlocksStepIds: [
+      'workflow_step_funding_commercialization_4'
+    ],
+
+    completionCriteria: [
+      'Mandatory partner types confirmed',
+      'Potential partners identified',
+      'Required letters confirmed',
+      'Institutional approvals identified',
+      'Partner readiness risk assessed'
+    ],
+
+    estimatedHours: 6,
+    estimatedCost: 0,
+
+    actionItemIds: [
+      'action_funding_confirm_partner'
+    ],
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('workflow_step_funding_commercialization_4', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 4,
+    title: 'Map project scope, budget, and eligible costs',
+    description:
+      'Match the funding opportunity to specific FedEMR commercialization blockers, work packages, costs, and measurable outcomes.',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dependencyStepIds: [
+      'workflow_step_funding_commercialization_3'
+    ],
+
+    unlocksStepIds: [
+      'workflow_step_funding_commercialization_5'
+    ],
+
+    completionCriteria: [
+      'Project scope drafted',
+      'Eligible work packages selected',
+      'Preliminary budget prepared',
+      'Ineligible costs removed',
+      'Commercialization outcomes defined'
+    ],
+
+    estimatedHours: 10,
+    estimatedCost: 0,
+
+    actionItemIds: [],
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ],
+
+    linkedWorkPackageIds: [
+      'workpackage_security'
+    ]
+  }),
+
+  fixed('workflow_step_funding_commercialization_5', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 5,
+    title: 'Assess application effort and strategic value',
+    description:
+      'Compare funding value, probability, application effort, timing, strategic alignment, and opportunity cost.',
+
+    status: 'Not Started',
+    priority: 'Medium',
+    owner: 'Robb',
+
+    dependencyStepIds: [
+      'workflow_step_funding_commercialization_4'
+    ],
+
+    unlocksStepIds: [
+      'workflow_step_funding_commercialization_6'
+    ],
+
+    completionCriteria: [
+      'Application effort estimated',
+      'Probability reviewed',
+      'Strategic fit scored',
+      'Timing risk assessed',
+      'Alternative funding options considered'
+    ],
+
+    estimatedHours: 4,
+    estimatedCost: 0,
+
+    actionItemIds: [],
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('workflow_step_funding_commercialization_6', {
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    templateId:
+      'workflow_template_funding_assessment',
+
+    sequence: 6,
+    title: 'Record pursue, hold, or decline decision',
+    description:
+      'Document the final decision, rationale, conditions, next actions, and application owner.',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dependencyStepIds: [
+      'workflow_step_funding_commercialization_5'
+    ],
+
+    unlocksStepIds: [],
+
+    completionCriteria: [
+      'Decision recorded',
+      'Decision rationale documented',
+      'Application owner assigned when pursued',
+      'Internal deadline confirmed',
+      'Next workflow started when applicable'
+    ],
+
+    estimatedHours: 2,
+    estimatedCost: 0,
+
+    actionItemIds: [
+      'action_funding_prepare_decision'
+    ],
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  })
+],
+
+actionItems: [
+  fixed('action_funding_confirm_eligibility', {
+    title:
+      'Confirm commercialization program eligibility with advisor',
+
+    description:
+      'Verify company eligibility, geography, sector, TRL, applicant requirements, and any automatic disqualifiers.',
+
+    actionType: 'Verification',
+    category: 'Funding',
+
+    status: 'Ready',
+    priority: 'High',
+    owner: 'Robb',
+
+    dueDate: '2026-07-20',
+    startedAt: '',
+    completedAt: '',
+
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    workflowStepId:
+      'workflow_step_funding_commercialization_1',
+
+    linkedRecordType: 'fundingOpportunity',
+    linkedRecordId: 'funding_commercialization',
+
+    dependencyActionIds: [],
+    unlocksActionIds: [
+      'action_funding_confirm_matching'
+    ],
+
+    completionCriteria: [
+      'Eligibility confirmed in writing or from an authoritative program source',
+      'All unresolved eligibility questions recorded',
+      'Funding opportunity verification status updated'
+    ],
+
+    suggestedNextAction:
+      'Validate matching and contribution requirements.',
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: 'Program advisor response',
+
+    estimatedHours: 2,
+    estimatedCost: 0,
+
+    sourceType: 'Workflow',
+    sourceRecordId:
+      'workflow_instance_funding_commercialization',
+
+    linkedPersonIds: [
+      'person_program_advisor'
+    ],
+
+    linkedOrganizationIds: [
+      'org_funder'
+    ],
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('action_funding_confirm_matching', {
+    title:
+      'Confirm matching contribution and reimbursement rules',
+
+    description:
+      'Determine required contribution percentage, cash versus in-kind eligibility, stacking limits, payment timing, and reimbursement rules.',
+
+    actionType: 'Verification',
+    category: 'Funding',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dueDate: '2026-07-22',
+    startedAt: '',
+    completedAt: '',
+
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    workflowStepId:
+      'workflow_step_funding_commercialization_2',
+
+    linkedRecordType: 'fundingOpportunity',
+    linkedRecordId: 'funding_commercialization',
+
+    dependencyActionIds: [
+      'action_funding_confirm_eligibility'
+    ],
+
+    unlocksActionIds: [
+      'action_funding_confirm_partner'
+    ],
+
+    completionCriteria: [
+      'Required contribution confirmed',
+      'Cash and in-kind treatment confirmed',
+      'Stacking rules confirmed',
+      'Potential contribution source identified'
+    ],
+
+    suggestedNextAction:
+      'Confirm partner and letter requirements.',
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    estimatedHours: 2,
+    estimatedCost: 0,
+
+    sourceType: 'Workflow',
+    sourceRecordId:
+      'workflow_instance_funding_commercialization',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('action_funding_confirm_partner', {
+    title:
+      'Confirm implementation-partner and support-letter requirements',
+
+    description:
+      'Verify whether an implementation partner, customer letter, research partner, or institutional approval is mandatory.',
+
+    actionType: 'Partner Requirement',
+    category: 'Funding',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dueDate: '2026-07-24',
+    startedAt: '',
+    completedAt: '',
+
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    workflowStepId:
+      'workflow_step_funding_commercialization_3',
+
+    linkedRecordType: 'fundingOpportunity',
+    linkedRecordId: 'funding_commercialization',
+
+    dependencyActionIds: [
+      'action_funding_confirm_matching'
+    ],
+
+    unlocksActionIds: [
+      'action_funding_prepare_decision'
+    ],
+
+    completionCriteria: [
+      'Mandatory partner requirements confirmed',
+      'Letter requirements confirmed',
+      'Candidate partner identified or gap recorded',
+      'Institutional approval requirements documented'
+    ],
+
+    suggestedNextAction:
+      'Prepare preliminary pursue-or-decline recommendation.',
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    estimatedHours: 3,
+    estimatedCost: 0,
+
+    sourceType: 'Workflow',
+    sourceRecordId:
+      'workflow_instance_funding_commercialization',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  }),
+
+  fixed('action_funding_prepare_decision', {
+    title:
+      'Prepare pursue-or-decline recommendation',
+
+    description:
+      'Summarize eligibility, strategic fit, funding value, required effort, risks, partners, budget, and recommended decision.',
+
+    actionType: 'Decision Preparation',
+    category: 'Funding',
+
+    status: 'Not Started',
+    priority: 'High',
+    owner: 'Robb',
+
+    dueDate: '2026-07-29',
+    startedAt: '',
+    completedAt: '',
+
+    workflowInstanceId:
+      'workflow_instance_funding_commercialization',
+
+    workflowStepId:
+      'workflow_step_funding_commercialization_6',
+
+    linkedRecordType: 'fundingOpportunity',
+    linkedRecordId: 'funding_commercialization',
+
+    dependencyActionIds: [
+      'action_funding_confirm_eligibility',
+      'action_funding_confirm_matching',
+      'action_funding_confirm_partner'
+    ],
+
+    unlocksActionIds: [],
+
+    completionCriteria: [
+      'Recommendation drafted',
+      'Decision rationale documented',
+      'Remaining conditions listed',
+      'Application owner proposed',
+      'Internal deadline confirmed'
+    ],
+
+    suggestedNextAction:
+      'Record the funding decision and launch the application workflow if approved.',
+
+    blocked: false,
+    blockedReason: '',
+    waitingOn: '',
+
+    estimatedHours: 4,
+    estimatedCost: 0,
+
+    sourceType: 'Workflow',
+    sourceRecordId:
+      'workflow_instance_funding_commercialization',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ],
+
+    linkedDecisionIds: []
+  })
+],
+
+aiActionProposals: [
+  fixed('ai_action_proposal_sample', {
+    title:
+      'Validate whether a signed customer letter is mandatory',
+
+    description:
+      'The funding opportunity contains an unresolved requirement regarding customer or implementation-partner letters.',
+
+    proposedActionType: 'Verification',
+    proposedCollection: 'actionItems',
+
+    proposedOwner: 'Robb',
+    proposedPriority: 'High',
+    proposedDueDate: '2026-07-23',
+
+    status: 'Pending Review',
+
+    sourceType: 'Funding Opportunity',
+    sourceRecordId: 'funding_commercialization',
+
+    rationale:
+      'The funding record lists this requirement as unknown, and it could determine whether the opportunity is currently actionable.',
+
+    confidence: 'High',
+
+    proposedCompletionCriteria: [
+      'Letter requirement confirmed',
+      'Required signatory identified',
+      'Lead time documented',
+      'Funding record updated'
+    ],
+
+    approvedAt: '',
+    approvedBy: '',
+    rejectedAt: '',
+    rejectionReason: '',
+
+    linkedFundingOpportunityIds: [
+      'funding_commercialization'
+    ]
+  })
+],
+
+conversations: [],
+conversationParticipants: [],
+conversationInsights: [],
+
+competitors: [],
+competitorProducts: [],
+competitorPricing: [],
+competitorMarkets: [],
+competitiveComparisons: [],
+competitiveFindings: [],
+competitiveSources: [],
+competitiveResponses: [],
+
+organizations: [
     fixed('org_fedemr', {
       name: 'FedEMR Technologies Inc.',
       legalName: 'FedEMR Technologies Inc.',
