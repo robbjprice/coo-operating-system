@@ -2959,3 +2959,41 @@ summary {
       repeat(2, minmax(0, 1fr));
   }
 }
+/* Conversation inline linked records */
+
+.conversation-fieldset-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.conversation-fieldset-header legend {
+  float: none;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.conversation-add-linked-button {
+  min-height: 32px;
+  padding: 6px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--aqua-600);
+  font: inherit;
+  font-size: 9px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.conversation-add-linked-button:hover {
+  border-color: var(--aqua-600);
+  background: var(--aqua-100);
+}
+
+.conversation-linked-record-modal {
+  width: min(720px, calc(100vw - 32px));
+}

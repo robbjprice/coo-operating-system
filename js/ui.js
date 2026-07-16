@@ -3877,6 +3877,554 @@ function renderApprovedClaims(items, data) {
     </section>
   `;
 }
+function getConversationFormSnapshot(form) {
+  if (!form) return null;
+
+  const formData = new FormData(form);
+  const values = {};
+
+  for (const [key, value] of formData.entries()) {
+    if (
+      key === 'personIds' ||
+      key === 'organizationIds'
+    ) {
+      continue;
+    }
+
+    values[key] = value;
+  }
+
+  values.personIds =
+    formData.getAll('personIds');
+
+  values.organizationIds =
+    formData.getAll('organizationIds');
+
+  return values;
+}
+
+function restoreConversationFormSnapshot(
+  form,
+  snapshot
+) {
+  if (!form || !snapshot) return;
+
+  Object.entries(snapshot).forEach(
+    ([name, value]) => {
+      if (
+        name === 'personIds' ||
+        name === 'organizationIds'
+      ) {
+        return;
+      }
+
+      const field = form.elements.namedItem(name);
+
+      if (
+        field &&
+        typeof field.value !== 'undefined'
+      ) {
+        field.value = value;
+      }
+    }
+  );
+
+  form
+    .querySelectorAll(
+      'input[name="personIds"]'
+    )
+    .forEach((checkbox) => {
+      checkbox.checked =
+        snapshot.personIds.includes(
+          checkbox.value
+        );
+    });
+
+  form
+    .querySelectorAll(
+      'input[name="organizationIds"]'
+    )
+    .forEach((checkbox) => {
+      checkbox.checked =
+        snapshot.organizationIds.includes(
+          checkbox.value
+        );
+    });
+}
+
+function renderConversationPersonOption(
+  person,
+  checked = false
+) {
+  return `
+    <label class="conversation-checkbox">
+      <input
+        type="checkbox"
+        name="personIds"
+        value="${escapeHtml(person.id)}"
+        ${checked ? 'checked' : ''}
+      />
+
+      <span>
+        ${escapeHtml(
+          person.displayName ||
+            'Unnamed Person'
+        )}
+      </span>
+    </label>
+  `;
+}
+
+function renderConversationOrganizationOption(
+  organization,
+  checked = false
+) {
+  return `
+    <label class="conversation-checkbox">
+      <input
+        type="checkbox"
+        name="organizationIds"
+        value="${escapeHtml(organization.id)}"
+        ${checked ? 'checked' : ''}
+      />
+
+      <span>
+        ${escapeHtml(
+          organization.name ||
+            'Unnamed Organization'
+        )}
+      </span>
+    </label>
+  `;
+}
+
+function openConversationPersonModal({
+  handlers,
+  form,
+  data
+}) {
+  if (!modalRoot) return;
+
+  const snapshot =
+    getConversationFormSnapshot(form);
+
+  modalRoot.innerHTML = `
+    <div class="modal-backdrop">
+      <section
+        class="modal conversation-linked-record-modal"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">
+              Conversation Participant
+            </p>
+
+            <h2>Add New Person</h2>
+          </div>
+
+          <button
+            class="ghost-button"
+            type="button"
+            data-close-linked-record-modal
+          >
+            Close
+          </button>
+        </div>
+
+        <form
+          id="conversationPersonForm"
+          class="item-form"
+        >
+          <div class="form-grid-two">
+            <label>
+              First Name
+              <input
+                name="firstName"
+                required
+                autofocus
+              />
+            </label>
+
+            <label>
+              Last Name
+              <input
+                name="lastName"
+                required
+              />
+            </label>
+
+            <label>
+              Job Title
+              <input name="title" />
+            </label>
+
+            <label>
+              Email
+              <input
+                type="email"
+                name="email"
+              />
+            </label>
+
+            <label>
+              Organization
+              <select
+                name="primaryOrganizationId"
+              >
+                <option value="">
+                  None
+                </option>
+
+                ${(data.organizations || [])
+                  .map(
+                    (organization) => `
+                      <option
+                        value="${escapeHtml(
+                          organization.id
+                        )}"
+                      >
+                        ${escapeHtml(
+                          organization.name
+                        )}
+                      </option>
+                    `
+                  )
+                  .join('')}
+              </select>
+            </label>
+
+            <label>
+              Relationship Type
+              <input
+                name="relationshipType"
+                placeholder="Partner, prospect, advisor..."
+              />
+            </label>
+          </div>
+
+          <button
+            class="primary-button"
+            type="submit"
+          >
+            Add and Select Person
+          </button>
+        </form>
+      </section>
+    </div>
+  `;
+
+  const closeModal = () => {
+    modalRoot.innerHTML = '';
+  };
+
+  modalRoot
+    .querySelector(
+      '[data-close-linked-record-modal]'
+    )
+    .addEventListener(
+      'click',
+      closeModal
+    );
+
+  modalRoot
+    .querySelector(
+      '#conversationPersonForm'
+    )
+    .addEventListener(
+      'submit',
+      async (event) => {
+        event.preventDefault();
+
+        const formData =
+          new FormData(event.currentTarget);
+
+        const firstName =
+          String(
+            formData.get('firstName') || ''
+          ).trim();
+
+        const lastName =
+          String(
+            formData.get('lastName') || ''
+          ).trim();
+
+        const person =
+          await handlers.onSaveLinkedRecord(
+            'people',
+            {
+              firstName,
+              lastName,
+
+              displayName:
+                `${firstName} ${lastName}`.trim(),
+
+              title:
+                formData.get('title') || '',
+
+              email:
+                formData.get('email') || '',
+
+              primaryOrganizationId:
+                formData.get(
+                  'primaryOrganizationId'
+                ) || '',
+
+              relationshipTypes:
+                formData.get(
+                  'relationshipType'
+                )
+                  ? [
+                      formData.get(
+                        'relationshipType'
+                      )
+                    ]
+                  : [],
+
+              relationshipStrength: 'New',
+              internalRelationshipOwner:
+                'Robb',
+
+              active: true,
+              confidentiality: 'Internal'
+            }
+          );
+
+        const peopleGrid =
+          form.querySelector(
+            '[data-conversation-people-grid]'
+          );
+
+        if (peopleGrid) {
+          peopleGrid.insertAdjacentHTML(
+            'beforeend',
+            renderConversationPersonOption(
+              person,
+              true
+            )
+          );
+        }
+
+        if (
+          !snapshot.personIds.includes(
+            person.id
+          )
+        ) {
+          snapshot.personIds.push(
+            person.id
+          );
+        }
+
+        restoreConversationFormSnapshot(
+          form,
+          snapshot
+        );
+
+        closeModal();
+      }
+    );
+}
+
+function openConversationOrganizationModal({
+  handlers,
+  form
+}) {
+  if (!modalRoot) return;
+
+  const snapshot =
+    getConversationFormSnapshot(form);
+
+  modalRoot.innerHTML = `
+    <div class="modal-backdrop">
+      <section
+        class="modal conversation-linked-record-modal"
+        role="dialog"
+        aria-modal="true"
+      >
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">
+              Conversation Organization
+            </p>
+
+            <h2>Add New Organization</h2>
+          </div>
+
+          <button
+            class="ghost-button"
+            type="button"
+            data-close-linked-record-modal
+          >
+            Close
+          </button>
+        </div>
+
+        <form
+          id="conversationOrganizationForm"
+          class="item-form"
+        >
+          <div class="form-grid-two">
+            <label>
+              Organization Name
+              <input
+                name="name"
+                required
+                autofocus
+              />
+            </label>
+
+            <label>
+              Organization Type
+              <select name="organizationType">
+                <option value="Company">
+                  Company
+                </option>
+
+                <option value="University">
+                  University
+                </option>
+
+                <option value="Health System">
+                  Health System
+                </option>
+
+                <option value="Government">
+                  Government
+                </option>
+
+                <option value="Funder">
+                  Funder
+                </option>
+
+                <option value="Research Network">
+                  Research Network
+                </option>
+
+                <option value="Partner">
+                  Partner
+                </option>
+
+                <option value="Other">
+                  Other
+                </option>
+              </select>
+            </label>
+
+            <label>
+              Sector
+              <input name="sector" />
+            </label>
+
+            <label>
+              Country
+              <input name="country" />
+            </label>
+
+            <label>
+              Website
+              <input name="website" />
+            </label>
+          </div>
+
+          <button
+            class="primary-button"
+            type="submit"
+          >
+            Add and Select Organization
+          </button>
+        </form>
+      </section>
+    </div>
+  `;
+
+  const closeModal = () => {
+    modalRoot.innerHTML = '';
+  };
+
+  modalRoot
+    .querySelector(
+      '[data-close-linked-record-modal]'
+    )
+    .addEventListener(
+      'click',
+      closeModal
+    );
+
+  modalRoot
+    .querySelector(
+      '#conversationOrganizationForm'
+    )
+    .addEventListener(
+      'submit',
+      async (event) => {
+        event.preventDefault();
+
+        const formData =
+          new FormData(event.currentTarget);
+
+        const organization =
+          await handlers.onSaveLinkedRecord(
+            'organizations',
+            {
+              name:
+                String(
+                  formData.get('name') || ''
+                ).trim(),
+
+              organizationType:
+                formData.get(
+                  'organizationType'
+                ) || 'Other',
+
+              sector:
+                formData.get('sector') || '',
+
+              country:
+                formData.get('country') || '',
+
+              website:
+                formData.get('website') || '',
+
+              active: true,
+              confidentiality: 'Internal'
+            }
+          );
+
+        const organizationsGrid =
+          form.querySelector(
+            '[data-conversation-organizations-grid]'
+          );
+
+        if (organizationsGrid) {
+          organizationsGrid.insertAdjacentHTML(
+            'beforeend',
+            renderConversationOrganizationOption(
+              organization,
+              true
+            )
+          );
+        }
+
+        if (
+          !snapshot.organizationIds.includes(
+            organization.id
+          )
+        ) {
+          snapshot.organizationIds.push(
+            organization.id
+          );
+        }
+
+        restoreConversationFormSnapshot(
+          form,
+          snapshot
+        );
+
+        closeModal();
+      }
+    );
+}
 function renderConversationForm(item = {}, data = {}) {
   const selectedPersonIds = Array.isArray(item.personIds)
     ? item.personIds
@@ -4044,69 +4592,62 @@ function renderConversationForm(item = {}, data = {}) {
       </div>
 
       <fieldset class="conversation-link-fieldset">
-        <legend>People</legend>
+  <div class="conversation-fieldset-header">
+    <legend>People</legend>
 
-        <div class="conversation-checkbox-grid">
-          ${(data.people || [])
-            .map(
-              (person) => `
-                <label class="conversation-checkbox">
-                  <input
-                    type="checkbox"
-                    name="personIds"
-                    value="${escapeHtml(person.id)}"
-                    ${
-                      selectedPersonIds.includes(person.id)
-                        ? 'checked'
-                        : ''
-                    }
-                  />
+    <button
+      class="conversation-add-linked-button"
+      type="button"
+      data-add-conversation-person
+    >
+      + Add New Person
+    </button>
+  </div>
 
-                  <span>
-                    ${escapeHtml(
-                      person.displayName || 'Unnamed Person'
-                    )}
-                  </span>
-                </label>
-              `
-            )
-            .join('')}
-        </div>
-      </fieldset>
+  <div
+    class="conversation-checkbox-grid"
+    data-conversation-people-grid
+  >
+    ${(data.people || [])
+      .map((person) =>
+        renderConversationPersonOption(
+          person,
+          selectedPersonIds.includes(person.id)
+        )
+      )
+      .join('')}
+  </div>
+</fieldset>
 
       <fieldset class="conversation-link-fieldset">
-        <legend>Organizations</legend>
+  <div class="conversation-fieldset-header">
+    <legend>Organizations</legend>
 
-        <div class="conversation-checkbox-grid">
-          ${(data.organizations || [])
-            .map(
-              (organization) => `
-                <label class="conversation-checkbox">
-                  <input
-                    type="checkbox"
-                    name="organizationIds"
-                    value="${escapeHtml(organization.id)}"
-                    ${
-                      selectedOrganizationIds.includes(
-                        organization.id
-                      )
-                        ? 'checked'
-                        : ''
-                    }
-                  />
+    <button
+      class="conversation-add-linked-button"
+      type="button"
+      data-add-conversation-organization
+    >
+      + Add New Organization
+    </button>
+  </div>
 
-                  <span>
-                    ${escapeHtml(
-                      organization.name ||
-                        'Unnamed Organization'
-                    )}
-                  </span>
-                </label>
-              `
-            )
-            .join('')}
-        </div>
-      </fieldset>
+  <div
+    class="conversation-checkbox-grid"
+    data-conversation-organizations-grid
+  >
+    ${(data.organizations || [])
+      .map((organization) =>
+        renderConversationOrganizationOption(
+          organization,
+          selectedOrganizationIds.includes(
+            organization.id
+          )
+        )
+      )
+      .join('')}
+  </div>
+</fieldset>
 
       <label>
         Transcript, Notes, or Email Content
@@ -4647,10 +5188,16 @@ function renderConversations(
   `;
 
   bindCollectionActions(handlers);
-  bindConversationActions(handlers);
+  bindConversationActions(
+  handlers,
+  data
+);
 }
 
-function bindConversationActions(handlers) {
+function bindConversationActions(
+  handlers,
+  data = {}
+) {
   if (!appRoot) return;
 
   appRoot
@@ -4664,7 +5211,8 @@ function bindConversationActions(handlers) {
           'function'
         ) {
           handlers.onPrepareConversationAnalysis(
-            button.dataset.requestConversationAnalysis
+            button.dataset
+              .requestConversationAnalysis
           );
 
           return;
@@ -4673,6 +5221,41 @@ function bindConversationActions(handlers) {
         showStatus(
           'Conversation saved. Secure AI analysis is the next build step.'
         );
+      });
+    });
+
+  appRoot
+    .querySelectorAll(
+      '[data-add-conversation-person]'
+    )
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        const form = button.closest(
+          '.conversation-form'
+        );
+
+        openConversationPersonModal({
+          handlers,
+          form,
+          data
+        });
+      });
+    });
+
+  appRoot
+    .querySelectorAll(
+      '[data-add-conversation-organization]'
+    )
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        const form = button.closest(
+          '.conversation-form'
+        );
+
+        openConversationOrganizationModal({
+          handlers,
+          form
+        });
       });
     });
 }

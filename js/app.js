@@ -429,7 +429,62 @@ async function handleSave(collection, item) {
 
   await refresh();
 }
+async function handleSaveLinkedRecord(
+  collection,
+  item
+) {
+  const existingItem = item.id
+    ? (state.data[collection] || []).find(
+        (candidate) => candidate.id === item.id
+      )
+    : null;
 
+  const nextItem = {
+    ...(existingItem || {}),
+    ...item,
+
+    id:
+      item.id ||
+      uid(collection),
+
+    createdAt:
+      existingItem?.createdAt ||
+      item.createdAt ||
+      nowIso(),
+
+    updatedAt: nowIso()
+  };
+
+  await saveItem(
+    collection,
+    nextItem
+  );
+
+  if (!state.data[collection]) {
+    state.data[collection] = [];
+  }
+
+  const existingIndex =
+    state.data[collection].findIndex(
+      (candidate) =>
+        candidate.id === nextItem.id
+    );
+
+  if (existingIndex >= 0) {
+    state.data[collection][existingIndex] =
+      nextItem;
+  } else {
+    state.data[collection].push(nextItem);
+  }
+
+  showStatus(
+    collection === 'people'
+      ? 'Person added to the conversation.'
+      : 'Organization added to the conversation.'
+  );
+
+  return nextItem;
+}
 async function handleDelete(collection, id) {
   const confirmed = window.confirm(
     'Delete this item?'
@@ -762,6 +817,262 @@ async function handleCompleteAction(actionId) {
 
   await refresh();
 }
+function buildConversationProposal({
+  conversation,
+  category,
+  title,
+  description,
+  rationale,
+  priority = 'Medium',
+  actionType = 'Follow-Up',
+  sequence
+}) {
+  return {
+    id: `ai_proposal_${conversation.id}_${category
+      .toLowerCase()
+      .replaceAll(' ', '_')}_${sequence}`,
+
+    title,
+    description,
+    rationale,
+
+    status: 'Pending Review',
+    confidence: 'Structured',
+
+    sourceType: 'Conversation',
+    sourceRecordId: conversation.id,
+    sourceTitle: conversation.title || '',
+
+    category,
+    proposedActionType: actionType,
+    proposedPriority: priority,
+    proposedOwner: conversation.owner || 'Robb',
+    proposedDueDate: '',
+
+    proposedCompletionCriteria: [
+      'The required work has been completed.',
+      'The outcome has been recorded in the COO Operating System.',
+      'Relevant stakeholders have been updated where necessary.'
+    ],
+
+    linkedPersonIds: Array.isArray(
+      conversation.personIds
+    )
+      ? conversation.personIds
+      : [],
+
+    linkedOrganizationIds: Array.isArray(
+      conversation.organizationIds
+    )
+      ? conversation.organizationIds
+      : [],
+
+    linkedConversationIds: [
+      conversation.id
+    ],
+
+    confidentiality:
+      conversation.confidentiality || 'Internal',
+
+    createdAt: nowIso(),
+    updatedAt: nowIso()
+  };
+}
+
+function createConversationProposals(conversation) {
+  const proposals = [];
+
+  const addProposal = ({
+    category,
+    title,
+    description,
+    rationale,
+    priority,
+    actionType
+  }) => {
+    proposals.push(
+      buildConversationProposal({
+        conversation,
+        category,
+        title,
+        description,
+        rationale,
+        priority,
+        actionType,
+        sequence: proposals.length + 1
+      })
+    );
+  };
+
+  (
+    conversation.fedemrCommitments || []
+  ).forEach((commitment) => {
+    addProposal({
+      category: 'Commitment',
+      title: commitment,
+      description:
+        `Complete the FedEMR commitment identified during "${conversation.title}".`,
+      rationale:
+        'FedEMR made or discussed this commitment during the conversation.',
+      priority: 'High',
+      actionType: 'Commitment'
+    });
+  });
+
+  (
+    conversation.suggestedFollowUps || []
+  ).forEach((followUp) => {
+    addProposal({
+      category: 'Follow-Up',
+      title: followUp,
+      description:
+        `Complete the follow-up identified during "${conversation.title}".`,
+      rationale:
+        'The conversation identified this as a necessary follow-up.',
+      priority: 'High',
+      actionType: 'Relationship Follow-Up'
+    });
+  });
+
+  (
+    conversation.openQuestions || []
+  ).forEach((question) => {
+    addProposal({
+      category: 'Open Question',
+      title: `Answer: ${question}`,
+      description:
+        `Research, confirm, or obtain an answer to the question raised during "${conversation.title}".`,
+      rationale:
+        'An unresolved question may prevent a decision or delay progress.',
+      priority: 'Medium',
+      actionType: 'Research'
+    });
+  });
+
+  (
+    conversation.risksRaised || []
+  ).forEach((risk) => {
+    addProposal({
+      category: 'Risk',
+      title: `Assess and respond to risk: ${risk}`,
+      description:
+        `Assess the risk raised during "${conversation.title}" and determine the appropriate mitigation or escalation.`,
+      rationale:
+        'The conversation identified a risk that requires an explicit response.',
+      priority: 'High',
+      actionType: 'Risk Mitigation'
+    });
+  });
+
+  (
+    conversation.opportunities || []
+  ).forEach((opportunity) => {
+    addProposal({
+      category: 'Opportunity',
+      title: `Qualify opportunity: ${opportunity}`,
+      description:
+        `Evaluate the opportunity identified during "${conversation.title}" and determine the recommended next step.`,
+      rationale:
+        'The opportunity should be qualified before resources are committed.',
+      priority: 'Medium',
+      actionType: 'Opportunity Qualification'
+    });
+  });
+
+  (
+    conversation.productRequests || []
+  ).forEach((request) => {
+    addProposal({
+      category: 'Product Request',
+      title: `Review product request: ${request}`,
+      description:
+        `Review the product request raised during "${conversation.title}", assess its fit with the roadmap, and document a response.`,
+      rationale:
+        'A product request was raised and requires assessment before any commitment is made.',
+      priority: 'Medium',
+      actionType: 'Product Review'
+    });
+  });
+
+  return proposals;
+}
+
+async function handlePrepareConversationAnalysis(
+  conversationId
+) {
+  const conversation = (
+    state.data.conversations || []
+  ).find(
+    (item) => item.id === conversationId
+  );
+
+  if (!conversation) {
+    showStatus('Conversation not found.');
+    return;
+  }
+
+  const proposals =
+    createConversationProposals(conversation);
+
+  if (proposals.length === 0) {
+    showStatus(
+      'Add commitments, follow-ups, questions, risks, opportunities, or product requests before preparing proposals.'
+    );
+
+    return;
+  }
+
+  const existingProposals = (
+    state.data.aiActionProposals || []
+  ).filter(
+    (proposal) =>
+      proposal.sourceType === 'Conversation' &&
+      proposal.sourceRecordId === conversationId &&
+      proposal.status !== 'Rejected'
+  );
+
+  if (existingProposals.length > 0) {
+    const replaceExisting = window.confirm(
+      `This conversation already has ${existingProposals.length} active proposal${
+        existingProposals.length === 1 ? '' : 's'
+      }. Replace them with newly generated proposals?`
+    );
+
+    if (!replaceExisting) return;
+
+    for (const proposal of existingProposals) {
+      await deleteItem(
+        'aiActionProposals',
+        proposal.id
+      );
+    }
+  }
+
+  for (const proposal of proposals) {
+    await saveItem(
+      'aiActionProposals',
+      proposal
+    );
+  }
+
+  await saveItem('conversations', {
+    ...conversation,
+    analysisStatus: 'Analyzed',
+    analyzedAt: nowIso(),
+    generatedProposalCount:
+      proposals.length,
+    updatedAt: nowIso()
+  });
+
+  showStatus(
+    `${proposals.length} proposed action${
+      proposals.length === 1 ? '' : 's'
+    } prepared for review.`
+  );
+
+  await refresh();
+}
+
 
 async function handleApproveAiAction(
   proposalId
@@ -820,8 +1131,13 @@ async function handleApproveAiAction(
     linkedRecordType:
       proposal.sourceType || '',
 
-    linkedRecordId:
+        linkedRecordId:
       proposal.sourceRecordId || '',
+
+    linkedConversationIds:
+      normalizeArray(
+        proposal.linkedConversationIds
+      ),
 
     dependencyActionIds: [],
     unlocksActionIds: [],
@@ -982,6 +1298,8 @@ const handlers = {
   onNavigate: handleNavigate,
   onSearch: handleSearch,
   onSave: handleSave,
+  onSaveLinkedRecord:
+  handleSaveLinkedRecord,
   onDelete: handleDelete,
   onQuickAdd: handleQuickAdd,
   onExport: handleExport,
@@ -993,11 +1311,14 @@ const handlers = {
   onWaitAction: handleWaitAction,
   onCompleteAction: handleCompleteAction,
 
-  onApproveAiAction:
-    handleApproveAiAction,
+  onPrepareConversationAnalysis:
+  handlePrepareConversationAnalysis,
 
-  onRejectAiAction:
-    handleRejectAiAction
+onApproveAiAction:
+  handleApproveAiAction,
+
+onRejectAiAction:
+  handleRejectAiAction
 };
 
 async function init() {
