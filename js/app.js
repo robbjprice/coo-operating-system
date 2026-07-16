@@ -38,6 +38,7 @@ const state = {
 
 const PRODUCT_MARKET_SEED_VERSION = 1;
 const ACTION_ENGINE_SEED_VERSION = 1;
+const READINESS_SEED_VERSION = 1;
 const AI_SERVICE_URL =
   'http://localhost:3001';
 
@@ -60,7 +61,12 @@ const actionEngineCollections = [
   'actionItems',
   'aiActionProposals'
 ];
-
+const readinessCollections = [
+  'readinessTemplates',
+  'readinessTemplateItems',
+  'readinessAssessments',
+  'readinessAssessmentItems'
+];
 const completedStatuses = new Set([
   'Complete',
   'Completed',
@@ -187,7 +193,13 @@ async function seedActionEngineDataOnce() {
     version: ACTION_ENGINE_SEED_VERSION
   });
 }
-
+async function seedReadinessDataOnce() {
+  return seedCollectionsOnce({
+    collectionsToSeed: readinessCollections,
+    settingName: 'readinessSeedVersion',
+    version: READINESS_SEED_VERSION
+  });
+}
 async function loadData() {
   const entries = await Promise.all(
     collections.map(async (collection) => {
@@ -1551,10 +1563,17 @@ async function init() {
     await loadData();
   }
 
-  const actionEngineSeeded =
+    const actionEngineSeeded =
     await seedActionEngineDataOnce();
 
   if (actionEngineSeeded) {
+    await loadData();
+  }
+
+  const readinessSeeded =
+    await seedReadinessDataOnce();
+
+  if (readinessSeeded) {
     await loadData();
   }
 
@@ -1563,7 +1582,11 @@ async function init() {
     handlers
   );
 
-  if (actionEngineSeeded) {
+    if (readinessSeeded) {
+    showStatus(
+      'Readiness templates and research checklist added.'
+    );
+  } else if (actionEngineSeeded) {
     showStatus(
       'Action Engine workflow and next actions added.'
     );

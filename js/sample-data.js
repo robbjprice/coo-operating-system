@@ -347,8 +347,428 @@ schemaVersion: '0.7',
       completionPercentage: 10
     })
   ],
-  readinessTemplates: [],
-  readinessTemplateItems: [],
+    readinessTemplates: [
+    fixed('readiness_template_commercial', {
+      title: 'Commercial Readiness',
+      name: 'Commercial Readiness',
+
+      readinessType: 'Commercial',
+      version: 1,
+      active: true,
+
+      description:
+        'Determine whether FedEMR is prepared to enter a paid customer, pilot, licensing, deployment, or procurement engagement.',
+
+      purpose:
+        'Evaluate company, product, legal, security, procurement, pricing, support, deployment, and value-evidence readiness.',
+
+      defaultOwner: 'Robb',
+
+      applicableEngagementTypes: [
+        'Paid Pilot',
+        'Commercial Licence',
+        'Health-System Deployment',
+        'Enterprise Agreement',
+        'Pharmaceutical Engagement'
+      ],
+
+      readinessDecisionOptions: [
+        'Ready',
+        'Ready with Conditions',
+        'Not Ready',
+        'On Hold'
+      ],
+
+            templateItemIds: [
+        'readiness_template_item_research_1',
+        'readiness_template_item_research_2',
+        'readiness_template_item_research_3',
+        'readiness_template_item_research_4',
+        'readiness_template_item_research_5',
+        'readiness_template_item_research_6',
+        'readiness_template_item_research_7',
+        'readiness_template_item_research_8',
+        'readiness_template_item_research_9',
+        'readiness_template_item_research_10',
+        'readiness_template_item_research_11',
+        'readiness_template_item_research_12'
+      ],
+
+      confidentiality: 'Internal'
+    }),
+
+    fixed('readiness_template_government', {
+      title: 'Government Readiness',
+      name: 'Government Readiness',
+
+      readinessType: 'Government',
+      version: 1,
+      active: true,
+
+      description:
+        'Determine whether FedEMR is prepared for a government, public-sector, health-system, procurement, funding, or policy engagement.',
+
+      purpose:
+        'Evaluate vendor registration, procurement, public value, security, privacy, contracting, evidence, approvals, and government-facing communications.',
+
+      defaultOwner: 'Robb',
+
+      applicableEngagementTypes: [
+        'Government Briefing',
+        'Public-Sector Procurement',
+        'Health-System Engagement',
+        'Government Funding',
+        'Policy Engagement'
+      ],
+
+      readinessDecisionOptions: [
+        'Ready',
+        'Ready with Conditions',
+        'Not Ready',
+        'On Hold'
+      ],
+
+      templateItemIds: [],
+
+      confidentiality: 'Internal'
+    }),
+
+    fixed('readiness_template_research', {
+      title: 'Research Collaboration Readiness',
+      name: 'Research Collaboration Readiness',
+
+      readinessType: 'Research Collaboration',
+      version: 1,
+      active: true,
+
+      description:
+        'Determine whether FedEMR and its partners are prepared to begin a defined research collaboration.',
+
+      purpose:
+        'Evaluate scientific fit, participating sites, data feasibility, governance, agreements, ethics, privacy, technical readiness, resources, publication expectations, and project ownership.',
+
+      defaultOwner: 'Robb',
+
+      applicableEngagementTypes: [
+        'Research Collaboration',
+        'Multi-Site Study',
+        'Federated Model Development',
+        'External Validation',
+        'Research Network Deployment'
+      ],
+
+      readinessDecisionOptions: [
+        'Ready',
+        'Ready with Conditions',
+        'Not Ready',
+        'On Hold'
+      ],
+
+      templateItemIds: [],
+
+      confidentiality: 'Internal'
+    })
+  ],
+    readinessTemplateItems: [
+    fixed('readiness_template_item_research_1', {
+      templateId: 'readiness_template_research',
+      sequence: 1,
+
+      title: 'Research question and intended outcome defined',
+      category: 'Scientific Fit',
+      criticality: 'Critical',
+
+      description:
+        'The collaboration has a clear research question, intended output, success criteria, and defined role for FedEMR.',
+
+      completionCriteria: [
+        'Research question documented',
+        'Primary outcome documented',
+        'FedEMR role documented',
+        'Success criteria documented'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_2', {
+      templateId: 'readiness_template_research',
+      sequence: 2,
+
+      title: 'Participating organizations and project leads confirmed',
+      category: 'Partners',
+      criticality: 'Critical',
+
+      description:
+        'Participating organizations, scientific leads, technical contacts, decision-makers, and responsibilities are identified.',
+
+      completionCriteria: [
+        'Participating organizations listed',
+        'Scientific lead confirmed',
+        'Technical lead confirmed',
+        'Decision authority identified',
+        'Responsibilities documented'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_3', {
+      templateId: 'readiness_template_research',
+      sequence: 3,
+
+      title: 'Data feasibility and variable compatibility assessed',
+      category: 'Data Readiness',
+      criticality: 'Critical',
+
+      description:
+        'Required populations, variables, outcomes, coding systems, data quality, and site comparability have been assessed.',
+
+      completionCriteria: [
+        'Required population defined',
+        'Required variables listed',
+        'Outcome definitions confirmed',
+        'Data comparability reviewed',
+        'Known data gaps documented'
+      ],
+
+      defaultOwner: 'FedEMR Team',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_4', {
+      templateId: 'readiness_template_research',
+      sequence: 4,
+
+      title: 'Research protocol and analytical plan defined',
+      category: 'Methodology',
+      criticality: 'Critical',
+
+      description:
+        'The study design, analytical method, validation strategy, outputs, and reproducibility requirements are documented.',
+
+      completionCriteria: [
+        'Study design documented',
+        'Analysis method documented',
+        'Validation approach documented',
+        'Permitted outputs defined',
+        'Reproducibility plan documented'
+      ],
+
+      defaultOwner: 'FedEMR Team',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_5', {
+      templateId: 'readiness_template_research',
+      sequence: 5,
+
+      title: 'Ethics, privacy, legal, and governance requirements identified',
+      category: 'Governance',
+      criticality: 'Critical',
+
+      description:
+        'All required ethics, privacy, legal, institutional, data-use, and governance reviews are identified for each participating site.',
+
+      completionCriteria: [
+        'Ethics requirements identified',
+        'Privacy requirements identified',
+        'Legal requirements identified',
+        'Data-use requirements identified',
+        'Institutional approvals identified'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_6', {
+      templateId: 'readiness_template_research',
+      sequence: 6,
+
+      title: 'Research and collaboration agreements mapped',
+      category: 'Agreements',
+      criticality: 'Critical',
+
+      description:
+        'Required research, data, confidentiality, intellectual-property, publication, and platform-use agreements are identified.',
+
+      completionCriteria: [
+        'Required agreement types listed',
+        'Agreement owners identified',
+        'Intellectual-property expectations documented',
+        'Publication expectations documented',
+        'Contracting gaps documented'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_7', {
+      templateId: 'readiness_template_research',
+      sequence: 7,
+
+      title: 'Participating-site technical readiness assessed',
+      category: 'Technical Readiness',
+      criticality: 'Critical',
+
+      description:
+        'Each participating site has an assessed compute environment, operating system, network path, access model, security controls, and technical support contact.',
+
+      completionCriteria: [
+        'Compute environment assessed',
+        'Operating-system compatibility assessed',
+        'Network requirements assessed',
+        'Access and identity model assessed',
+        'Technical contact confirmed'
+      ],
+
+      defaultOwner: 'FedEMR Team',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_8', {
+      templateId: 'readiness_template_research',
+      sequence: 8,
+
+      title: 'FedEMR product and workflow fit confirmed',
+      category: 'Product Fit',
+      criticality: 'Critical',
+
+      description:
+        'The requested analysis and collaboration workflow are supported by the current or planned FedEMR product version.',
+
+      completionCriteria: [
+        'Required capabilities identified',
+        'Supported product version confirmed',
+        'Unsupported requirements documented',
+        'Configuration needs documented',
+        'Technical feasibility decision recorded'
+      ],
+
+      defaultOwner: 'FedEMR Team',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_9', {
+      templateId: 'readiness_template_research',
+      sequence: 9,
+
+      title: 'Project resources, budget, and funding confirmed',
+      category: 'Resources',
+      criticality: 'High',
+
+      description:
+        'Required people, technical support, research capacity, student support, external expertise, budget, and funding sources are identified.',
+
+      completionCriteria: [
+        'Required roles listed',
+        'Internal capacity assessed',
+        'External support needs identified',
+        'Budget estimated',
+        'Funding source identified'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_10', {
+      templateId: 'readiness_template_research',
+      sequence: 10,
+
+      title: 'Project plan, milestones, and dependencies documented',
+      category: 'Execution',
+      criticality: 'High',
+
+      description:
+        'The collaboration has a realistic work plan, owners, milestones, dependencies, decision points, and target dates.',
+
+      completionCriteria: [
+        'Project phases defined',
+        'Milestones documented',
+        'Owners assigned',
+        'Dependencies documented',
+        'Target dates agreed'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: false,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_11', {
+      templateId: 'readiness_template_research',
+      sequence: 11,
+
+      title: 'Publication, authorship, and communication expectations agreed',
+      category: 'Research Outputs',
+      criticality: 'High',
+
+      description:
+        'Publication goals, authorship principles, review rights, confidentiality, external communications, and acknowledgement expectations are defined.',
+
+      completionCriteria: [
+        'Publication objective documented',
+        'Authorship principles documented',
+        'Review rights documented',
+        'Confidentiality expectations documented',
+        'External communication rules documented'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    }),
+
+    fixed('readiness_template_item_research_12', {
+      templateId: 'readiness_template_research',
+      sequence: 12,
+
+      title: 'Final start decision and conditions recorded',
+      category: 'Decision',
+      criticality: 'Critical',
+
+      description:
+        'The accountable decision-maker records whether the collaboration is ready, ready with conditions, not ready, or on hold.',
+
+      completionCriteria: [
+        'Readiness decision recorded',
+        'Decision owner identified',
+        'Remaining conditions listed',
+        'Critical blockers documented',
+        'Earliest responsible start date recorded'
+      ],
+
+      defaultOwner: 'Robb',
+      evidenceRequired: true,
+      approvalRequired: true,
+      applicableByDefault: true
+    })
+  ],
   readinessAssessments: [],
   readinessAssessmentItems: [],
   customers: [
