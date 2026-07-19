@@ -38,7 +38,7 @@ const state = {
 
 const PRODUCT_MARKET_SEED_VERSION = 1;
 const ACTION_ENGINE_SEED_VERSION = 1;
-const READINESS_SEED_VERSION = 1;
+const READINESS_SEED_VERSION = 3;
 const AI_SERVICE_URL =
   'http://localhost:3001';
 

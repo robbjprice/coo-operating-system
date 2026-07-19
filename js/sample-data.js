@@ -769,8 +769,817 @@ schemaVersion: '0.7',
       applicableByDefault: true
     })
   ],
-  readinessAssessments: [],
-  readinessAssessmentItems: [],
+    readinessAssessments: [
+    fixed('readiness_assessment_gemini_research', {
+      title:
+        'GEMINI Research Collaboration Readiness',
+
+      name:
+        'GEMINI Research Collaboration Readiness',
+
+      templateId:
+        'readiness_template_research',
+
+      assessmentType:
+        'Research Collaboration',
+
+      engagementName:
+        'GEMINI Research Collaboration',
+
+      linkedRecordType:
+        'organization',
+
+      linkedRecordId:
+        '',
+
+      status:
+        'In Progress',
+
+      priority:
+        'High',
+
+      owner:
+        'Robb',
+
+      startDate:
+        '2026-07-18',
+
+      targetDecisionDate:
+        '',
+
+      readinessDecision:
+        'Not Yet Assessed',
+
+      readinessDecisionDate:
+        '',
+
+      decisionOwner:
+        'Robb',
+
+      overallCompletionPercentage:
+        0,
+
+      criticalBlockerCount:
+        0,
+
+      applicableItemCount:
+        12,
+
+      completedItemCount:
+        0,
+
+      notApplicableItemCount:
+        0,
+
+      earliestResponsibleStartDate:
+        '',
+
+      objective:
+        'Determine whether FedEMR and GEMINI are ready to begin a defined research collaboration.',
+
+      scope:
+        'Assess scientific, partner, data, governance, agreement, technical, product, resource, execution, publication, and decision readiness.',
+
+      blockerSummary:
+        '',
+
+      conditionsToProceed: [],
+
+      assessmentItemIds: [
+        'readiness_assessment_item_gemini_1',
+        'readiness_assessment_item_gemini_2',
+        'readiness_assessment_item_gemini_3',
+        'readiness_assessment_item_gemini_4',
+        'readiness_assessment_item_gemini_5',
+        'readiness_assessment_item_gemini_6',
+        'readiness_assessment_item_gemini_7',
+        'readiness_assessment_item_gemini_8',
+        'readiness_assessment_item_gemini_9',
+        'readiness_assessment_item_gemini_10',
+        'readiness_assessment_item_gemini_11',
+        'readiness_assessment_item_gemini_12'
+      ],
+
+      linkedOrganizationIds: [],
+      linkedPersonIds: [],
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: [],
+
+      confidentiality:
+        'Internal'
+    })
+  ],
+  readinessAssessmentItems: [
+    fixed('readiness_assessment_item_gemini_1', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_1',
+
+      sequence: 1,
+
+      title:
+        'Research question and intended outcome defined',
+
+      category:
+        'Scientific Fit',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Define the research question, intended output, success criteria, and the specific role of FedEMR in the GEMINI collaboration.',
+
+      completionCriteria: [
+        'Research question documented',
+        'Primary outcome documented',
+        'FedEMR role documented',
+        'Success criteria documented'
+      ],
+
+      blocker:
+        '',
+
+      waitingOn:
+        '',
+
+      approvalRequired:
+        false,
+
+      approvalStatus:
+        'Not Required',
+
+      evidenceRequired:
+        true,
+
+      evidenceStatus:
+        'Missing',
+
+      notes:
+        '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_2', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_2',
+
+      sequence: 2,
+
+      title:
+        'Participating organizations and project leads confirmed',
+
+      category:
+        'Partners',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Identify participating organizations, scientific leads, technical contacts, decision-makers, and responsibilities.',
+
+      completionCriteria: [
+        'Participating organizations listed',
+        'Scientific lead confirmed',
+        'Technical lead confirmed',
+        'Decision authority identified',
+        'Responsibilities documented'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: false,
+      approvalStatus: 'Not Required',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_3', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_3',
+
+      sequence: 3,
+
+      title:
+        'Data feasibility and variable compatibility assessed',
+
+      category:
+        'Data Readiness',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'FedEMR Team',
+
+      dueDate:
+        '',
+
+      description:
+        'Assess required populations, variables, outcomes, coding systems, data quality, and site comparability.',
+
+      completionCriteria: [
+        'Required population defined',
+        'Required variables listed',
+        'Outcome definitions confirmed',
+        'Data comparability reviewed',
+        'Known data gaps documented'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: false,
+      approvalStatus: 'Not Required',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_4', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_4',
+
+      sequence: 4,
+
+      title:
+        'Research protocol and analytical plan defined',
+
+      category:
+        'Methodology',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'FedEMR Team',
+
+      dueDate:
+        '',
+
+      description:
+        'Document the study design, analytical method, validation strategy, permitted outputs, and reproducibility requirements.',
+
+      completionCriteria: [
+        'Study design documented',
+        'Analysis method documented',
+        'Validation approach documented',
+        'Permitted outputs defined',
+        'Reproducibility plan documented'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_5', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_5',
+
+      sequence: 5,
+
+      title:
+        'Ethics, privacy, legal, and governance requirements identified',
+
+      category:
+        'Governance',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Identify all ethics, privacy, legal, institutional, data-use, and governance reviews required for the collaboration.',
+
+      completionCriteria: [
+        'Ethics requirements identified',
+        'Privacy requirements identified',
+        'Legal requirements identified',
+        'Data-use requirements identified',
+        'Institutional approvals identified'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_6', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_6',
+
+      sequence: 6,
+
+      title:
+        'Research and collaboration agreements mapped',
+
+      category:
+        'Agreements',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Identify required research, data, confidentiality, intellectual-property, publication, and platform-use agreements.',
+
+      completionCriteria: [
+        'Required agreement types listed',
+        'Agreement owners identified',
+        'Intellectual-property expectations documented',
+        'Publication expectations documented',
+        'Contracting gaps documented'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_7', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_7',
+
+      sequence: 7,
+
+      title:
+        'Participating-site technical readiness assessed',
+
+      category:
+        'Technical Readiness',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'FedEMR Team',
+
+      dueDate:
+        '',
+
+      description:
+        'Assess compute environment, operating system, network path, access model, security controls, and technical support contacts.',
+
+      completionCriteria: [
+        'Compute environment assessed',
+        'Operating-system compatibility assessed',
+        'Network requirements assessed',
+        'Access and identity model assessed',
+        'Technical contact confirmed'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: false,
+      approvalStatus: 'Not Required',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_8', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_8',
+
+      sequence: 8,
+
+      title:
+        'FedEMR product and workflow fit confirmed',
+
+      category:
+        'Product Fit',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'FedEMR Team',
+
+      dueDate:
+        '',
+
+      description:
+        'Confirm that the requested analysis and collaboration workflow are supported by the current or planned FedEMR version.',
+
+      completionCriteria: [
+        'Required capabilities identified',
+        'Supported product version confirmed',
+        'Unsupported requirements documented',
+        'Configuration needs documented',
+        'Technical feasibility decision recorded'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_9', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_9',
+
+      sequence: 9,
+
+      title:
+        'Project resources, budget, and funding confirmed',
+
+      category:
+        'Resources',
+
+      criticality:
+        'High',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Identify required people, technical support, research capacity, budget, and funding sources.',
+
+      completionCriteria: [
+        'Required roles listed',
+        'Internal capacity assessed',
+        'External support needs identified',
+        'Budget estimated',
+        'Funding source identified'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: false,
+      approvalStatus: 'Not Required',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_10', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_10',
+
+      sequence: 10,
+
+      title:
+        'Project plan, milestones, and dependencies documented',
+
+      category:
+        'Execution',
+
+      criticality:
+        'High',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Document project phases, milestones, owners, dependencies, decision points, and target dates.',
+
+      completionCriteria: [
+        'Project phases defined',
+        'Milestones documented',
+        'Owners assigned',
+        'Dependencies documented',
+        'Target dates agreed'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: false,
+      approvalStatus: 'Not Required',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_11', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_11',
+
+      sequence: 11,
+
+      title:
+        'Publication, authorship, and communication expectations agreed',
+
+      category:
+        'Research Outputs',
+
+      criticality:
+        'High',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Define publication goals, authorship principles, review rights, confidentiality, external communications, and acknowledgements.',
+
+      completionCriteria: [
+        'Publication objective documented',
+        'Authorship principles documented',
+        'Review rights documented',
+        'Confidentiality expectations documented',
+        'External communication rules documented'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    }),
+
+    fixed('readiness_assessment_item_gemini_12', {
+      assessmentId:
+        'readiness_assessment_gemini_research',
+
+      templateItemId:
+        'readiness_template_item_research_12',
+
+      sequence: 12,
+
+      title:
+        'Final start decision and conditions recorded',
+
+      category:
+        'Decision',
+
+      criticality:
+        'Critical',
+
+      status:
+        'Not Started',
+
+      completionPercentage:
+        0,
+
+      applicable:
+        true,
+
+      owner:
+        'Robb',
+
+      dueDate:
+        '',
+
+      description:
+        'Record whether the collaboration is ready, ready with conditions, not ready, or on hold.',
+
+      completionCriteria: [
+        'Readiness decision recorded',
+        'Decision owner identified',
+        'Remaining conditions listed',
+        'Critical blockers documented',
+        'Earliest responsible start date recorded'
+      ],
+
+      blocker: '',
+      waitingOn: '',
+      approvalRequired: true,
+      approvalStatus: 'Not Started',
+      evidenceRequired: true,
+      evidenceStatus: 'Missing',
+      notes: '',
+
+      linkedActionItemIds: [],
+      linkedDocumentIds: [],
+      linkedEvidenceIds: [],
+      linkedDecisionIds: []
+    })
+  ],
   customers: [
     base('cust', {
       name: 'Government health-system buyer',
