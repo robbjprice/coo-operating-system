@@ -1586,6 +1586,10 @@ async function init() {
     showStatus(
       'Readiness templates and research checklist added.'
     );
+  }   if (readinessSeeded) {
+    showStatus(
+      'Readiness templates and research checklist added.'
+    );
   } else if (actionEngineSeeded) {
     showStatus(
       'Action Engine workflow and next actions added.'
